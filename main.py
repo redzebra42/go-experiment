@@ -10,9 +10,8 @@ if __name__ == "__main__":
 
         if hand == None:
             continue
-
-        go.move(hand)
+        coord = go.hand_to_coord(hand)
+        go.move(coord)
         go.next_turn(go.current_player)
-        
 
         go.board.print_board()
