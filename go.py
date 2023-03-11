@@ -25,10 +25,35 @@ class Go():
 
     
     def neighbours(self, coord):
-        return [self.board.goban[coord[0]][coord[1] - 1],
-                self.board.goban[coord[0] - 1][coord[1]],
-                self.board.goban[coord[0]][coord[1] + 1],
-                self.board.goban[coord[0] + 1][coord[1]],]
+        '''Returns an array of neighbouring coordinates, of length 2 to 4.'''
+        if coord[0] == 0:
+            if coord[1] == 0:
+                return [(0,1), (1,0)]
+            elif coord[1] == 18:
+                return [(0,17), (1,18)]
+            else:
+                return [(0, coord[1]-1),
+                        (0, coord[1]+1),
+                        (1, coord[1])]
+        elif coord[0] == 18:
+            if coord[1] == 0:
+                return [(18, 1), (17, 0)]
+            elif coord[1] == 18:
+                return [(18, 17), (17, 18)]
+            else:
+                return [(18, coord[1]-1),
+                        (18, coord[1]+1),
+                        (17, coord[1])]
+        else:
+            if coord[1] == 0:
+                return [(coord[0]-1, 0), (coord[0]+1, 0), (coord[0], 1)]
+            elif coord[1] == 18:
+                return [(coord[0]-1, 18), (coord[0]+1, 18), (coord[0], 17)]
+            else:
+                return [(coord[0]-1, coord[1]),
+                        (coord[0]+1, coord[1]),
+                        (coord[0], coord[1]-1),
+                        (coord[0], coord[1]+1)]
 
 
     def capture (self, hand):
