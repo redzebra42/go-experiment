@@ -17,18 +17,18 @@ class Go():
     def move(self, coord):
         self.board.goban[coord[1]][coord[0]] = self.current_player
 
-    def next_turn(self,player):
-        if player == 'w':
+    def next_turn(self):
+        if self.current_player == 'w':
             self.current_player = 'b'
         else:
             self.current_player = 'w'
 
     
     def neighbours(self, coord):
-        return [self.board.goban[self.hand_to_coord(hand)[0]][self.hand_to_coord(hand)[1] - 1],
-                self.board.goban[self.hand_to_coord(hand)[0] - 1][self.hand_to_coord(hand)[1]],
-                self.board.goban[self.hand_to_coord(hand)[0]][self.hand_to_coord(hand)[1] + 1],
-                self.board.goban[self.hand_to_coord(hand)[0] + 1][self.hand_to_coord(hand)[1]],]
+        return [self.board.goban[coord[0]][coord[1] - 1],
+                self.board.goban[coord[0] - 1][coord[1]],
+                self.board.goban[coord[0]][coord[1] + 1],
+                self.board.goban[coord[0] + 1][coord[1]],]
 
 
     def capture (self, hand):
