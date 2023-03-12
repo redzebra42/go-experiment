@@ -56,16 +56,26 @@ class Go():
                         (coord[0], coord[1]-1),
                         (coord[0], coord[1]+1)]
             
+            
+    def group_rec(self, coord, goban):                #recursive fonction for groups (doesn't work yet)
+        if len(self.group_list) > 4:
+            return self.group_list
+        else:
+            neighbours = self.neighbours(coord)
+            self.group_list.append(coord)
+            print(self.group_list)
+            for neighb in neighbours:
+                if (not(neighb in self.group_list)) and goban[neighb[1]][neighb[0]] == goban[coord[1]][coord[0]]:
+                    self.group_rec(neighb, self.board.goban)
+            
+        '''
     def group(self, coord, goban):
         neighbours = self.neighbours(coord)
-        self.group_list.append(coord)
-        for neighb in neighbours:
-            if goban[neighb[1]][neighb[0]] != goban[coord[1]][coord[0]]:
-                break
-            else:
-                self.group(neighb, self.board.goban)
-        return self.group_list
+        i = 0
+        while goban[neighbours[i][1], neighbours[i][0]] == goban[coord[1], coord[0]]:
+            break
 
+'''
 
     def capture (self, coord):
         if self.neighbours(coord) != ['0','0','0','0']:
