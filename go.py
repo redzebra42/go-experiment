@@ -8,6 +8,7 @@ class Go():
         self.current_player = 'w'
         self.opp_player = 'b' if self.current_player == 'w' else 'w'
         self.group_list = []
+        self.turn = 0
         
 
     def hand_to_coord(self,hand):
@@ -19,6 +20,7 @@ class Go():
         self.board.goban[coord[1]][coord[0]] = self.current_player
 
     def next_turn(self):
+        self.turn += 1
         if self.current_player == 'w':
             self.current_player = 'b'
         else:
@@ -57,17 +59,22 @@ class Go():
                         (coord[0], coord[1]+1)]
             
             
-    def group_rec(self, coord, goban):                #recursive fonction for groups (doesn't work yet)
-        if len(self.group_list) > 4:
-            return self.group_list
-        else:
-            neighbours = self.neighbours(coord)
-            self.group_list.append(coord)
-            print(self.group_list)
-            for neighb in neighbours:
-                if (not(neighb in self.group_list)) and goban[neighb[1]][neighb[0]] == goban[coord[1]][coord[0]]:
-                    self.group_rec(neighb, self.board.goban)
+    def group_rec(self, coord, goban):                #recursive fonction for groups (doesn't work yet, or does it ?)
+        neighbours = self.neighbours(coord)
+        self.group_list.append(coord)
+        #print(self.group_list)
+        for neighb in neighbours:
+            if (not(neighb in self.group_list)) and goban[neighb[1]][neighb[0]] == goban[coord[1]][coord[0]]:
+                #print(goban[neighb[1]][neighb[0]], goban[coord[1]][coord[0]])
+                #self.group_list.append(self.group_rec(neighb, goban))
+                self.group_rec(neighb, goban)
+        return coord
             
+    def group(self, coord, goban):
+        self.group_list = []
+        self.group_rec(coord, goban)
+        return self.group_list
+
         '''
     def group(self, coord, goban):
         neighbours = self.neighbours(coord)
