@@ -74,16 +74,18 @@ class Go():
         self.group_list = []
         self.group_rec(coord, goban)
         return self.group_list
+    
+    def liberty(self, group, goban):
+        lib_coords = []
+        liberties = 0
+        for coord in group:
+            for neighb in self.neighbours(coord):
+                if (not (neighb in lib_coords)) and goban[neighb[1]][neighb[0]] in ["0","x"]:
+                    lib_coords.append(neighb)
+                    liberties += 1
+        return liberties
 
-        '''
-    def group(self, coord, goban):
-        neighbours = self.neighbours(coord)
-        i = 0
-        while goban[neighbours[i][1], neighbours[i][0]] == goban[coord[1], coord[0]]:
-            break
-
-'''
 
     def capture (self, coord):
-        if self.neighbours(coord) != ['0','0','0','0']:
-            return True
+        #need to create liberties fonction first
+        return True
