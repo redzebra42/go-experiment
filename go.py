@@ -6,7 +6,7 @@ class Go():
     def __init__(self):
         self.board = board.Board()
         self.current_player = 'w'
-        self.opp_player = 'b' if self.current_player == 'w' else 'w'
+        self.opp_player = 'b'
         self.group_list = []
         self.turn = 0
         
@@ -23,8 +23,10 @@ class Go():
         self.turn += 1
         if self.current_player == 'w':
             self.current_player = 'b'
+            self.opp_player = 'w'
         else:
             self.current_player = 'w'
+            self.opp_player = 'b'
 
     
     def neighbours(self, coord):
@@ -62,11 +64,8 @@ class Go():
     def group_rec(self, coord, goban):                #recursive fonction for groups (doesn't work yet, or does it ?)
         neighbours = self.neighbours(coord)
         self.group_list.append(coord)
-        #print(self.group_list)
         for neighb in neighbours:
             if (not(neighb in self.group_list)) and goban[neighb[1]][neighb[0]] == goban[coord[1]][coord[0]]:
-                #print(goban[neighb[1]][neighb[0]], goban[coord[1]][coord[0]])
-                #self.group_list.append(self.group_rec(neighb, goban))
                 self.group_rec(neighb, goban)
         return coord
             
@@ -86,6 +85,12 @@ class Go():
         return liberties
 
 
-    def capture (self, coord):
-        #need to create liberties fonction first
-        return True
+    def capture (self, new_coord, goban):
+        '''tests if there is a capture for a new move and captures the stones'''
+        for neighb in self.neighbours(new_coord):
+            if goban[neighb[1]][neighb[0]] == self.opp_player and self.liberty(self.group(neighb, goban), goban) == 0:
+                for coord in self.group(neighb, goban):
+                    goban[coord[1]][coord[0]] = '0'
+    
+
+

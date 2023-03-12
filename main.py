@@ -12,6 +12,7 @@ if __name__ == "__main__":
             continue
         coord = go.hand_to_coord(hand)
         go.move(coord)
+        go.capture(coord, go.board.goban)
         go.next_turn()
 
         go.board.print_board()
