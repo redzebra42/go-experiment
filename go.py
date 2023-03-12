@@ -17,7 +17,8 @@ class Go():
         return (self.list.index(hand[0]), int(hand[1:])-1)
 
     def move(self, coord):
-        self.board.goban[coord[1]][coord[0]] = self.current_player
+        if self.board.goban[coord[1]][coord[0]] in ['0','x']:
+            self.board.goban[coord[1]][coord[0]] = self.current_player
 
     def next_turn(self):
         self.turn += 1
@@ -67,7 +68,7 @@ class Go():
         for neighb in neighbours:
             if (not(neighb in self.group_list)) and goban[neighb[1]][neighb[0]] == goban[coord[1]][coord[0]]:
                 self.group_rec(neighb, goban)
-        return coord
+        return
             
     def group(self, coord, goban):
         self.group_list = []
@@ -85,8 +86,9 @@ class Go():
         return liberties
 
 
-    def capture (self, new_coord, goban):
+    def capture (self, new_coord):
         '''tests if there is a capture for a new move and captures the stones'''
+        goban = self.board.goban
         for neighb in self.neighbours(new_coord):
             if goban[neighb[1]][neighb[0]] == self.opp_player and self.liberty(self.group(neighb, goban), goban) == 0:
                 for coord in self.group(neighb, goban):
