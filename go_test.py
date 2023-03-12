@@ -28,6 +28,11 @@ class TestGoGroups(unittest.TestCase):
         self.test_goban = test_goban.Test_goban()
         self.assertEqual(self.go.group((3, 3), self.test_goban.goban_1), [(3, 3), (4, 3), (3, 4), (3, 5)])
 
+    def test_group_2(self):
+        self.go = go.Go()
+        self.test_goban = test_goban.Test_goban()
+        self.assertEqual(self.go.group((3, 17), self.test_goban.goban_2), [(3, 3), (4, 3), (3, 4), (3, 5)])
+
 
 if __name__ == "__main__":
     unittest.main()
