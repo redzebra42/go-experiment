@@ -7,6 +7,7 @@ class Go():
         self.board = board.Board()
         self.current_player = 'w'
         self.opp_player = 'b' if self.current_player == 'w' else 'w'
+        self.group_list = []
         
 
     def hand_to_coord(self,hand):
@@ -54,8 +55,18 @@ class Go():
                         (coord[0]+1, coord[1]),
                         (coord[0], coord[1]-1),
                         (coord[0], coord[1]+1)]
+            
+    def group(self, coord, goban):
+        neighbours = self.neighbours(coord)
+        self.group_list.append(coord)
+        for neighb in neighbours:
+            if goban[neighb[1]][neighb[0]] != goban[coord[1]][coord[0]]:
+                break
+            else:
+                self.group(neighb, self.board.goban)
+        return self.group_list
 
 
-    def capture (self, hand):
-        if self.neighbours(hand) != ['0','0','0','0']:
+    def capture (self, coord):
+        if self.neighbours(coord) != ['0','0','0','0']:
             return True

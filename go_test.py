@@ -1,7 +1,8 @@
 import go
+import test_goban
 import unittest
 
-class TestGoMethods(unittest.TestCase):
+class TestGoNeighbours(unittest.TestCase):
 
     def test_neighbour_0_0(self):
         self.go = go.Go()
@@ -18,6 +19,15 @@ class TestGoMethods(unittest.TestCase):
     def test_neighbour_10_12(self):
         self.go = go.Go()
         self.assertEqual(self.go.neighbours((10,12)), [(9,12), (11,12), (10,11), (10, 13)])
+
+
+class TestGoGroups(unittest.TestCase):
+
+    def test_group_1(self):
+        self.go = go.Go()
+        self.test_goban = test_goban.Test_goban()
+        self.assertEqual(self.go.group_rec((3, 3), self.test_goban.goban_1), [(3, 3), (3, 4), (4, 3), (4, 5)])
+
 
 if __name__ == "__main__":
     unittest.main()
