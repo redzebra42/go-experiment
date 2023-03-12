@@ -1,7 +1,7 @@
-import go
+from go import *
 
 if __name__ == "__main__":
-    go = go.Go()
+    go = Go()
     go.board.print_board()
     
 
