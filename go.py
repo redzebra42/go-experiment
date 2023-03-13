@@ -9,6 +9,7 @@ class Go():
         self.opp_player = 'b'
         self.group_list = []
         self.turn = 0
+        self.captured_pieces = []
         
 
     def hand_to_coord(self,hand):
@@ -92,6 +93,7 @@ class Go():
         for neighb in self.neighbours(new_coord):
             if goban[neighb[1]][neighb[0]] == self.opp_player and self.liberty(self.group(neighb, goban), goban) == 0:
                 for coord in self.group(neighb, goban):
+                    self.captured_pieces.append(self.opp_player)
                     goban[coord[1]][coord[0]] = '0'
     
 
