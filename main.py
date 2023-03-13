@@ -13,6 +13,6 @@ if __name__ == "__main__":
         coord = go.hand_to_coord(hand)
         go.move(coord)
         go.capture(coord)
-        go.next_turn()
+        go.next_turn(hand)
 
         go.board.print_board()

@@ -10,6 +10,7 @@ class Go():
         self.group_list = []
         self.turn = 0
         self.captured_pieces = []
+        self.previous_move = ''
         
 
     def hand_to_coord(self,hand):
@@ -21,8 +22,9 @@ class Go():
         if self.board.goban[coord[1]][coord[0]] in ['0','x']:
             self.board.goban[coord[1]][coord[0]] = self.current_player
 
-    def next_turn(self):
+    def next_turn(self,hand):
         self.turn += 1
+        self.previous_move = hand
         if self.current_player == 'w':
             self.current_player = 'b'
             self.opp_player = 'w'
