@@ -15,4 +15,5 @@ if __name__ == "__main__":
         go.capture(coord)
         go.next_turn(hand)
 
+        print(go.previous_move)
         go.board.print_board()
