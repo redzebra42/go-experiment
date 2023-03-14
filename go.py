@@ -6,13 +6,13 @@ class Go():
 
     def __init__(self):
         self.board = board.Board()
-        self.current_player = 'w'
-        self.opp_player = 'b'
+        self.current_player = 'b'
+        self.opp_player = 'w'
         self.group_list = []
         self.turn = 0
         self.captured_pieces = []
         self.previous_move = ''
-        self.two_last_states = [copy.deepcopy(self.board.goban), copy.deepcopy(self.board.goban)]
+        self.states = []
         
 
     def hand_to_coord(self,hand):
@@ -27,8 +27,7 @@ class Go():
     def next_turn(self,hand):
         self.turn += 1
         self.previous_move = hand
-        self.two_last_states[0] = self.two_last_states[1]
-        self.two_last_states[1] =  copy.deepcopy(self.board.goban)
+        self.states.append(copy.deepcopy(self.board.goban))
         if self.current_player == 'w':
             self.current_player = 'b'
             self.opp_player = 'w'
@@ -102,5 +101,8 @@ class Go():
                     self.captured_pieces.append(self.opp_player)
                     goban[coord[1]][coord[0]] = '0'
     
-
+    
+    def is_ko(self):
+        '''tests if there is a ko position only for the two_last_sates''' 
+        return (self.board.goban in self.states[:(len(self.states)-1)])
 
