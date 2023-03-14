@@ -23,17 +23,21 @@ class TestsGo(unittest.TestCase):
     def test_lib_1(self):
         self.go = Go()
         self.test_goban = test_goban.Test_goban()
-        self.assertEqual(self.go.liberty(self.go.group((3, 3), self.test_goban.goban_1), self.test_goban.goban_1), 7)
+        self.assertEqual(self.go.liberty(self.go.group((3, 3)))[0], 7)
         
     def test_lib_2(self):
         self.go = Go()
         self.test_goban = test_goban.Test_goban()
-        self.assertEqual(self.go.liberty(self.go.group((3,17), self.test_goban.goban_2), self.test_goban.goban_2), 9)
+        self.assertEqual(self.go.liberty(self.go.group((3,17)))[0], 9)
     
     def test_group_1(self):
         self.go = Go()
         self.test_goban = test_goban.Test_goban()
-        self.assertEqual(self.go.group((3, 3), self.test_goban.goban_1), [(3, 3), (4, 3), (3, 4), (3, 5)])
+        self.assertEqual(self.go.group((3, 3)), [(3, 3), (4, 3), (3, 4), (3, 5)])
+
+    def test_territory(self):
+        self.go = Go()
+        self.assertEqual(self.go.territory('b'), 9)
 
 
     
