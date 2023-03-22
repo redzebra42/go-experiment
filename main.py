@@ -15,5 +15,5 @@ if __name__ == "__main__":
         go.capture(coord)
         go.next_turn(hand)
 
-        print(go.territory('b'))
+        print(go.territory('w'))
         go.board.print_board()

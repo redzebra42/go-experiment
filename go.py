@@ -68,7 +68,7 @@ class Go():
                         (coord[0], coord[1]+1)]
             
             
-    def group_rec(self, coord):                #recursive fonction for groups (doesn't work yet, or does it ?)
+    def group_rec(self, coord):
         goban = self.board.goban
         neighbours = self.neighbours(coord)
         self.group_list.append(coord)
@@ -78,7 +78,6 @@ class Go():
         return
             
     def group(self, coord):
-        goban = self.board.goban
         self.group_list = []
         self.group_rec(coord)
         return self.group_list
@@ -123,12 +122,13 @@ class Go():
     def territory(self, color):
         points = 0
         already_counted = []
-        for i in range(len(self.board.goban)):
-            for j in range(len(self.board.goban[0])):
+        for i in range(len(self.board.goban)-1):
+            for j in range(len(self.board.goban[0])-1):
                     coord = (j,i)
-                    if not(coord in already_counted) and all(self.board.goban[x[1]][x[0]] == color for x in self.group_neighbours(self.group(coord))):
+                    if self.board.goban[i][j] == "0" and not(coord in already_counted) and all(self.board.goban[x[1]][x[0]] == color for x in self.group_neighbours(self.group(coord))):
                         points += len(self.group(coord))
-                        for i in range(len(self.group(coord))):
-                            already_counted.append(self.group(coord)[i])
+                    if not(coord in already_counted):
+                        for k in range(len(self.group(coord))):
+                            already_counted.append(self.group(coord)[k])
         return points
 
