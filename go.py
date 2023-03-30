@@ -1,3 +1,5 @@
+import tkinter as tk
+from tkinter import ttk
 import board
 import copy
 
@@ -13,6 +15,21 @@ class Go():
         self.captured_pieces = []
         self.previous_move = ''
         self.states = []
+        self.root = tk.Tk()
+        self.frm = ttk.Frame(self.root, padding=10)
+        self.frm.grid(padx=0, pady=0)
+        self.tile = tk.PhotoImage(file ='tkinter/tile.png')
+        self.top_left = tk.PhotoImage(file ='tkinter/top_left_corner.png')
+        self.top_right = tk.PhotoImage(file ='tkinter/top_right_corner.png')
+        self.bottom_left = tk.PhotoImage(file ='tkinter/bottom_left_corner.png')
+        self.bottom_right = tk.PhotoImage(file ='tkinter/bottom_right_corner.png')
+        self.top = tk.PhotoImage(file ='tkinter/top.png')
+        self.bottom = tk.PhotoImage(file ='tkinter/bottom.png')
+        self.right = tk.PhotoImage(file ='tkinter/right.png')
+        self.left = tk.PhotoImage(file ='tkinter/left.png')
+        self.x_tile = tk.PhotoImage(file ='tkinter/x_tile.png')
+        self.black_stone = tk.PhotoImage(file ='tkinter/black_stone.png')
+        self.white_stone = tk.PhotoImage(file ='tkinter/white_stone.png')
         
 
     def hand_to_coord(self,hand):
@@ -132,3 +149,18 @@ class Go():
                             already_counted.append(self.group(coord)[k])
         return points
 
+    def goban_to_img(self, case):
+        '''returns the img name for the corresponding tile'''
+        if case == '0':
+            return self.tile
+        elif case == 'b':
+            return self.black_stone
+        elif case == 'w':
+            return self.white_stone
+        elif case == 'x':
+            return self.x_tile
+
+    def print_tcltk(self):
+        for i in range(len(self.board.goban[0])):
+            for j in range(len(self.board.goban)):
+                ttk.Button(self.frm, image=self.goban_to_img(self.board.goban[j][i]), padding=-3.5, command=self.move((i,j))).grid(column=i, row=j)

@@ -1,11 +1,14 @@
 from go import *
+import tkinter as tk
+from tkinter import ttk
 
 if __name__ == "__main__":
     go = Go()
     go.board.print_board()
-    
+    go.print_tcltk()
 
     while True:
+        go.root.mainloop()
         hand = input(str(go.current_player) + " to move: ")
 
         if hand == None:
