@@ -11,7 +11,7 @@ class Go():
         self.group_list = []
         self.turn = 0
         self.captured_pieces = []
-        self.previous_move = ''
+        self.previous_move = None
         self.states = []
         
 
@@ -24,9 +24,9 @@ class Go():
         if self.board.goban[coord[1]][coord[0]] in ['0','x']:
             self.board.goban[coord[1]][coord[0]] = self.current_player
 
-    def next_turn(self,hand):
+    def next_turn(self,coord):
         self.turn += 1
-        self.previous_move = hand
+        self.previous_move = coord
         self.states.append(copy.deepcopy(self.board.goban))
         if self.current_player == 'w':
             self.current_player = 'b'

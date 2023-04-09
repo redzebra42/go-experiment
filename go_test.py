@@ -2,6 +2,7 @@ from go import *
 import test_goban
 import unittest
 
+
 class TestsGo(unittest.TestCase):
 
     def test_neighbour_0_0(self):
