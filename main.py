@@ -16,10 +16,7 @@ if __name__ == "__main__":
         play_at(coord)
 
     def play_at(coord):
-        if go.is_legal(coord):
-            go.move(coord)
-            go.capture(coord)
-            go.next_turn(coord)
+        if go.play_at(coord):
             go.board.print_tkinter_board(my_canvas)
         else:
             print("illegal move")
@@ -36,8 +33,8 @@ if __name__ == "__main__":
         play_at(coord)
 
     def print_terr():
-        print("white: ", go.territory("w"))
-        print("black: ", go.territory("b"))
+        print("white: ", go.board.territory("w"))
+        print("black: ", go.board.territory("b"))
 
 
     my_canvas.bind("<Motion>", on_mouse_move)
