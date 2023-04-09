@@ -131,4 +131,8 @@ class Go():
                         for k in range(len(self.group(coord))):
                             already_counted.append(self.group(coord)[k])
         return points
+    
+    def is_legal(self, coord):
+        return (not(self.is_ko()) and self.board.goban[coord[1]][coord[0]] == "0")
+
 
