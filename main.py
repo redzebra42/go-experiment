@@ -8,7 +8,7 @@ if __name__ == "__main__":
     root = Tk()
     root.geometry("1100x800")
     # frm = ttk.Frame(root, padding=0)
-    my_canvas = Canvas(root, width=800, height= 800)
+    my_canvas = Canvas(root, width=707, height= 707)
 
     def play():
         hand = text_box.get()
@@ -28,7 +28,8 @@ if __name__ == "__main__":
         return(int(np.trunc((x-42)/35)), int(np.trunc((y-42)/35)))
 
     def on_mouse_move(evt):
-        print(canvas_coord_to_coord(evt.x, evt.y))
+        # TODO Diplay placeholder for next move
+        pass
 
     def on_click(evt):
         coord = canvas_coord_to_coord(evt.x, evt.y)

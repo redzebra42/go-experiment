@@ -30,14 +30,14 @@ class Board():
   ['0','0','b','b','b','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
   ]
         
-    def goban_to_print(self, case):
-        if case == '0':
+    def goban_to_print(self, tile):
+        if tile == '0':
             return '|  '
-        elif case == 'b':
+        elif tile == 'b':
             return '| 0'
-        elif case == 'w':
+        elif tile == 'w':
             return '| O'
-        elif case == 'x':
+        elif tile == 'x':
             return '| x'
         
     def print_board(self):

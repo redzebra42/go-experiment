@@ -21,8 +21,7 @@ class Go():
         return (self.list.index(hand[0]), int(hand[1:])-1)
 
     def move(self, coord):
-        if self.board.goban[coord[1]][coord[0]] in ['0','x']:
-            self.board.goban[coord[1]][coord[0]] = self.current_player
+        self.board.goban[coord[1]][coord[0]] = self.current_player
 
     def next_turn(self,coord):
         self.turn += 1
@@ -68,18 +67,18 @@ class Go():
                         (coord[0], coord[1]+1)]
             
             
-    def group_rec(self, coord):
+    def _group_rec(self, coord):
         goban = self.board.goban
         neighbours = self.neighbours(coord)
         self.group_list.append(coord)
         for neighb in neighbours:
             if (not(neighb in self.group_list)) and goban[neighb[1]][neighb[0]] == goban[coord[1]][coord[0]]:
-                self.group_rec(neighb)
+                self._group_rec(neighb)
         return
             
     def group(self, coord):
         self.group_list = []
-        self.group_rec(coord)
+        self._group_rec(coord)
         return self.group_list
     
     def liberty(self, group):
@@ -115,15 +114,15 @@ class Go():
                     goban[coord[1]][coord[0]] = '0'
     
     
-    def is_ko(self):
+    def is_ko(self, goban):
         '''tests if there is a ko position only for the two_last_sates''' 
-        return (self.board.goban in self.states[:(len(self.states)-1)])
+        return len(self.states) > 2 and goban in self.states
 
     def territory(self, color):
         points = 0
         already_counted = []
-        for i in range(len(self.board.goban)-1):
-            for j in range(len(self.board.goban[0])-1):
+        for i in range(len(self.board.goban)):
+            for j in range(len(self.board.goban[0])):
                     coord = (j,i)
                     if self.board.goban[i][j] == "0" and not(coord in already_counted) and all(self.board.goban[x[1]][x[0]] == color for x in self.group_neighbours(self.group(coord))):
                         points += len(self.group(coord))
@@ -132,7 +131,14 @@ class Go():
                             already_counted.append(self.group(coord)[k])
         return points
     
+    def next_state(self, coord):
+        # TODO doesn't place the right color && doesn't
+        next_goban = copy.deepcopy(self.board.goban)
+        next_goban[coord[1]][coord[0]] = self.current_player
+        return next_goban
+
+    
     def is_legal(self, coord):
-        return (not(self.is_ko()) and self.board.goban[coord[1]][coord[0]] == "0")
+        return (self.board.goban[coord[1]][coord[0]] == "0" and (not self.is_ko(self.next_state(coord))))
 
 
