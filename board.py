@@ -1,4 +1,5 @@
-
+from tkinter import *
+from tkinter import ttk
 
 class Board():
 
@@ -38,11 +39,32 @@ class Board():
             return '| O'
         elif case == 'x':
             return '| x'
-
         
     def print_board(self):
         print("  A  B  C  D  E  F  G  H  J  K  L  M  N  O  P  Q  R  S  T")
         for i in range(len(self.goban)):
             print("".join([self.goban_to_print(self.goban[i][j]) for j in range(len(self.goban[0]))]), str(i+1))
+
+    def print_tile_canvas(self, coord, cnvs):
+        i,j = coord[0], coord[1]
+        if self.goban[j][i] == "b":
+            cnvs.create_oval(43+35*i,43+35*j,77+35*i,77+35*j, fill="black")
+        elif self.goban[j][i] == "w":
+            cnvs.create_oval(43+35*i,43+35*j,77+35*i,77+35*j, fill="white", outline="white")
+
+    def print_tkinter_board(self, cnvs):
+        cnvs.pack(side=LEFT)
+        cnvs.create_rectangle(40,40,710,710, width=3, fill="orange", outline="orange")
+        cnvs.create_rectangle(60,60,690,690, width=3)
+        for i in range(1,18):
+            cnvs.create_line(60+35*i,60,60+35*i,690, width=3)
+        for j in range(1,18):
+            cnvs.create_line(60,60+35*j,690,60+35*j, width=3)
+        for i in [165, 375, 585]:
+            for j in [165, 375, 585]:
+                cnvs.create_oval(i-5,j-5,i+5,j+5, fill="black")
+        for i in range(len(self.goban)):
+            for j in range(len(self.goban[0])):
+                self.print_tile_canvas((i,j), cnvs)
 
     
