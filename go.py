@@ -20,7 +20,7 @@ class Go():
     def _next_turn(self, coord, new_state):
         self.turn += 1
         self.previous_move = coord
-        self.states.append(new_state.goban)
+        self.states.append(new_state)
         self.board = new_state
         if self.current_player == 'w':
             self.current_player = 'b'
@@ -37,10 +37,14 @@ class Go():
 
     def is_ko(self, goban):
         '''tests if there is a ko position only for the two_last_sates''' 
-        return len(self.states) > 2 and goban in self.states
+        if len(self.states) > 2:
+            for i in range(len(self.states)-1, len(self.states)-3, -1):
+                if self.states[i].goban == goban:
+                    return True
+        return False
 
     def next_state(self, coord):
-        # TODO doesn't place the right color && doesn't
+        # TODO doesn't place the right color && doesn't capture
         next_goban = self.board.move(coord, self.current_player)
         return next_goban
 
