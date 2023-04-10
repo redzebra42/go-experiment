@@ -7,7 +7,6 @@ class Go():
     def __init__(self):
         self.board = board.Board()
         self.current_player = 'b'
-        self.opp_player = 'w'
         self.turn = 0
         self.captured_pieces = []
         self.previous_move = None
@@ -18,22 +17,20 @@ class Go():
         self.list = ['a','b','c','d','e','f','g','h','j','k','l','m','n','o','p','q','r','s','t']
         return (self.list.index(hand[0]), int(hand[1:])-1)
 
-    def next_turn(self, coord):
+    def _next_turn(self, coord, new_state):
         self.turn += 1
         self.previous_move = coord
-        self.states.append(copy.deepcopy(self.board.goban))
+        self.states.append(new_state.goban)
+        self.board = new_state
         if self.current_player == 'w':
             self.current_player = 'b'
-            self.opp_player = 'w'
         else:
             self.current_player = 'w'
-            self.opp_player = 'b'
 
     def play_at(self, coord):
         if self.is_legal(coord):
-            self.board.move(coord, self.current_player)
-            self.board.capture(coord, self.opp_player)
-            self.next_turn(coord)
+            new_state = self.board.move(coord, self.current_player)
+            self._next_turn(coord, new_state)
             return True
         else:
             return False
@@ -44,11 +41,10 @@ class Go():
 
     def next_state(self, coord):
         # TODO doesn't place the right color && doesn't
-        next_goban = copy.deepcopy(self.board.goban)
-        next_goban[coord[1]][coord[0]] = self.current_player
+        next_goban = self.board.move(coord, self.current_player)
         return next_goban
 
     def is_legal(self, coord):
-        return (self.board.goban[coord[1]][coord[0]] == "0" and (not self.is_ko(self.next_state(coord))))
+        return (self.board.goban[coord[1]][coord[0]] == "0" and (not self.is_ko(self.board.move(coord, self.current_player).goban)))
 
 

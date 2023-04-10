@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+import copy
 
 class Board():
 
@@ -7,8 +8,7 @@ class Board():
     Board state, print board
     '''
 
-    def __init__(self):
-        self.goban = [
+    def __init__(self, goban = [
   ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
   ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
   ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
@@ -28,7 +28,8 @@ class Board():
   ['0','b','b','b','w','b','0','0','0','0','0','0','0','0','0','0','0','0','0'],
   ['0','0','b','b','b','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
   ['0','0','b','b','b','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-  ]
+  ]):
+        self.goban = copy.deepcopy(goban)
 
     def neighbours(self, coord):
         '''Returns an array of neighbouring coordinates, of length 2 to 4.'''
@@ -122,12 +123,22 @@ class Board():
                     liberties += 1
         return (liberties, lib_coords)
 
-    def play_at(self, coord):
-        self.move(coord)
-        self.capture(coord)
+    def play_at(self, coord, player):
+        self.move(coord, player)
+
+    def opposite(self, player):
+        if player == 'w':
+            return 'b'
+        elif player == 'b':
+            return 'w'
+        else:
+            raise RuntimeError('Illegal argument, player should be "b" or "w"')
 
     def move(self, coord, player):
-        self.goban[coord[1]][coord[0]] = player
+        result = Board(self.goban)
+        result.goban[coord[1]][coord[0]] = player
+        result.capture(coord, self.opposite(player))
+        return result
 
     def capture (self, new_coord, opp_player):
         '''tests if there is a capture for a new move and captures the stones
