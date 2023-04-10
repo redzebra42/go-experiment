@@ -2,6 +2,7 @@ import numpy as np
 from go import *
 from tkinter import *
 from tkinter import ttk
+from tkinter import messagebox
 
 if __name__ == "__main__":
     go = Go()
@@ -49,6 +50,11 @@ if __name__ == "__main__":
 
     go.board.print_tkinter_board(my_canvas)
 
+    def on_closing():
+        if messagebox.askokcancel("Quit", "Do you want to quit?"):
+            root.destroy()
+
     while True:
+        root.protocol("WM_DELETE_WINDOW", on_closing)
         root.mainloop()
 
