@@ -43,20 +43,6 @@ class Go():
                     return True
         return False
 
-    def is_suicide(self, coord, board, player):
-        i = 0
-        group_coord = board.group(coord)
-        neighbours = board.group_neighbours(group_coord)
-        for neighb in neighbours:
-            if board.goban[neighb[1]][neighb[0]] == board.opposite(player):
-                i += 1
-            else:
-                return False
-        if i == len(neighbours):
-            return True
-        return False
-
-
     def next_state(self, coord):
         # TODO doesn't place the right color && doesn't capture
         next_goban = self.board.move(coord, self.current_player)
@@ -64,6 +50,6 @@ class Go():
 
     def is_legal(self, coord):
         new_board = self.board.move(coord, self.current_player)
-        return (self.board.goban[coord[1]][coord[0]] == "0" and (not self.is_ko(new_board)) and not self.is_suicide(coord, new_board, self.current_player))
+        return (self.board.goban[coord[1]][coord[0]] == "0" and (not self.is_ko(new_board)) and not new_board.is_suicide(coord, self.current_player))
 
 

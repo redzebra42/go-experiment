@@ -162,6 +162,19 @@ class Board():
                     neighb_coords.append(neighb)
         return neighb_coords
 
+    def is_suicide(self, coord, player):
+        i = 0
+        group_coord = self.group(coord)
+        neighbours = self.group_neighbours(group_coord)
+        for neighb in neighbours:
+            if self.goban[neighb[1]][neighb[0]] == self.opposite(player):
+                i += 1
+            else:
+                return False
+        if i == len(neighbours):
+            return True
+        return False
+
     def territory(self, color):
         points = 0
         already_counted = []
