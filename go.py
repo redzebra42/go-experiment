@@ -35,24 +35,26 @@ class Go():
         else:
             return False
 
-    def is_ko(self, goban):
+    def is_ko(self, board):
         '''tests if there is a ko position only for the two_last_sates''' 
         if len(self.states) > 2:
             for i in range(len(self.states)-1, len(self.states)-3, -1):
-                if self.states[i].goban == goban:
+                if self.states[i].goban == board.goban:
                     return True
         return False
-    
-    def is_suicide(self, coord, goban, player):
+
+    def is_suicide(self, coord, board, player):
         i = 0
-        neighbours = self.board.neighbours(coord)
+        group_coord = board.group(coord)
+        neighbours = board.group_neighbours(group_coord)
         for neighb in neighbours:
-            if goban[neighb[1]][neighb[0]] == self.board.opposite(player):
+            if board.goban[neighb[1]][neighb[0]] == board.opposite(player):
                 i += 1
             else:
                 return False
         if i == len(neighbours):
             return True
+        return False
 
 
     def next_state(self, coord):
@@ -61,7 +63,7 @@ class Go():
         return next_goban
 
     def is_legal(self, coord):
-        new_goban = self.board.move(coord, self.current_player).goban
-        return (self.board.goban[coord[1]][coord[0]] == "0" and (not self.is_ko(new_goban)) and not self.is_suicide(coord, new_goban, self.current_player))
+        new_board = self.board.move(coord, self.current_player)
+        return (self.board.goban[coord[1]][coord[0]] == "0" and (not self.is_ko(new_board)) and not self.is_suicide(coord, new_board, self.current_player))
 
 
