@@ -1,5 +1,4 @@
 import board
-import copy
 
 class Go():
 
