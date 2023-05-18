@@ -7,9 +7,9 @@ class Go():
         self.board = board.Board()
         self.current_player = 'b'
         self.turn = 0
-        self.captured_pieces = []
         self.previous_move = None
         self.states = []
+        self.komi = 6.5
 
     def hand_to_coord(self, hand):
         '''Convert a textual hand like c12 into coordinates like (2, 12).'''
@@ -50,5 +50,13 @@ class Go():
     def is_legal(self, coord):
         new_board = self.board.move(coord, self.current_player)
         return (self.board.goban[coord[1]][coord[0]] == "0" and (not self.is_ko(new_board)) and not new_board.is_suicide(coord, self.current_player))
+
+    def win_player(self):
+        w_pts = self.board.territory('w') + self.board.captured_pieces['w'] + self.komi
+        b_pts = self.board.territory('b') + self.board.captured_pieces['b']
+        if w_pts > b_pts:
+            return 'w'
+        elif w_pts < b_pts:
+            return 'b'
 
 

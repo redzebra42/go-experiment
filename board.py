@@ -30,6 +30,7 @@ class Board():
   ['0','0','b','b','b','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
   ]):
         self.goban = copy.deepcopy(goban)
+        self.captured_pieces = {'w': 0, 'b': 0}    #(w_captures, b_captures)
 
     def neighbours(self, coord):
         '''Returns an array of neighbouring coordinates, of length 2 to 4.'''
@@ -151,6 +152,7 @@ class Board():
                 for coord in self.group(neighb):
                     result += 1
                     goban[coord[1]][coord[0]] = '0'
+        self.captured_pieces[self.opposite(opp_player)] += result
         return result
 
     def group_neighbours(self, group):
