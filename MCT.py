@@ -26,8 +26,8 @@ class Node():
 
 class MCT():
 
-    def __init__(self, goban):
-        self.arbre = Node(goban)
+    def __init__(self, board):
+        self.arbre = Node(board)
 
     def selection(self, arbre):
         noeud = arbre.noeud
