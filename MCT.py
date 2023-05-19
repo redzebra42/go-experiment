@@ -18,22 +18,21 @@ class Node():
         nv_noeud.depth = noeud.depth + 1
         noeud.enfant.append(nv_noeud)
 
-    def is_feuille(self, noeud):
-        return noeud.enfants == []
+    def is_feuille(self):
+        return self.enfants == []
 
-    def is_racine(self, noeud):
-        return noeud.parent == None
+    def is_racine(self):
+        return self.parent == None
 
 
 class MCT():
 
     def __init__(self, game):
         self.arbre = Node(game)
-        self.game = game         #game class (Go() or TTT()) that has play(), play_random(), legal_moves(), is_over(), winner() functions
+        self.game = game         #game class (Go() or TTT()) that has play(), play_random(), legal_moves(), is_over(), winner(), player_to_depth() functions
 
-    def selection(self, arbre):
-        noeud = arbre
-        if not Node.is_feuille(noeud):
+    def selection(self, noeud):
+        if not noeud.is_feuille():
             i = random.randrange(len(noeud.enfant))
             return self.selection(noeud.enfant[i])
         return noeud
@@ -60,6 +59,12 @@ class MCT():
             self.back_propagation(noeud)
 
     def back_propagation(self, noeud):
-        if not noeud.is_racine(noeud):
-            #TODO before this function: function that determines if the game is over, and who won
-            pass
+        winner = noeud.game.winner()
+        def _bp_rec(noeud):
+            noeud.weight[1] += 1
+            if noeud.depth % 2 == noeud.game.player_to_depth(winner()):
+                noeud.wieght[0] += 1
+            if not noeud.is_racine():
+                _bp_rec(noeud.parent)
+        _bp_rec(noeud)
+
