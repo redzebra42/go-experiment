@@ -30,7 +30,7 @@ class Board():
   ['0','0','b','b','b','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
   ]):
         self.goban = copy.deepcopy(goban)
-        self.captured_pieces = {'w': 0, 'b': 0}    #(w_captures, b_captures)
+        self.captured_pieces = {'w': 0, 'b': 0}
 
     def neighbours(self, coord):
         '''Returns an array of neighbouring coordinates, of length 2 to 4.'''

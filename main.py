@@ -36,17 +36,23 @@ if __name__ == "__main__":
     def print_terr():
         print("white: ", go.board.territory("w"))
         print("black: ", go.board.territory("b"))
+    
+    def print_capt():
+        print("w caps: ", go.board.captured_pieces['w'])
+        print("b caps: ", go.board.captured_pieces['b'])
 
 
     my_canvas.bind("<Motion>", on_mouse_move)
     my_canvas.bind("<ButtonPress>", on_click)
     text_box = Entry(root)
-    text_box.place(x=810, y=120)
+    text_box.place(x=825, y=100)
 
     terr_button = ttk.Button(root, text= "calculate territory", command = lambda: print_terr())
+    captures_button = ttk.Button(root, text= "show captures", command = lambda: print_capt())
     pos_button = ttk.Button(root, text= "play", command = lambda: play())
     terr_button.place(x=825, y=200)
-    pos_button.place(x=850, y=165)
+    pos_button.place(x=825, y=150)
+    captures_button.place(x=825, y=250)
 
     go.board.print_tkinter_board(my_canvas)
 
