@@ -28,9 +28,9 @@ class Board():
   ['0','b','b','b','w','b','0','0','0','0','0','0','0','0','0','0','0','0','0'],
   ['0','0','b','b','b','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
   ['0','0','b','b','b','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-  ]):
+  ], captured_pieces = {'w': 0, 'b': 0}):
         self.goban = copy.deepcopy(goban)
-        self.captured_pieces = {'w': 0, 'b': 0}
+        self.captured_pieces =  captured_pieces
 
     def neighbours(self, coord):
         '''Returns an array of neighbouring coordinates, of length 2 to 4.'''
@@ -136,9 +136,9 @@ class Board():
             raise RuntimeError('Illegal argument, player should be "b" or "w"')
 
     def move(self, coord, player):
-        result = Board(self.goban)
+        result = Board(self.goban, self.captured_pieces)
         result.goban[coord[1]][coord[0]] = player
-        result.capture(coord, self.opposite(player))
+        result.captured_pieces[player] += result.capture(coord, self.opposite(player))
         return result
 
     def capture (self, new_coord, opp_player):
@@ -152,7 +152,6 @@ class Board():
                 for coord in self.group(neighb):
                     result += 1
                     goban[coord[1]][coord[0]] = '0'
-        self.captured_pieces[self.opposite(opp_player)] += result
         return result
 
     def group_neighbours(self, group):
