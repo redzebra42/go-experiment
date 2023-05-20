@@ -1,11 +1,12 @@
 import copy
 import random
+from MCT import *
 
 class TTT():
 
     def __init__(self, ttt_board =[["_","_","_"],
                                    ["_","_","_"],
-                                   ["_","_","_"]] ) -> None:
+                                   ["_","_","_"]] ):
         self.ttt_board = copy.deepcopy(ttt_board)
         self.curr_player = "X"
 
@@ -16,6 +17,12 @@ class TTT():
             for j in i:
                 line += j
             print(line)
+    
+    def player_to_depth(self, player):
+        if player == "O":
+            return 0
+        else:
+            return 1
     
     def other_player(self, player):
         if player == "X":
@@ -34,7 +41,7 @@ class TTT():
     def is_legal(self,coord):
         return self.ttt_board[coord[1]][coord[0]] == "_"
     
-    def move(self, coord):
+    def play(self, coord):
         if self.is_legal(coord):
             self.ttt_board[coord[1]][coord[0]] = self.curr_player
             self.next_turn()
@@ -53,6 +60,13 @@ class TTT():
             return (True, cp)
         return (False, None)
     
+    def is_over(self):
+        return self.has_won()[0] or self.legal_moves() == []
+    
+    def winner(self):
+        if self.is_over():
+            return self.has_won()[1]
+    
     def legal_moves(self):
         legal_moves = []
         l = len(self.ttt_board)
@@ -65,14 +79,15 @@ class TTT():
 
     def play_random(self):
         leg_moves = self.legal_moves()
-        i = random.randint(0, len(leg_moves))
-        self.move(leg_moves[i-1])
+        i = random.randint(0, len(leg_moves)-1)
+        self.play(leg_moves[i])
 
 
 if __name__ == "__main__":
     ttt = TTT()
+    mct = MCT(ttt)
     for i in range(9):
-        ttt.play_random()
         ttt.print_ttt()
         print(ttt.has_won())
+        mct.tree_search(mct.arbre)
     
