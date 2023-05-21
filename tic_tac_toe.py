@@ -2,13 +2,20 @@ import copy
 import random
 from MCT import *
 
+class TTT_state():
+
+    def __init__(self, curr_player = "X", ttt_board =[["_","_","_"],
+                                                      ["_","_","_"],
+                                                      ["_","_","_"]]):
+        self.board = copy.deepcopy(ttt_board)
+        self.curr_player = curr_player
+
 class TTT():
 
-    def __init__(self, ttt_board =[["_","_","_"],
-                                   ["_","_","_"],
-                                   ["_","_","_"]] ):
-        self.ttt_board = copy.deepcopy(ttt_board)
-        self.curr_player = "X"
+    def __init__(self, state = TTT_state()):
+        self.state = state
+        self.ttt_board = self.state.board
+        self.curr_player = self.state.curr_player
 
     def print_ttt(self):
         print("")
@@ -31,12 +38,16 @@ class TTT():
             return "X"
         else:
             return "error"
+    
+    def update_state(self):
+        self.state = TTT_state(self.curr_player, self.ttt_board)
 
     def next_turn(self):
         if self.curr_player == "X":
             self.curr_player = "O"
         else:
             self.curr_player = "X"
+        self.update_state()
     
     def is_legal(self,coord):
         return self.ttt_board[coord[1]][coord[0]] == "_"
@@ -84,10 +95,11 @@ class TTT():
 
 
 if __name__ == "__main__":
-    ttt = TTT()
+    ttt = TTT
     mct = MCT(ttt)
-    for i in range(9):
-        ttt.print_ttt()
-        print(ttt.has_won())
+    for i in range(2):
+        #ttt().play_random()
+        ttt().print_ttt()
+        print(ttt().has_won())
         mct.tree_search(mct.arbre)
     

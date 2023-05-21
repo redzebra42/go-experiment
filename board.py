@@ -6,6 +6,7 @@ class Board():
 
     '''
     Board state, print board
+    has all the information needed to play from here (board, captures)
     '''
 
     def __init__(self, goban = [

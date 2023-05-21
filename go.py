@@ -10,6 +10,7 @@ class Go():
         self.previous_move = None
         self.states = []
         self.komi = 6.5
+        self.captured_pieces = {'w': 0, 'b': 0}
 
     def hand_to_coord(self, hand):
         '''Convert a textual hand like c12 into coordinates like (2, 12).'''
