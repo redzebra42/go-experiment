@@ -27,9 +27,9 @@ class Node():
 
 class MCT():
 
-    def __init__(self, game):
-        self.arbre = Node(game().state)
+    def __init__(self, game, state):
         self.game = game
+        self.arbre = Node(state)
         '''
         games class (Go(state) or TTT(state)) with the following functions:
         play(coord: tuple) -> None
@@ -39,6 +39,20 @@ class MCT():
         winner() -> str (player)
         player_to_depth(player: str) -> int (0 or 1)
         '''
+    
+    def new_child(self, noeud, move):
+        new_state = noeud.state.clone()
+        nv_noeud = Node(new_state)
+        nv_noeud.weight = [0,0]
+        nv_noeud.parent = noeud
+        nv_noeud.depth = noeud.depth + 1
+        noeud.enfants.append(nv_noeud)
+        self.game.play(new_state, move)
+        return nv_noeud
+
+    def random_move(self, state):
+        legal_moves = self.game.legal_moves(state)
+        return legal_moves[random.randint(0,len(legal_moves)-1)]
 
     def selection(self, noeud):
         if not noeud.is_feuille():
@@ -47,42 +61,27 @@ class MCT():
         return noeud
     
     def expension(self, noeud):
-        legal_moves = self.game().legal_moves()
-        if legal_moves != []:
-            for coord in legal_moves:
-                new_game = self.game(noeud.state)
-                nv_noeud = Node(new_game.state)
-                new_game.play(coord)
-                new_game.print_ttt()           #debug is here
-                nv_noeud.weight = [0,0]
-                nv_noeud.parent = noeud
-                nv_noeud.depth = noeud.depth + 1
-                noeud.enfants.append(nv_noeud)
-                nv_noeud.state = new_game.state
+        legal_moves = self.game.legal_moves(noeud.state)
+        if not self.game.is_over(noeud.state):
+            for move in legal_moves:
+                self.new_child(noeud, move)
             self.simulation(noeud.enfants[random.randint(0,len(noeud.enfants)-1)])
         else:
             self.back_propagation(noeud)     #if there are no legal moves, skips expension and simulation
 
-
     def simulation(self, noeud):
-        if not self.game().is_over():
-            new_game = self.game(noeud.state)
-            nv_noeud = Node(new_game.state)
-            new_game.game.play_random()
-            nv_noeud.weight = [0,0]
-            nv_noeud.parent = noeud
-            nv_noeud.depth = noeud.depth + 1   
-            noeud.enfant.append(nv_noeud)
-            nv_noeud.state = new_game.state
+        if not self.game.is_over(noeud.state):
+            move = self.random_move(noeud.state)
+            nv_noeud = self.new_child(noeud, move)
             self.simulation(nv_noeud)
         else:
             self.back_propagation(noeud)
 
     def back_propagation(self, noeud):
-        winner = self.game().winner()
+        winner = self.game.winner(noeud.state)
         def _bp_rec(noeud):
             noeud.weight[1] += 1
-            if noeud.depth % 2 == self.game().player_to_depth(winner):
+            if noeud.state.curr_player == winner:
                 noeud.weight[0] += 1
             if not noeud.is_racine():
                 _bp_rec(noeud.parent)

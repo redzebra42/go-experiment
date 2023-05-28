@@ -2,34 +2,44 @@ import copy
 import random
 from MCT import *
 
+def other_player(player):
+    if player == "X":
+        return "O"
+    elif player == "O":
+        return "X"
+    else:
+        return "error"
+
 class TTT_state():
 
     def __init__(self, curr_player = "X", ttt_board =[["_","_","_"],
                                                       ["_","_","_"],
                                                       ["_","_","_"]]):
-        self.board = copy.deepcopy(ttt_board)
+        self.ttt_board = copy.deepcopy(ttt_board)
         self.curr_player = curr_player
 
-class TTT():
+    def clone(self):
+        new_child = TTT_state(self.curr_player, self.ttt_board)
+        return new_child
+    
+    def next_turn(self):
+        if self.curr_player == "X":
+            self.curr_player = "O"
+        else:
+            self.curr_player = "X"
+    
+    def is_legal(self, coord):
+        return self.ttt_board[coord[1]][coord[0]] == "_"
 
-    def __init__(self, state = TTT_state()):
-        self.state = state
-        self.ttt_board = self.state.board
-        self.curr_player = self.state.curr_player
-
-    def print_ttt(self):
+    def print(self):
         print("")
         for i in self.ttt_board:
             line = ""
             for j in i:
                 line += j
             print(line)
-    
-    def player_to_depth(self, player):
-        if player == "O":
-            return 0
-        else:
-            return 1
+
+class TTT():
     
     def other_player(self, player):
         if player == "X":
@@ -37,29 +47,20 @@ class TTT():
         elif player == "O":
             return "X"
         else:
-            return "error"
+            raise RuntimeError
     
-    def update_state(self):
-        self.state = TTT_state(self.curr_player, self.ttt_board)
-
-    def next_turn(self):
-        if self.curr_player == "X":
-            self.curr_player = "O"
+    def play(self, state, move):
+        if state.is_legal(move):
+            state.ttt_board[move[1]][move[0]] = state.curr_player
+            state.next_turn()
+            # debug
+            state.print()
         else:
-            self.curr_player = "X"
-        self.update_state()
+            raise RuntimeError
     
-    def is_legal(self,coord):
-        return self.ttt_board[coord[1]][coord[0]] == "_"
-    
-    def play(self, coord):
-        if self.is_legal(coord):
-            self.ttt_board[coord[1]][coord[0]] = self.curr_player
-            self.next_turn()
-    
-    def has_won(self):
-        cp = self.other_player(self.curr_player)
-        brd = self.ttt_board
+    def has_won(self, state):
+        cp = self.other_player(state.curr_player)
+        brd = state.ttt_board
         for i in range(len(brd)):
             if (brd[i][0], brd[i][1], brd[i][2]) == (cp, cp, cp):
                 return (True, cp)
@@ -71,35 +72,33 @@ class TTT():
             return (True, cp)
         return (False, None)
     
-    def is_over(self):
-        return self.has_won()[0] or self.legal_moves() == []
+    def is_over(self, state):
+        return self.has_won(state)[0] or self.legal_moves(state) == []
     
-    def winner(self):
-        if self.is_over():
-            return self.has_won()[1]
+    def winner(self, state):
+        if self.is_over(state):
+            return self.has_won(state)[1]
     
-    def legal_moves(self):
+    def legal_moves(self, state):
         legal_moves = []
-        l = len(self.ttt_board)
+        l = len(state.ttt_board)
         for i in range(l):
             for j in range(l):
-                coord = (i, j)
-                if self.is_legal((i, j)):
-                    legal_moves.append(coord)
+                move = (i, j)
+                if state.is_legal(move):
+                    legal_moves.append(move)
         return legal_moves
 
-    def play_random(self):
-        leg_moves = self.legal_moves()
+    def play_random(self, state):
+        leg_moves = self.legal_moves(state)
         i = random.randint(0, len(leg_moves)-1)
-        self.play(leg_moves[i])
+        self.play(state, leg_moves[i])
 
 
 if __name__ == "__main__":
-    ttt = TTT
-    mct = MCT(ttt)
-    for i in range(2):
-        #ttt().play_random()
-        ttt().print_ttt()
-        print(ttt().has_won())
+    ttt = TTT()
+    ttt_state = TTT_state()
+    mct = MCT(ttt, ttt_state)
+    for i in range(9):
         mct.tree_search(mct.arbre)
     
