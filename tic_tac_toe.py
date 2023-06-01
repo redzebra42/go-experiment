@@ -54,7 +54,7 @@ class TTT():
             state.ttt_board[move[1]][move[0]] = state.curr_player
             state.next_turn()
             # debug
-            state.print()
+            #state.print()
         else:
             raise RuntimeError
     
@@ -99,6 +99,7 @@ if __name__ == "__main__":
     ttt = TTT()
     ttt_state = TTT_state()
     mct = MCT(ttt, ttt_state)
-    for i in range(9):
+    for i in range(100):
         mct.tree_search(mct.arbre)
+    ttt_state.print()
     

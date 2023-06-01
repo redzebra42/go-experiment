@@ -1,15 +1,21 @@
 import random
+from math import log, sqrt
+import numpy as np
 from go import *
-import copy
+
+def best_child(node):
+    enfants = node.enfants
+    L = [(enf.weight[0] / enf.weight[1]) + sqrt(2) * sqrt(log(node.weight[1]) / enf.weight[1]) for enf in node.enfants]
+    return enfants[np.argmax(np.asarray(L))]
 
 class Node():
 
     def __init__(self, state):
-        self.weight = [0,0]
+        self.weight = [0,1]
         self.state = state
         self.enfants = []
         self.parent = None
-        self.depth = 0              #pair depth is 'w' and odd is 'b'
+        self.depth = 0
 
     def ajouter_noeud(self, noeud, state):
         nv_noeud = Node(state)
@@ -54,17 +60,17 @@ class MCT():
         legal_moves = self.game.legal_moves(state)
         return legal_moves[random.randint(0,len(legal_moves)-1)]
 
-    def selection(self, noeud):
-        if not noeud.is_feuille():
-            i = random.randrange(len(noeud.enfants))
-            return self.selection(noeud.enfants[i])
-        return noeud
+    def selection(self, node):
+        if not node.is_feuille():
+            #i = random.randrange(len(noeud.enfants))
+            return self.selection(best_child(node))
+        return node
     
     def expension(self, noeud):
         legal_moves = self.game.legal_moves(noeud.state)
         if not self.game.is_over(noeud.state):
             for move in legal_moves:
-                self.new_child(noeud, move)
+                self.new_child(noeud, move).weight[1] = 1
             self.simulation(noeud.enfants[random.randint(0,len(noeud.enfants)-1)])
         else:
             self.back_propagation(noeud)     #if there are no legal moves, skips expension and simulation
