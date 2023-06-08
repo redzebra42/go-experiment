@@ -21,13 +21,13 @@ class TTT_state():
     def clone(self):
         new_child = TTT_state(self.curr_player, self.ttt_board)
         return new_child
-    
+
     def next_turn(self):
         if self.curr_player == "X":
             self.curr_player = "O"
         else:
             self.curr_player = "X"
-    
+
     def is_legal(self, coord):
         return self.ttt_board[coord[1]][coord[0]] == "_"
 
@@ -40,7 +40,7 @@ class TTT_state():
             print(line)
 
 class TTT():
-    
+
     def other_player(self, player):
         if player == "X":
             return "O"
@@ -48,7 +48,7 @@ class TTT():
             return "X"
         else:
             raise RuntimeError
-    
+
     def play(self, state, move):
         if state.is_legal(move):
             state.ttt_board[move[1]][move[0]] = state.curr_player
@@ -57,7 +57,7 @@ class TTT():
             #state.print()
         else:
             raise RuntimeError
-    
+
     def has_won(self, state):
         cp = self.other_player(state.curr_player)
         brd = state.ttt_board
@@ -71,14 +71,14 @@ class TTT():
         elif (brd[0][2],brd[1][1],brd[2][0]) == (cp, cp, cp):
             return (True, cp)
         return (False, None)
-    
+
     def is_over(self, state):
         return self.has_won(state)[0] or self.legal_moves(state) == []
-    
+
     def winner(self, state):
         if self.is_over(state):
             return self.has_won(state)[1]
-    
+
     def legal_moves(self, state):
         legal_moves = []
         l = len(state.ttt_board)
@@ -99,7 +99,8 @@ if __name__ == "__main__":
     ttt = TTT()
     ttt_state = TTT_state()
     mct = MCT(ttt, ttt_state)
-    for i in range(100):
-        mct.tree_search(mct.arbre)
-    ttt_state.print()
-    
+    for i in range(8):
+        mct.new_move(100000)
+        mct.root.state.print()
+
+

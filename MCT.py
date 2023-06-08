@@ -1,7 +1,7 @@
 import random
 from math import log, sqrt
 import numpy as np
-from go import *
+#from go import *
 
 def best_child(node):
     enfants = node.enfants
@@ -35,7 +35,7 @@ class MCT():
 
     def __init__(self, game, state):
         self.game = game
-        self.arbre = Node(state)
+        self.root = Node(state)
         '''
         games class (Go(state) or TTT(state)) with the following functions:
         play(coord: tuple) -> None
@@ -45,7 +45,7 @@ class MCT():
         winner() -> str (player)
         player_to_depth(player: str) -> int (0 or 1)
         '''
-    
+
     def new_child(self, noeud, move):
         new_state = noeud.state.clone()
         nv_noeud = Node(new_state)
@@ -62,10 +62,9 @@ class MCT():
 
     def selection(self, node):
         if not node.is_feuille():
-            #i = random.randrange(len(noeud.enfants))
             return self.selection(best_child(node))
         return node
-    
+
     def expension(self, noeud):
         legal_moves = self.game.legal_moves(noeud.state)
         if not self.game.is_over(noeud.state):
@@ -85,6 +84,8 @@ class MCT():
 
     def back_propagation(self, noeud):
         winner = self.game.winner(noeud.state)
+        #print(winner)                                     #debug
+        #print(noeud.state.ttt_board)                      #debug
         def _bp_rec(noeud):
             noeud.weight[1] += 1
             if noeud.state.curr_player == winner:
@@ -92,7 +93,21 @@ class MCT():
             if not noeud.is_racine():
                 _bp_rec(noeud.parent)
         _bp_rec(noeud)
-    
-    def tree_search(self, arbre):
-        self.expension(self.selection(arbre))
+
+    def tree_search(self, root):
+        self.expension(self.selection(root))
+
+    def choose_best_node(self):
+        best = self.root.enfants[0]
+        for enf in self.root.enfants:
+            if enf.weight[1] > best.weight[1]:
+                best = enf
+        return(best)
+
+    def new_move(self, search_depth):
+        for i in range(search_depth):
+            self.tree_search(self.root)
+        for enf in self.root.enfants:
+            print(enf.weight)
+        self.root = self.choose_best_node()
 
