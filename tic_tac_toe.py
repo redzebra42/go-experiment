@@ -93,14 +93,19 @@ class TTT():
         leg_moves = self.legal_moves(state)
         i = random.randint(0, len(leg_moves)-1)
         self.play(state, leg_moves[i])
+    
+    def rand_simulation(self, state):
+        '''returns the new_state of the game after a randomly played game'''
+        new_state = state.clone()
+        while not self.is_over(new_state):
+            self.play_random(new_state)
+        return new_state
 
 
 if __name__ == "__main__":
     ttt = TTT()
     ttt_state = TTT_state()
     mct = MCT(ttt, ttt_state)
-    for i in range(8):
-        mct.new_move(100000)
+    for i in range(9):
+        mct.new_move(10000)
         mct.root.state.print()
-
-

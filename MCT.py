@@ -72,23 +72,20 @@ class MCT():
                 self.new_child(noeud, move).weight[1] = 1
             self.simulation(noeud.enfants[random.randint(0,len(noeud.enfants)-1)])
         else:
-            self.back_propagation(noeud)     #if there are no legal moves, skips expension and simulation
+            self.back_propagation(noeud, noeud.state)     #if there are no legal moves, skips expension and simulation
 
     def simulation(self, noeud):
         if not self.game.is_over(noeud.state):
-            move = self.random_move(noeud.state)
-            nv_noeud = self.new_child(noeud, move)
-            self.simulation(nv_noeud)
+            sim = self.game.rand_simulation(noeud.state)
         else:
-            self.back_propagation(noeud)
+            sim = noeud.state
+        self.back_propagation(noeud, sim)
 
-    def back_propagation(self, noeud):
-        winner = self.game.winner(noeud.state)
-        #print(winner)                                     #debug
-        #print(noeud.state.ttt_board)                      #debug
+    def back_propagation(self, noeud, state):
+        winner = self.game.winner(state)
         def _bp_rec(noeud):
             noeud.weight[1] += 1
-            if noeud.state.curr_player == winner:
+            if noeud.state.curr_player != winner:          # == -> !=
                 noeud.weight[0] += 1
             if not noeud.is_racine():
                 _bp_rec(noeud.parent)
@@ -107,7 +104,4 @@ class MCT():
     def new_move(self, search_depth):
         for i in range(search_depth):
             self.tree_search(self.root)
-        for enf in self.root.enfants:
-            print(enf.weight)
         self.root = self.choose_best_node()
-
