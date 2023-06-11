@@ -106,6 +106,11 @@ if __name__ == "__main__":
     ttt = TTT()
     ttt_state = TTT_state()
     mct = MCT(ttt, ttt_state)
-    for i in range(9):
+    while not ttt.is_over(ttt_state):
+        next_move = input("X to play ('xy' coords): ")
+        ttt.play(ttt_state, (int(next_move[0]), int(next_move[1])))
+        ttt_state.print()
+        mct.opponent_played(ttt_state)
         mct.new_move(10000)
-        mct.root.state.print()
+        ttt_state = mct.root.state
+        ttt_state.print()

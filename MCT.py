@@ -105,3 +105,9 @@ class MCT():
         for i in range(search_depth):
             self.tree_search(self.root)
         self.root = self.choose_best_node()
+    
+    def opponent_played(self, state):
+        for node in [enf for enf in self.root.enfants]:
+            if node.state.ttt_board == state.ttt_board:
+                self.root = node
+        #TODO case where node isn't already created
