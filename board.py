@@ -9,27 +9,8 @@ class Board():
     has all the information needed to play from here (board, captures)
     '''
 
-    def __init__(self, goban = [
-  ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-  ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-  ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-  ['0','0','b','w','w','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-  ['0','b','w','b','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-  ['0','w','0','w','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-  ['0','b','w','b','b','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-  ['0','0','0','0','0','b','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-  ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-  ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-  ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-  ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-  ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-  ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-  ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-  ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-  ['0','b','b','b','w','b','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-  ['0','0','b','b','b','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-  ['0','0','b','b','b','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-  ], captured_pieces = {'w': 0, 'b': 0}):
+    def __init__(self, goban = [['0' for i in range(9)] for j in range(9)], captured_pieces = {'w': 0, 'b': 0}, size = 9):
+        self.size = size
         self.goban = copy.deepcopy(goban)
         self.captured_pieces =  captured_pieces
 
@@ -38,26 +19,26 @@ class Board():
         if coord[0] == 0:
             if coord[1] == 0:
                 return [(0,1), (1,0)]
-            elif coord[1] == 18:
-                return [(0,17), (1,18)]
+            elif coord[1] == self.size - 1:
+                return [(0,self.size - 2), (1,self.size - 1)]
             else:
                 return [(0, coord[1]-1),
                         (0, coord[1]+1),
                         (1, coord[1])]
-        elif coord[0] == 18:
+        elif coord[0] == self.size - 1:
             if coord[1] == 0:
-                return [(18, 1), (17, 0)]
-            elif coord[1] == 18:
-                return [(18, 17), (17, 18)]
+                return [(self.size - 1, 1), (self.size - 2, 0)]
+            elif coord[1] == self.size - 1:
+                return [(self.size - 1, self.size - 2), (self.size - 2, self.size - 1)]
             else:
-                return [(18, coord[1]-1),
-                        (18, coord[1]+1),
-                        (17, coord[1])]
+                return [(self.size - 1, coord[1]-1),
+                        (self.size - 1, coord[1]+1),
+                        (self.size - 2, coord[1])]
         else:
             if coord[1] == 0:
                 return [(coord[0]-1, 0), (coord[0]+1, 0), (coord[0], 1)]
-            elif coord[1] == 18:
-                return [(coord[0]-1, 18), (coord[0]+1, 18), (coord[0], 17)]
+            elif coord[1] == self.size - 1:
+                return [(coord[0]-1, self.size - 1), (coord[0]+1, self.size - 1), (coord[0], self.size - 2)]
             else:
                 return [(coord[0]-1, coord[1]),
                         (coord[0]+1, coord[1]),
@@ -86,17 +67,23 @@ class Board():
         elif self.goban[j][i] == "w":
             cnvs.create_oval(43+35*i,43+35*j,77+35*i,77+35*j, fill="white", outline="white")
 
-    def print_tkinter_board(self, cnvs):
+    def print_tkinter_board(self, cnvs,):
+        size = self.size
         cnvs.pack(side=LEFT)
-        cnvs.create_rectangle(40,40,710,710, width=3, fill="orange", outline="orange")
-        cnvs.create_rectangle(60,60,690,690, width=3)
-        for i in range(1,18):
-            cnvs.create_line(60+35*i,60,60+35*i,690, width=2)
-        for j in range(1,18):
-            cnvs.create_line(60,60+35*j,690,60+35*j, width=2)
-        for i in [165, 375, 585]:
-            for j in [165, 375, 585]:
-                cnvs.create_oval(i-5,j-5,i+5,j+5, fill="black")
+        cnvs.create_rectangle(40, 40, 80+35*(size-1), 80+35*(size-1), width=3, fill="orange", outline="orange")
+        cnvs.create_rectangle(60, 60, 60+35*(size-1), 60+35*(size-1), width=3)
+        for i in range(1,size):
+            cnvs.create_line(60+35*i, 60, 60+35*i, 60+35*(size-1), width=2)
+        for j in range(1,size):
+            cnvs.create_line(60, 60+35*j, 60+35*(size-1), 60+35*j, width=2)
+        if size == 19:
+            for i in [165, 375, 585]:
+                for j in [165, 375, 585]:
+                    cnvs.create_oval(i-5,j-5,i+5,j+5, fill="black")
+        elif size == 9:
+            for i in [130, 270]:
+                for j in [130, 270]:
+                    cnvs.create_oval(i-5,j-5,i+5,j+5, fill="black")
         for i in range(len(self.goban)):
             for j in range(len(self.goban[0])):
                 self.print_tile_canvas((i,j), cnvs)
