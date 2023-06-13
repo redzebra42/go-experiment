@@ -1,5 +1,7 @@
 import copy
 import random
+import numpy as np
+import matplotlib.pyplot as plt
 from MCT import *
 
 def other_player(player):
@@ -106,11 +108,29 @@ if __name__ == "__main__":
     ttt = TTT()
     ttt_state = TTT_state()
     mct = MCT(ttt, ttt_state)
-    while not ttt.is_over(ttt_state):
-        #next_move = input("X to play ('xy' coords): ")
-        #ttt.play(ttt_state, (int(next_move[0]), int(next_move[1])))
-        #ttt_state.print()
-        #mct.opponent_played(ttt_state)
-        mct.new_move(100)
-        ttt_state = mct.root.state
-        ttt_state.print()
+    res_list = []
+    x_coords = []
+    for i in range(2):
+        draws = 0
+        for j in range(30):
+            ttt_state = TTT_state()
+            mct = MCT(ttt, ttt_state)
+            while not ttt.is_over(ttt_state):
+                #next_move = input("X to play ('xy' coords): ")
+                #ttt.play(ttt_state, (int(next_move[0]), int(next_move[1])))
+                #ttt_state.print()
+                #mct.opponent_played(ttt_state)
+                mct.new_move(4 + 4*i)
+                ttt_state = mct.root.state
+                #ttt_state.print()
+            if ttt.winner(ttt_state) == None:
+                draws += 1
+        print(i)
+        res_list.append(draws)
+        x_coords.append(5 + 4*i)
+    print(res_list)
+    print(x_coords)
+    np_res_list = np.array(res_list)
+    np_x_coords = np.array(x_coords)
+    plt.plot(np_x_coords, np_res_list)
+    plt.show()
