@@ -112,7 +112,7 @@ if __name__ == "__main__":
     x_coords = []
     for i in range(2):
         draws = 0
-        for j in range(30):
+        for j in range(25):
             ttt_state = TTT_state()
             mct = MCT(ttt, ttt_state)
             while not ttt.is_over(ttt_state):
@@ -120,7 +120,7 @@ if __name__ == "__main__":
                 #ttt.play(ttt_state, (int(next_move[0]), int(next_move[1])))
                 #ttt_state.print()
                 #mct.opponent_played(ttt_state)
-                mct.new_move(4 + 4*i)
+                mct.new_move(4 + 8*i) # - mct.root.depth*(i//4)
                 ttt_state = mct.root.state
                 #ttt_state.print()
             if ttt.winner(ttt_state) == None:

@@ -37,13 +37,12 @@ class MCT():
         self.game = game
         self.root = Node(state)
         '''
-        games class (Go(state) or TTT(state)) with the following functions:
-        play(coord: tuple) -> None
-        play_random() -> None
-        legal_moves() -> tuple list (with coords of legal moves)
-        is_over() -> bool
-        winner() -> str (player)
-        player_to_depth(player: str) -> int (0 or 1)
+        game class that has the following functions:
+        legal_moves(state)
+        play(state, move)
+        is_over(state)
+        winner(state)
+        rand_simulation(state)
         '''
 
     def new_child(self, noeud, move):
