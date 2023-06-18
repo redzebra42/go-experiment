@@ -5,12 +5,11 @@ class Go():
 
     def __init__(self):
         self.board = board.Board()
-        self.current_player = 'b'
+        self.current_player = 'w'
         self.turn = 0
-        self.previous_move = None
-        self.states = []
+        #self.previous_move = None
         self.komi = 6.5
-        self.captured_pieces = {'w': 0, 'b': 0}
+        #self.captured_pieces = {'w': 0, 'b': 0}
 
     def hand_to_coord(self, hand):
         '''Convert a textual hand like c12 into coordinates like (2, 12).'''
@@ -19,42 +18,36 @@ class Go():
 
     def _next_turn(self, coord, new_state):
         self.turn += 1
-        self.previous_move = coord
-        self.states.append(new_state)
+        #self.previous_move = coord
         self.board = new_state
-        if self.current_player == 'w':
-            self.current_player = 'b'
+        if new_state.current_player == 'w':
+            new_state.current_player = 'b'
         else:
-            self.current_player = 'w'
+            new_state.current_player = 'w'
 
-    def play_at(self, coord):
-        if self.is_legal(coord):
-            new_state = self.board.move(coord, self.current_player)
+    def play_at(self, state, coord):
+        print("play_at")
+        if self.is_legal(state, coord):
+            new_state = state.move(coord, state.current_player)
             self._next_turn(coord, new_state)
-            return True
+            self.board = new_state
+            return new_state
         else:
-            return False
+            raise RuntimeError
 
-    def is_ko(self, board):
-        '''tests if there is a ko position only for the two_last_sates''' 
-        if len(self.states) > 2:
-            for i in range(len(self.states)-1, len(self.states)-3, -1):
-                if self.states[i].goban == board.goban:
-                    return True
-        return False
-
-    def next_state(self, coord):
+    def next_state(self, coord, state):
         # TODO doesn't place the right color && doesn't capture
-        next_goban = self.board.move(coord, self.current_player)
+        next_goban = self.board.move(coord, state.current_player)
         return next_goban
 
-    def is_legal(self, coord):
-        new_board = self.board.move(coord, self.current_player)
-        return (self.board.goban[coord[1]][coord[0]] == "0" and (not self.is_ko(new_board)) and not new_board.is_suicide(coord, self.current_player))
+    def is_legal(self, state, coord):
+        new_state = state.clone()
+        new_state = new_state.move(coord, new_state.current_player)
+        return (state.goban[coord[1]][coord[0]] == "0" and not new_state.is_suicide(coord, new_state.current_player))
 
-    def win_player(self):
-        w_pts = self.board.territory('w') + self.board.captured_pieces['w'] + self.komi
-        b_pts = self.board.territory('b') + self.board.captured_pieces['b']
+    def win_player(self, state):
+        w_pts = state.territory('w') + state.captured_pieces['w'] + self.komi
+        b_pts = state.territory('b') + state.captured_pieces['b']
         if w_pts > b_pts:
             return 'w'
         elif w_pts < b_pts:

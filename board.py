@@ -9,8 +9,9 @@ class Board():
     has all the information needed to play from here (board, captures)
     '''
 
-    def __init__(self, goban = [['0' for i in range(9)] for j in range(9)], captured_pieces = {'w': 0, 'b': 0}, size = 9):
+    def __init__(self, goban = [['0' for i in range(9)] for j in range(9)], captured_pieces = {'w': 0, 'b': 0}, curr_player='w', size = 9):
         self.size = size
+        self.current_player = curr_player
         self.goban = copy.deepcopy(goban)
         self.captured_pieces =  captured_pieces
 
@@ -124,20 +125,24 @@ class Board():
             raise RuntimeError('Illegal argument, player should be "b" or "w"')
 
     def move(self, coord, player):
-        result = Board(self.goban, self.captured_pieces)
+        print("move")
+        result = Board(self.goban, self.captured_pieces, player)
         result.goban[coord[1]][coord[0]] = player
         result.captured_pieces[player] += result.capture(coord, self.opposite(player))
         return result
 
-    def capture (self, new_coord, opp_player):
+    def capture(self, new_coord, opp_player):
         '''tests if there is a capture for a new move and captures the stones
         Modifies the board's goban.
         Returns the number of captured pieces, 0 if nothing is captured.'''
+        #TODO for some reason, all caps are x3 ???
         result = 0
         goban = self.goban
+        print("does caps")
         for neighb in self.neighbours(new_coord):
             if goban[neighb[1]][neighb[0]] == opp_player and self.liberty(self.group(neighb))[0] == 0:
                 for coord in self.group(neighb):
+                    print("egsùpgk")
                     result += 1
                     goban[coord[1]][coord[0]] = '0'
         return result
@@ -176,3 +181,7 @@ class Board():
                         for k in range(len(self.group(coord))):
                             already_counted.append(self.group(coord)[k])
         return points
+    
+    def clone(self):
+        new_child = Board(self.goban, self.captured_pieces, self.size, self.current_player)
+        return new_child

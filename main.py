@@ -1,4 +1,5 @@
 import numpy as np
+from board import *
 from go import *
 from tkinter import *
 from tkinter import ttk
@@ -6,32 +7,28 @@ from tkinter import messagebox
 
 if __name__ == "__main__":
     go = Go()
+    go_board = go.board
     root = Tk()
     root.geometry("1100x800")
-    # frm = ttk.Frame(root, padding=0)
     my_canvas = Canvas(root, width=707, height= 707)
 
-    def play():
+    def play(state=go_board):
         hand = text_box.get()
         coord = go.hand_to_coord(hand)
-        play_at(coord)
+        play_at(state, coord)
 
-    def play_at(coord):
-        if go.play_at(coord):
-            go.board.print_tkinter_board(my_canvas)
+    def play_at(coord, state=go_board):
+        if go.is_legal(state, coord):
+            go.play_at(state, coord).print_tkinter_board(my_canvas)
         else:
             print("illegal move")
         
     def canvas_coord_to_coord(x,y):
         return(int(np.trunc((x-42)/35)), int(np.trunc((y-42)/35)))
 
-    def on_mouse_move(evt):
-        # TODO Diplay placeholder for next move
-        pass
-
     def on_click(evt):
         coord = canvas_coord_to_coord(evt.x, evt.y)
-        play_at(coord)
+        play_at(coord, go.board)
 
     def print_terr():
         print("white: ", go.board.territory("w"))
@@ -42,7 +39,6 @@ if __name__ == "__main__":
         print("b caps: ", go.board.captured_pieces['b'])
 
 
-    my_canvas.bind("<Motion>", on_mouse_move)
     my_canvas.bind("<ButtonPress>", on_click)
     text_box = Entry(root)
     text_box.place(x=825, y=100)
