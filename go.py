@@ -26,7 +26,6 @@ class Go():
             new_state.current_player = 'w'
 
     def play_at(self, state, coord):
-        print("play_at")
         if self.is_legal(state, coord):
             new_state = state.move(coord, state.current_player)
             self._next_turn(coord, new_state)
@@ -45,7 +44,7 @@ class Go():
         new_state = new_state.move(coord, new_state.current_player)
         return (state.goban[coord[1]][coord[0]] == "0" and not new_state.is_suicide(coord, new_state.current_player))
 
-    def win_player(self, state):
+    def winner(self, state):
         w_pts = state.territory('w') + state.captured_pieces['w'] + self.komi
         b_pts = state.territory('b') + state.captured_pieces['b']
         if w_pts > b_pts:
@@ -62,13 +61,10 @@ class Go():
         return list(filter(self.is_legal_fn(), state.all_coords()))
 
     def play(self, state, move):
-        pass
+        self.play_at(state, move)
 
     def is_over(self, state):
-        pass
-
-    def winner(self, state):
-        pass
+        return len(self.legal_moves(state)) <= 5
 
 
 

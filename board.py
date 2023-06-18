@@ -127,11 +127,9 @@ class Board():
             raise RuntimeError('Illegal argument, player should be "b" or "w"')
 
     def move(self, coord, player):
-        print(player)
         result = Board(self.goban, self.captured_pieces, player, self.size)
         result.goban[coord[1]][coord[0]] = player
         result.captured_pieces[player] += result.capture(coord, self.opposite(player))
-        print(result.captured_pieces)
         return result
 
     def capture(self, new_coord, opp_player):
