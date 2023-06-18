@@ -2,6 +2,8 @@ from tkinter import *
 from tkinter import ttk
 import copy
 
+global_board_size = 9
+
 class Board():
 
     '''
@@ -9,11 +11,11 @@ class Board():
     has all the information needed to play from here (board, captures)
     '''
 
-    def __init__(self, goban = [['0' for i in range(9)] for j in range(9)], captured_pieces = {'w': 0, 'b': 0}, curr_player='w', size = 9):
+    def __init__(self, goban = [['0' for i in range(global_board_size)] for j in range(global_board_size)], captured_pieces = {'w': 0, 'b': 0}, curr_player='w', size = global_board_size):
         self.size = size
         self.current_player = curr_player
         self.goban = copy.deepcopy(goban)
-        self.captured_pieces =  captured_pieces
+        self.captured_pieces =  copy.copy(captured_pieces)
 
     def neighbours(self, coord):
         '''Returns an array of neighbouring coordinates, of length 2 to 4.'''
@@ -125,10 +127,11 @@ class Board():
             raise RuntimeError('Illegal argument, player should be "b" or "w"')
 
     def move(self, coord, player):
-        print("move")
-        result = Board(self.goban, self.captured_pieces, player)
+        print(player)
+        result = Board(self.goban, self.captured_pieces, player, self.size)
         result.goban[coord[1]][coord[0]] = player
         result.captured_pieces[player] += result.capture(coord, self.opposite(player))
+        print(result.captured_pieces)
         return result
 
     def capture(self, new_coord, opp_player):
@@ -183,5 +186,5 @@ class Board():
         return points
     
     def clone(self):
-        new_child = Board(self.goban, self.captured_pieces, self.size, self.current_player)
+        new_child = Board(self.goban, self.captured_pieces, self.current_player, self.size)
         return new_child
