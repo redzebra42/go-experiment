@@ -141,11 +141,9 @@ class Board():
         #TODO for some reason, all caps are x3 ???
         result = 0
         goban = self.goban
-        print("does caps")
         for neighb in self.neighbours(new_coord):
             if goban[neighb[1]][neighb[0]] == opp_player and self.liberty(self.group(neighb))[0] == 0:
                 for coord in self.group(neighb):
-                    print("egsùpgk")
                     result += 1
                     goban[coord[1]][coord[0]] = '0'
         return result
@@ -188,3 +186,10 @@ class Board():
     def clone(self):
         new_child = Board(self.goban, self.captured_pieces, self.current_player, self.size)
         return new_child
+    
+    def curr_player(self):
+        return self.current_player
+    
+    def all_coords(self):
+        res = [(i, j) for i in range(self.size) for j in range(self.size)]
+        return res

@@ -20,6 +20,7 @@ if __name__ == "__main__":
     def play_at(coord, state=go_board):
         if go.is_legal(state, coord):
             go.play_at(state, coord).print_tkinter_board(my_canvas)
+            go.legal_moves(state)
         else:
             print("illegal move")
         

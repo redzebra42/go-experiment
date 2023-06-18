@@ -52,5 +52,23 @@ class Go():
             return 'w'
         elif w_pts < b_pts:
             return 'b'
+        
+    def is_legal_fn(self):
+        def legal(move):
+            return self.is_legal(self.board, move)
+        return legal
+    
+    def legal_moves(self, state):
+        return list(filter(self.is_legal_fn(), state.all_coords()))
+
+    def play(self, state, move):
+        pass
+
+    def is_over(self, state):
+        pass
+
+    def winner(self, state):
+        pass
+
 
 
