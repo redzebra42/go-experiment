@@ -191,3 +191,9 @@ class Board():
     def all_coords(self):
         res = [(i, j) for i in range(self.size) for j in range(self.size)]
         return res
+
+    def __str__(self) -> str:
+        res = ''
+        for i in range(self.size):
+            res += str(f'{self.goban[i]}\n')
+        return res
