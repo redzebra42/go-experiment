@@ -21,7 +21,7 @@ class Node():
         return nv_noeud
 
     def is_feuille(self):
-        return self.enfants == {}
+        return len(self.enfants) == 0
 
     def is_racine(self):
         return self.parent == None
@@ -46,7 +46,7 @@ class MCT():
         '''
         game class that has the following functions:
         legal_moves(state)
-        play(state, move)
+        play_at(state, move)
         is_over(state)
         winner(state)
         rand_simulation(state)
@@ -56,8 +56,8 @@ class MCT():
         '''
 
     def new_child(self, noeud, move):
-        new_state = noeud.state.clone()
-        self.game.play(new_state, move)
+        # new_state = noeud.state.clone()
+        new_state = self.game.play_at(noeud.state, move)
         return noeud.add_child(move, new_state)
 
     def random_move(self, state):
@@ -121,7 +121,10 @@ class MCT():
         #TODO case where node isn't already created
     
     def set_played_move(self, coord):
-        pass # TODO
+        if coord in self.root.enfants:
+            self.root = self.root.enfants[coord]
+        else:
+            self.root = self.new_child(self.root, coord)
 
     def __str__(self) -> str:
         return str(f'root = {self.root}')

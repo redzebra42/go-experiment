@@ -57,16 +57,13 @@ class Go():
     def legal_moves(self, state):
         return list(filter(self.is_legal_fn(state), state.all_coords()))
 
-    def play(self, state, move):
-        return self.play_at(state, move)
-
     def is_over(self, state):
         return len(self.legal_moves(state)) <= 10
     
     def play_random(self, state):
         leg_moves = self.legal_moves(state)
         i = random.randint(0, len(leg_moves)-1)
-        return self.play(state, leg_moves[i])
+        return self.play_at(state, leg_moves[i])
     
     def rand_simulation(self, state):
         '''returns the new_state of the game after a randomly played game'''

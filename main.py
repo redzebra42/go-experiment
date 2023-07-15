@@ -17,7 +17,7 @@ if __name__ == "__main__":
     # mct.new_move(10)
     
 
-    def play(state=go_board):
+    def play_from_text_box(state=go_board):
         hand = text_box.get()
         coord = go.hand_to_coord(hand)
         play_at(state, coord)
@@ -54,8 +54,8 @@ if __name__ == "__main__":
 
     terr_button = ttk.Button(root, text= "calculate territory", command = lambda: print_terr())
     captures_button = ttk.Button(root, text= "show captures", command = lambda: print_capt())
-    pos_button = ttk.Button(root, text= "play", command = lambda: play())
-    tree_search_button = ttk.Button(root, text= "tree search", command = lambda: mct.new_move(10))
+    pos_button = ttk.Button(root, text= "play", command = lambda: play_from_text_box())
+    tree_search_button = ttk.Button(root, text= "tree search", command = lambda: mct.new_move(1))
     tree_search_button.place(x=825, y=300)
     terr_button.place(x=825, y=200)
     pos_button.place(x=825, y=150)
