@@ -29,7 +29,6 @@ class Go():
         if self.is_legal(state, coord):
             new_state = state.move(coord, state.current_player)
             self._next_turn(new_state)
-            self.board = new_state
             return new_state
         else:
             raise RuntimeError
