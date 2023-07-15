@@ -24,8 +24,10 @@ if __name__ == "__main__":
 
     def play_at(coord, state=go_board):
         if go.is_legal(state, coord):
-            go.play_at(state, coord).print_tkinter_board(my_canvas)
-            go.legal_moves(state)
+            new_state = go.play_at(state, coord)
+            go.board = new_state
+            go.board.print_tkinter_board(my_canvas)
+            # go.legal_moves(new_state)
         else:
             print("illegal move")
         

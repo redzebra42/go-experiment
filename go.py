@@ -19,7 +19,6 @@ class Go():
 
     def _next_turn(self, new_state):
         self.turn += 1
-        self.board = new_state
         if new_state.current_player == 'w':
             new_state.current_player = 'b'
         else:
@@ -34,7 +33,6 @@ class Go():
             raise RuntimeError
 
     def next_state(self, coord, state):
-        # TODO doesn't place the right color && doesn't capture
         next_goban = self.board.move(coord, state.current_player)
         return next_goban
 
