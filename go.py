@@ -49,13 +49,13 @@ class Go():
         elif w_pts < b_pts:
             return 'b'
         
-    def is_legal_fn(self):
+    def is_legal_fn(self, state):
         def legal(move):
-            return self.is_legal(self.board, move)
+            return self.is_legal(state, move)
         return legal
     
     def legal_moves(self, state):
-        return list(filter(self.is_legal_fn(), state.all_coords()))
+        return list(filter(self.is_legal_fn(state), state.all_coords()))
 
     def play(self, state, move):
         return self.play_at(state, move)
