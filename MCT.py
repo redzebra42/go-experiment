@@ -3,32 +3,37 @@ from math import log, sqrt
 import numpy as np
 #from go import *
 
-def best_child(node):
-    enfants = node.enfants
-    L = [(enf.weight[0] / enf.weight[1]) + sqrt(2) * sqrt(log(node.weight[1]) / enf.weight[1]) for enf in node.enfants]
-    return enfants[np.argmax(np.asarray(L))]
-
 class Node():
 
     def __init__(self, state):
         self.weight = [0,1]
         self.state = state
-        self.enfants = []
+        self.enfants = {}
         self.parent = None
         self.depth = 0
 
-    def ajouter_noeud(self, noeud, state):
+    def add_child(self, coord, state):
         nv_noeud = Node(state)
         nv_noeud.weight = [0,0]
-        nv_noeud.parent = noeud
-        nv_noeud.depth = noeud.depth + 1
-        noeud.enfants.append(nv_noeud)
+        nv_noeud.parent = self
+        nv_noeud.depth = self.depth + 1
+        self.enfants[coord] = nv_noeud
+        return nv_noeud
 
     def is_feuille(self):
-        return self.enfants == []
+        return self.enfants == {}
 
     def is_racine(self):
         return self.parent == None
+
+    def best_child(self):
+        best = (None, -1)
+        # list = [(enf.weight[0] / enf.weight[1]) + sqrt(2) * sqrt(log(node.weight[1]) / enf.weight[1]) for enf in node.enfants.values()]
+        for enf in self.enfants.values():
+            score = (enf.weight[0] / enf.weight[1]) + sqrt(2 * log(self.weight[1]) / enf.weight[1])
+            if (score > best[1]):
+                best = (enf, score)
+        return best[0]
     
     def __str__(self) -> str:
         return str(f'weight = {self.weight}, size = {len(self.enfants)}')
@@ -52,13 +57,8 @@ class MCT():
 
     def new_child(self, noeud, move):
         new_state = noeud.state.clone()
-        nv_noeud = Node(new_state)
-        nv_noeud.weight = [0,0]
-        nv_noeud.parent = noeud
-        nv_noeud.depth = noeud.depth + 1
-        noeud.enfants.append(nv_noeud)
         self.game.play(new_state, move)
-        return nv_noeud
+        return noeud.add_child(move, new_state)
 
     def random_move(self, state):
         legal_moves = self.game.legal_moves(state)
@@ -67,7 +67,7 @@ class MCT():
     def selection(self, node):
         if not node.is_feuille():
             # print(self)
-            return self.selection(best_child(node))
+            return self.selection(node.best_child())
         return node
 
     def expension(self, noeud):
@@ -76,7 +76,7 @@ class MCT():
         if not self.game.is_over(noeud.state):
             for move in legal_moves:
                 self.new_child(noeud, move).weight[1] = 1
-            self.simulation(noeud.enfants[random.randint(0,len(noeud.enfants)-1)])
+            self.simulation(noeud.enfants[random.choice(legal_moves)])
         else:
             self.back_propagation(noeud, noeud.state)     #if there are no legal moves, skips expension and simulation
 
@@ -102,11 +102,11 @@ class MCT():
         self.expension(self.selection(root))
 
     def choose_best_node(self):
-        best = self.root.enfants[0]
-        for enf in self.root.enfants:
-            if enf.weight[1] > best.weight[1]:
-                best = enf
-        return best
+        best = (None, -1)
+        for enf in self.root.enfants.values():
+            if enf.weight[1] > best[1]:
+                best = (enf, enf.weight[1])
+        return best[0]
 
     def new_move(self, search_depth):
         for i in range(search_depth):
@@ -115,10 +115,13 @@ class MCT():
         print('root state: ', self.root.state)
     
     def opponent_played(self, state):
-        for node in [enf for enf in self.root.enfants]:
+        for node in [enf for enf in self.root.enfants.values()]:
             if node.state.ttt_board == state.ttt_board:
                 self.root = node
         #TODO case where node isn't already created
+    
+    def set_played_move(self, coord):
+        pass # TODO
 
     def __str__(self) -> str:
         return str(f'root = {self.root}')

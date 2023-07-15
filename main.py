@@ -27,6 +27,7 @@ if __name__ == "__main__":
             new_state = go.play_at(state, coord)
             go.board = new_state
             go.board.print_tkinter_board(my_canvas)
+            mct.set_played_move(coord)
             # go.legal_moves(new_state)
         else:
             print("illegal move")
