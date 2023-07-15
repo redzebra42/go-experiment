@@ -66,7 +66,7 @@ class MCT():
 
     def selection(self, node):
         if not node.is_feuille():
-            print(self)
+            # print(self)
             return self.selection(best_child(node))
         return node
 
@@ -112,7 +112,7 @@ class MCT():
         for i in range(search_depth):
             self.tree_search(self.root)
         self.root = self.choose_best_node()
-        print(self.root.state)
+        print('root state: ', self.root.state)
     
     def opponent_played(self, state):
         for node in [enf for enf in self.root.enfants]:
