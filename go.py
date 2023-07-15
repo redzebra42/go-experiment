@@ -1,4 +1,5 @@
 import board
+import random
 
 class Go():
 
@@ -16,9 +17,8 @@ class Go():
         self.list = ['a','b','c','d','e','f','g','h','j','k','l','m','n','o','p','q','r','s','t']
         return (self.list.index(hand[0]), int(hand[1:])-1)
 
-    def _next_turn(self, coord, new_state):
+    def _next_turn(self, new_state):
         self.turn += 1
-        #self.previous_move = coord
         self.board = new_state
         if new_state.current_player == 'w':
             new_state.current_player = 'b'
@@ -28,7 +28,7 @@ class Go():
     def play_at(self, state, coord):
         if self.is_legal(state, coord):
             new_state = state.move(coord, state.current_player)
-            self._next_turn(coord, new_state)
+            self._next_turn(new_state)
             self.board = new_state
             return new_state
         else:
@@ -61,10 +61,21 @@ class Go():
         return list(filter(self.is_legal_fn(), state.all_coords()))
 
     def play(self, state, move):
-        self.play_at(state, move)
+        return self.play_at(state, move)
 
     def is_over(self, state):
-        return len(self.legal_moves(state)) <= 5
-
-
-
+        return len(self.legal_moves(state)) <= 10
+    
+    def play_random(self, state):
+        leg_moves = self.legal_moves(state)
+        i = random.randint(0, len(leg_moves)-1)
+        return self.play(state, leg_moves[i])
+    
+    def rand_simulation(self, state):
+        '''returns the new_state of the game after a randomly played game'''
+        new_state = state.clone()
+        while not self.is_over(new_state):
+            new_state = self.play_random(new_state)
+            print(new_state)
+        return new_state
+    

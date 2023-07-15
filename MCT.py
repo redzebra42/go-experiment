@@ -29,7 +29,9 @@ class Node():
 
     def is_racine(self):
         return self.parent == None
-
+    
+    def __str__(self) -> str:
+        return str(f'weight = {self.weight}, size = {len(self.enfants)}')
 
 class MCT():
 
@@ -43,6 +45,9 @@ class MCT():
         is_over(state)
         winner(state)
         rand_simulation(state)
+        state class with the following funcyions:
+        curr_player()
+        clone()
         '''
 
     def new_child(self, noeud, move):
@@ -61,11 +66,13 @@ class MCT():
 
     def selection(self, node):
         if not node.is_feuille():
+            print(self)
             return self.selection(best_child(node))
         return node
 
     def expension(self, noeud):
         legal_moves = self.game.legal_moves(noeud.state)
+        print(f'Found {len(legal_moves)} legal moves')
         if not self.game.is_over(noeud.state):
             for move in legal_moves:
                 self.new_child(noeud, move).weight[1] = 1
@@ -74,10 +81,11 @@ class MCT():
             self.back_propagation(noeud, noeud.state)     #if there are no legal moves, skips expension and simulation
 
     def simulation(self, noeud):
-        if not self.game.is_over(noeud.state):
-            sim = self.game.rand_simulation(noeud.state)
+        nv_state = noeud.state.clone()
+        if not self.game.is_over(nv_state):
+            sim = self.game.rand_simulation(nv_state)
         else:
-            sim = noeud.state
+            sim = nv_state
         self.back_propagation(noeud, sim)
 
     def back_propagation(self, noeud, state):
@@ -98,15 +106,19 @@ class MCT():
         for enf in self.root.enfants:
             if enf.weight[1] > best.weight[1]:
                 best = enf
-        return(best)
+        return best
 
     def new_move(self, search_depth):
         for i in range(search_depth):
             self.tree_search(self.root)
         self.root = self.choose_best_node()
+        print(self.root.state)
     
     def opponent_played(self, state):
         for node in [enf for enf in self.root.enfants]:
             if node.state.ttt_board == state.ttt_board:
                 self.root = node
         #TODO case where node isn't already created
+
+    def __str__(self) -> str:
+        return str(f'root = {self.root}')

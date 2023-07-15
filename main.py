@@ -4,6 +4,7 @@ from go import *
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
+from MCT import *
 
 if __name__ == "__main__":
     go = Go()
@@ -11,6 +12,10 @@ if __name__ == "__main__":
     root = Tk()
     root.geometry("1100x800")
     my_canvas = Canvas(root, width=707, height= 707)
+    mct = MCT(go, go_board)
+    # print(mct)
+    # mct.new_move(10)
+    
 
     def play(state=go_board):
         hand = text_box.get()
@@ -47,11 +52,13 @@ if __name__ == "__main__":
     terr_button = ttk.Button(root, text= "calculate territory", command = lambda: print_terr())
     captures_button = ttk.Button(root, text= "show captures", command = lambda: print_capt())
     pos_button = ttk.Button(root, text= "play", command = lambda: play())
+    tree_search_button = ttk.Button(root, text= "tree search", command = lambda: mct.new_move(10))
+    tree_search_button.place(x=825, y=300)
     terr_button.place(x=825, y=200)
     pos_button.place(x=825, y=150)
     captures_button.place(x=825, y=250)
 
-    go.board.print_tkinter_board(my_canvas)
+    mct.root.state.print_tkinter_board(my_canvas)
 
     def on_closing():
         if messagebox.askokcancel("Quit", "Do you want to quit?"):
