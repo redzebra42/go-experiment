@@ -116,7 +116,7 @@ class MCT():
         for i in range(search_depth):
             self.tree_search(self.root)
         #self.root = self.choose_best_node()
-        #print('root state: ', self.root.state)
+        print('root state: ', self.root.state)
         self.pretty_print()
     
     def opponent_played(self, state):
@@ -132,14 +132,15 @@ class MCT():
             self.root = self.new_child(self.root, coord)
     
     def _pretty_print(self, node, acc, file):
+        file.write("\n")
         for i in range(acc):
-            file.write(" ")
+            file.write("  ")
         file.write("(")
         file.write(str(node))
         if len(node.enfants) > 0:
             for enf in node.enfants.values():
                 self._pretty_print(enf, acc+1, file)
-        file.write(")\n")
+        file.write(")")
 
     def pretty_print(self):
         file = open("tree.lsp", "w")

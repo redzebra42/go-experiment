@@ -1,7 +1,16 @@
 from go import *
 import test_goban
 import unittest
+from MCT import *
+from board import *
 
+go = Go()
+state = Board()
+example_tree = MCT(go, state)
+node_1 = Node(state)
+example_tree.root.enfants = {(6, 6): Node(test_goban.Test_goban().state_1_1),
+                             (2, 2): Node(test_goban.Test_goban().state_1_2)}
+example_tree.root.enfants[(6, 6)].enfants = {(2, 2): Node(test_goban.Test_goban().state_2)}
 
 class TestsGo(unittest.TestCase):
 
@@ -39,6 +48,9 @@ class TestsGo(unittest.TestCase):
     def test_territory(self):
         self.go = Go()
         self.assertEqual(self.go.territory('b'), 9)
+    
+    def test_pretty_print(self):
+        example_tree.pretty_print()
 
 
     
