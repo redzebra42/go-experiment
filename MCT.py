@@ -115,8 +115,9 @@ class MCT():
     def new_move(self, search_depth):
         for i in range(search_depth):
             self.tree_search(self.root)
-        self.root = self.choose_best_node()
-        print('root state: ', self.root.state)
+        #self.root = self.choose_best_node()
+        #print('root state: ', self.root.state)
+        self.pretty_print(self.root)
     
     def opponent_played(self, state):
         for node in [enf for enf in self.root.enfants.values()]:
@@ -129,6 +130,15 @@ class MCT():
             self.root = self.root.enfants[coord]
         else:
             self.root = self.new_child(self.root, coord)
+    
+    def pretty_print(self, node):
+        print('(')
+        print(node)
+        if len(node.enfants) > 0:
+            for enf in node.enfants.values():
+                self.pretty_print(enf)
+        print(')')
+        
 
     def __str__(self) -> str:
         return str(f'root = {self.root}')
