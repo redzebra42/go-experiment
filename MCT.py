@@ -1,12 +1,13 @@
 import random
 from math import log, sqrt
 import numpy as np
-#from go import *
+from go import *
 
 class Node():
 
     def __init__(self, state):
-        self.weight = [0,1]
+        self.game = Go()
+        self.weight = [0,0]
         self.state = state
         self.enfants = {}
         self.parent = None
@@ -21,7 +22,7 @@ class Node():
         return nv_noeud
 
     def is_feuille(self):
-        return len(self.enfants) == 0
+        return len(self.enfants) <= len(self.game.legal_moves(self.state))
 
     def is_racine(self):
         return self.parent == None
@@ -75,8 +76,10 @@ class MCT():
         print(f'Found {len(legal_moves)} legal moves')
         if not self.game.is_over(noeud.state):
             for move in legal_moves:
-                self.new_child(noeud, move).weight[1] = 1
-            self.simulation(noeud.enfants[random.choice(legal_moves)])
+                if not (move in noeud.enfants.keys()):
+                    self.new_child(noeud, move)
+                    self.simulation(noeud.enfants[move])
+                    break
         else:
             self.back_propagation(noeud, noeud.state)     #if there are no legal moves, skips expension and simulation
 
