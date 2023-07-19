@@ -1,1 +1,6 @@
-(weight = [34, 34], size = 34(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0)(weight = [1, 1], size = 0))
+(weight = [5, 5], size = 5 (weight = [1, 1], size = 0)
+ (weight = [1, 1], size = 0)
+ (weight = [1, 1], size = 0)
+ (weight = [1, 1], size = 0)
+ (weight = [1, 1], size = 0)
+)

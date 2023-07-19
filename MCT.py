@@ -131,19 +131,19 @@ class MCT():
         else:
             self.root = self.new_child(self.root, coord)
     
-    def _pretty_print(self, node, file):
-        file.write('(')
+    def _pretty_print(self, node, acc, file):
+        for i in range(acc):
+            file.write(" ")
+        file.write("(")
         file.write(str(node))
         if len(node.enfants) > 0:
             for enf in node.enfants.values():
-                self._pretty_print(enf, file)
-        file.write(')')
+                self._pretty_print(enf, acc+1, file)
+        file.write(")\n")
 
     def pretty_print(self):
         file = open("tree.lsp", "w")
-        self._pretty_print(self.root, file)
-
-        
+        self._pretty_print(self.root, 0, file)
 
     def __str__(self) -> str:
         return str(f'root = {self.root}')
