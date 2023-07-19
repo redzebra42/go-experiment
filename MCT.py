@@ -22,7 +22,8 @@ class Node():
         return nv_noeud
 
     def is_feuille(self):
-        return len(self.enfants) <= len(self.game.legal_moves(self.state))
+        print(len(self.game.legal_moves(self.state)))
+        return len(self.enfants) < len(self.game.legal_moves(self.state))
 
     def is_racine(self):
         return self.parent == None
@@ -96,7 +97,7 @@ class MCT():
         winner = self.game.winner(state)
         def _bp_rec(noeud):
             noeud.weight[1] += 1
-            if noeud.state.curr_player != winner:          # == -> !=
+            if noeud.state.current_player != winner:          # == -> !=
                 noeud.weight[0] += 1
             if not noeud.is_racine():
                 _bp_rec(noeud.parent)
