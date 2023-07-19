@@ -73,6 +73,7 @@ class MCT():
 
     def expension(self, noeud):
         legal_moves = self.game.legal_moves(noeud.state)
+        random.shuffle(legal_moves)
         print(f'Found {len(legal_moves)} legal moves')
         if not self.game.is_over(noeud.state):
             for move in legal_moves:
