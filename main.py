@@ -57,6 +57,8 @@ if __name__ == "__main__":
     pos_button = ttk.Button(root, text= "play", command = lambda: play_from_text_box())
     tree_search_button = ttk.Button(root, text= "tree search", command = lambda: mct.new_move(40))
     print_tree_button = ttk.Button(root, text= "print tree", command = lambda: mct.pretty_print())
+    pass_button = ttk.Button(root, text = "pass", command = lambda: go.play_pass())
+    pass_button.place(x=825, y=400)
     print_tree_button.place(x=825, y=350)
     tree_search_button.place(x=825, y=300)
     terr_button.place(x=825, y=200)

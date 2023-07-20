@@ -31,6 +31,9 @@ class Go():
             return new_state
         else:
             raise RuntimeError
+    
+    def play_pass(self):
+        self._next_turn(self.board)
 
     def next_state(self, coord, state):
         next_goban = self.board.move(coord, state.current_player)
