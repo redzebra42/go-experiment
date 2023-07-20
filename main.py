@@ -55,7 +55,7 @@ if __name__ == "__main__":
     terr_button = ttk.Button(root, text= "calculate territory", command = lambda: print_terr())
     captures_button = ttk.Button(root, text= "show captures", command = lambda: print_capt())
     pos_button = ttk.Button(root, text= "play", command = lambda: play_from_text_box())
-    tree_search_button = ttk.Button(root, text= "tree search", command = lambda: mct.new_move(40))
+    tree_search_button = ttk.Button(root, text= "tree search", command = lambda: mct.new_move(100))
     print_tree_button = ttk.Button(root, text= "print tree", command = lambda: mct.pretty_print())
     pass_button = ttk.Button(root, text = "pass", command = lambda: go.play_pass())
     pass_button.place(x=825, y=400)
