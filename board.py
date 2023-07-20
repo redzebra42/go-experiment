@@ -26,6 +26,7 @@ class Board():
         self.current_player = curr_player
         self.goban = copy.deepcopy(goban)
         self.captured_pieces =  copy.copy(captured_pieces)
+        self.two_previous_moves = [None, None]
 
     def neighbours(self, coord):
         '''Returns an array of neighbouring coordinates, of length 2 to 4.'''

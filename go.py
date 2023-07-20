@@ -17,7 +17,9 @@ class Go():
         self.list = ['a','b','c','d','e','f','g','h','j','k','l','m','n','o','p','q','r','s','t']
         return (self.list.index(hand[0]), int(hand[1:])-1)
 
-    def _next_turn(self, new_state):
+    def _next_turn(self, new_state, move):
+        new_state.two_previous_moves[1] = new_state.two_previous_moves[0]
+        new_state.two_previous_moves[0] = move
         self.turn += 1
         if new_state.current_player == 'w':
             new_state.current_player = 'b'
@@ -25,24 +27,32 @@ class Go():
             new_state.current_player = 'w'
 
     def play_at(self, state, coord):
-        if self.is_legal(state, coord):
-            new_state = state.move(coord, state.current_player)
-            self._next_turn(new_state)
+        if coord == 'pass':
+            new_state = state.clone()
+            self._next_turn(new_state, coord)
             return new_state
         else:
-            raise RuntimeError
+            if self.is_legal(state, coord):
+                new_state = state.move(coord, state.current_player)
+                self._next_turn(new_state, coord)
+                return new_state
+            else:
+                raise RuntimeError
     
     def play_pass(self):
-        self._next_turn(self.board)
+        self._next_turn(self.board, 'pass')
 
     def next_state(self, coord, state):
         next_goban = self.board.move(coord, state.current_player)
         return next_goban
 
     def is_legal(self, state, coord):
-        new_state = state.clone()
-        new_state = new_state.move(coord, new_state.current_player)
-        return (state.goban[coord[1]][coord[0]] == "0" and not new_state.is_suicide(coord, new_state.current_player))
+        if coord == 'pass':
+            return True
+        else:
+            new_state = state.clone()
+            new_state = new_state.move(coord, new_state.current_player)
+            return (state.goban[coord[1]][coord[0]] == "0" and not new_state.is_suicide(coord, new_state.current_player))
 
     def winner(self, state):
         w_pts = state.territory('w') + state.captured_pieces['w'] + self.komi
@@ -58,10 +68,12 @@ class Go():
         return legal
     
     def legal_moves(self, state):
-        return list(filter(self.is_legal_fn(state), state.all_coords()))
+        leg_moves = list(filter(self.is_legal_fn(state), state.all_coords()))
+        leg_moves.append('pass')
+        return leg_moves
 
     def is_over(self, state):
-        return len(self.legal_moves(state)) <= 10
+        return state.two_previous_moves == ['pass', 'pass']
     
     def play_random(self, state):
         leg_moves = self.legal_moves(state)
