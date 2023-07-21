@@ -8,9 +8,8 @@ class Go():
         self.board = board.Board()
         self.current_player = 'w'
         self.turn = 0
-        #self.previous_move = None
         self.komi = 3.5
-        #self.captured_pieces = {'w': 0, 'b': 0}
+        self.is_chinese_rule_set = True
 
     def hand_to_coord(self, hand):
         '''Convert a textual hand like c12 into coordinates like (2, 12).'''
@@ -57,6 +56,15 @@ class Go():
     def winner(self, state):
         w_pts = state.territory('w') + state.captured_pieces['w'] + self.komi
         b_pts = state.territory('b') + state.captured_pieces['b']
+        if self.is_chinese_rule_set:
+            for line in state.goban:
+                for piece in line:
+                    if piece == 'w':
+                        w_pts += 1
+                    elif piece == 'b':
+                        b_pts += 1
+        print('w_pts = ', w_pts)
+        print('b_pts = ', b_pts)
         if w_pts > b_pts:
             return 'w'
         elif w_pts < b_pts:
