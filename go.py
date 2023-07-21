@@ -9,7 +9,7 @@ class Go():
         self.current_player = 'w'
         self.turn = 0
         #self.previous_move = None
-        self.komi = 6.5
+        self.komi = 3.5
         #self.captured_pieces = {'w': 0, 'b': 0}
 
     def hand_to_coord(self, hand):
