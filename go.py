@@ -85,6 +85,7 @@ class Go():
         new_state = state.clone()
         while not self.is_over(new_state):
             new_state = self.play_random(new_state)
-            # print(new_state)
+            #print(new_state)
+            #print(new_state.two_previous_moves)
         return new_state
     

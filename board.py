@@ -21,12 +21,12 @@ class Board():
     has all the information needed to play from here (board, captures)
     '''
 
-    def __init__(self, goban = starting_board_2, captured_pieces = {'w': 0, 'b': 0}, curr_player='w', size = global_board_size):
+    def __init__(self, goban = starting_board_2, captured_pieces = {'w': 0, 'b': 0}, curr_player='w',two_previous_moves=[None, None], size=global_board_size):
         self.size = size
         self.current_player = curr_player
         self.goban = copy.deepcopy(goban)
         self.captured_pieces =  copy.copy(captured_pieces)
-        self.two_previous_moves = [None, None]
+        self.two_previous_moves = copy.deepcopy(two_previous_moves)
 
     def neighbours(self, coord):
         '''Returns an array of neighbouring coordinates, of length 2 to 4.'''
@@ -138,7 +138,7 @@ class Board():
             raise RuntimeError('Illegal argument, player should be "b" or "w"')
 
     def move(self, coord, player):
-        result = Board(self.goban, self.captured_pieces, player, self.size)
+        result = Board(self.goban, self.captured_pieces, player, self.two_previous_moves, self.size)
         result.goban[coord[1]][coord[0]] = player
         result.captured_pieces[player] += result.capture(coord, self.opposite(player))
         return result
@@ -193,7 +193,7 @@ class Board():
         return points
     
     def clone(self):
-        new_child = Board(self.goban, self.captured_pieces, self.current_player, self.size)
+        new_child = Board(self.goban, self.captured_pieces, self.current_player, self.two_previous_moves, self.size)
         return new_child
     
     def curr_player(self):

@@ -91,6 +91,7 @@ class MCT():
             sim = self.game.rand_simulation(nv_state)
         else:
             sim = nv_state
+        print(sim)
         self.back_propagation(noeud, sim)
 
     def back_propagation(self, noeud, state):
