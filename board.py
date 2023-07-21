@@ -1,9 +1,9 @@
 from tkinter import *
 from tkinter import ttk
 import copy
+import starting_state as st
 
-global_board_size = 9
-starting_board_1 = [['0' for i in range(global_board_size)] for j in range(global_board_size)]
+starting_board_1 = [['0' for i in range(st.size)] for j in range(st.size)]
 starting_board_2 = [['w', 'w', 'w', 'b', 'b', 'w', 'b', 'b', '0'],
 ['0', '0', 'w', 'b', 'b', 'w', 'w', 'w', 'w'],
 ['0', 'w', 'w', 'b', '0', 'b', 'b', 'b', 'b'],
@@ -21,7 +21,7 @@ class Board():
     has all the information needed to play from here (board, captures)
     '''
 
-    def __init__(self, goban = starting_board_2, captured_pieces = {'w': 0, 'b': 0}, curr_player='w',two_previous_moves=[None, None], size=global_board_size):
+    def __init__(self, goban=st.goban, captured_pieces=st.caps, curr_player=st.player ,two_previous_moves=st.two_prev_moves, size=st.size):
         self.size = size
         self.current_player = curr_player
         self.goban = copy.deepcopy(goban)
