@@ -2,6 +2,7 @@ import random
 from math import log, sqrt
 import numpy as np
 from go import *
+import time
 
 class Node():
 
@@ -22,7 +23,7 @@ class Node():
         return nv_noeud
 
     def is_feuille(self):
-        print(len(self.game.legal_moves(self.state)))
+        #print(len(self.game.legal_moves(self.state)))
         return len(self.enfants) < len(self.game.legal_moves(self.state))
 
     def is_racine(self):
@@ -67,15 +68,17 @@ class MCT():
         return legal_moves[random.randint(0,len(legal_moves)-1)]
 
     def selection(self, node):
+        #clock = time.clock_gettime_ns(0)
         if not node.is_feuille():
             # print(self)
             return self.selection(node.best_child())
+        #print ("selection: ", time.clock_gettime_ns(0) - clock)
         return node
 
     def expension(self, noeud):
         legal_moves = self.game.legal_moves(noeud.state)
         random.shuffle(legal_moves)
-        print(f'Found {len(legal_moves)} legal moves')
+        #print(f'Found {len(legal_moves)} legal moves')
         if not self.game.is_over(noeud.state):
             for move in legal_moves:
                 if not (move in noeud.enfants.keys()):
@@ -91,7 +94,7 @@ class MCT():
             sim = self.game.rand_simulation(nv_state)
         else:
             sim = nv_state
-        print(sim)
+        #print(sim)
         self.back_propagation(noeud, sim)
 
     def back_propagation(self, noeud, state):
@@ -112,13 +115,19 @@ class MCT():
         for enf in self.root.enfants.values():
             if enf.weight[1] > best[1]:
                 best = (enf, enf.weight[1])
-        return best[0]
+        return (best[0], list(self.root.enfants.keys())[list(self.root.enfants.values()).index(best[0])])  #(node, move)
 
     def new_move(self, search_depth):
         for i in range(search_depth):
             self.tree_search(self.root)
-        #self.root = self.choose_best_node()
-        print('root state: ', self.root.state)
+            if i%100 == 0:
+                print(i)
+        best_node = self.choose_best_node()
+        self.game._mct_move(best_node[0].state, best_node[1])
+        #self.game.play_at(self.root.state, best_node[1])
+        self.root = best_node[0]
+        self.game.board = self.root.state
+        print('root state: ', self.root.state, '\n', self.root.state.current_player)
         self.pretty_print()
     
     def opponent_played(self, state):

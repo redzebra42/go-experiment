@@ -46,6 +46,10 @@ if __name__ == "__main__":
     def print_capt():
         print("w caps: ", go.board.captured_pieces['w'])
         print("b caps: ", go.board.captured_pieces['b'])
+    
+    def tree_search(search_depth):
+        mct.new_move(search_depth)
+        mct.root.state.print_tkinter_board(my_canvas)
 
 
     my_canvas.bind("<ButtonPress>", on_click)
@@ -55,7 +59,7 @@ if __name__ == "__main__":
     terr_button = ttk.Button(root, text= "calculate territory", command = lambda: print_terr())
     captures_button = ttk.Button(root, text= "show captures", command = lambda: print_capt())
     pos_button = ttk.Button(root, text= "play", command = lambda: play_from_text_box())
-    tree_search_button = ttk.Button(root, text= "tree search", command = lambda: mct.new_move(10))
+    tree_search_button = ttk.Button(root, text= "tree search", command = lambda: tree_search(200))
     print_tree_button = ttk.Button(root, text= "print tree", command = lambda: mct.pretty_print())
     pass_button = ttk.Button(root, text = "pass", command = lambda: go.play_pass())
     pass_button.place(x=825, y=400)

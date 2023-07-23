@@ -38,6 +38,10 @@ class Go():
             else:
                 raise RuntimeError
     
+    def _mct_move(self, state, move):
+        new_state = state.clone()
+        self._next_turn(new_state, move)
+    
     def play_pass(self):
         self._next_turn(self.board, 'pass')
 
@@ -63,8 +67,6 @@ class Go():
                         w_pts += 1
                     elif piece == 'b':
                         b_pts += 1
-        print('w_pts = ', w_pts)
-        print('b_pts = ', b_pts)
         if w_pts > b_pts:
             return 'w'
         elif w_pts < b_pts:

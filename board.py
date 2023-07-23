@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import ttk
+#from tkinter import ttk
 import copy
 import starting_state as st
 
