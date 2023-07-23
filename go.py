@@ -54,9 +54,7 @@ class Go():
         if coord == 'pass':
             return True
         else:
-            new_state = state.clone()
-            new_state = new_state.move(coord, new_state.current_player)
-            return (state.goban[coord[1]][coord[0]] == "0" and not new_state.is_suicide(coord, new_state.current_player))
+            return state.is_legal(coord)
 
     def winner(self, state):
         w_pts = state.territory('w') + state.captured_pieces['w'] + self.komi
@@ -99,7 +97,7 @@ class Go():
         '''returns the new_state of the game after a randomly played game'''
         new_state = state.clone()
         #while not self.is_over(new_state):
-        for i in range(2):                                          #for testing time......................................................
+        for i in range(20):                                          #for testing time......................................................
             new_state = self.play_random(new_state)
             #print(new_state)
             #print(new_state.two_previous_moves)

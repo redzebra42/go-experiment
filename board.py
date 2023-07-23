@@ -147,7 +147,6 @@ class Board():
         '''tests if there is a capture for a new move and captures the stones
         Modifies the board's goban.
         Returns the number of captured pieces, 0 if nothing is captured.'''
-        #TODO for some reason, all caps are x3 ???
         result = 0
         goban = self.goban
         for neighb in self.neighbours(new_coord):
@@ -202,6 +201,17 @@ class Board():
     def all_coords(self):
         res = [(i, j) for i in range(self.size) for j in range(self.size)]
         return res
+
+    def is_legal(self, coord):
+        res = 0
+        neighbours = self.neighbours(coord)
+        for neighb in neighbours:
+            if self.goban[neighb[1]][neighb[0]] == self.opposite(self.current_player) and self.liberty(self.group(neighb))[0] > 0:
+                res += 1
+            elif self.goban[neighb[1]][neighb[0]] == self.current_player and self.liberty(self.group(neighb))[0] == 1:
+                res += 1
+        return res != len(neighbours)
+                
 
     def __str__(self) -> str:
         res = ''
