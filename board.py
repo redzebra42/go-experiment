@@ -206,11 +206,11 @@ class Board():
         res = 0
         neighbours = self.neighbours(coord)
         for neighb in neighbours:
-            if self.goban[neighb[1]][neighb[0]] == self.opposite(self.current_player) and self.liberty(self.group(neighb))[0] > 0:
+            if self.goban[neighb[1]][neighb[0]] == self.opposite(self.current_player) and self.liberty(self.group(neighb))[0] > 1:
                 res += 1
             elif self.goban[neighb[1]][neighb[0]] == self.current_player and self.liberty(self.group(neighb))[0] == 1:
                 res += 1
-        return res != len(neighbours)
+        return (res != len(neighbours) and self.goban[coord[1]][coord[0]] == '0')
                 
 
     def __str__(self) -> str:
