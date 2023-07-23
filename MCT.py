@@ -132,7 +132,7 @@ class MCT():
         #self.game.play_at(self.root.state, best_node[1])
         self.root = best_node[0]
         self.game.board = self.root.state
-        print('root state: ', self.root.state, '\n', self.root.state.current_player)
+        #print('root state: ', self.root.state, '\n', self.root.state.current_player)
         print("new move: ", time.clock_gettime(0) - clock)
         self.pretty_print()
     
