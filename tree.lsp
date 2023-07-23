@@ -1,28 +1,2 @@
 
-(weight = [22, 27], size = 12
-  (weight = [0, 2], size = 1
-    (weight = [1, 1], size = 0))
-  (weight = [0, 2], size = 1
-    (weight = [1, 1], size = 0))
-  (weight = [2, 3], size = 2
-    (weight = [0, 1], size = 0)
-    (weight = [1, 1], size = 0))
-  (weight = [0, 2], size = 1
-    (weight = [1, 1], size = 0))
-  (weight = [0, 2], size = 1
-    (weight = [1, 1], size = 0))
-  (weight = [0, 2], size = 1
-    (weight = [1, 1], size = 0))
-  (weight = [1, 3], size = 2
-    (weight = [0, 1], size = 0)
-    (weight = [1, 1], size = 0))
-  (weight = [1, 2], size = 1
-    (weight = [0, 1], size = 0))
-  (weight = [0, 2], size = 1
-    (weight = [1, 1], size = 0))
-  (weight = [0, 2], size = 1
-    (weight = [1, 1], size = 0))
-  (weight = [0, 2], size = 1
-    (weight = [1, 1], size = 0))
-  (weight = [0, 2], size = 1
-    (weight = [1, 1], size = 0)))
+(weight = [1, 1], size = 0)

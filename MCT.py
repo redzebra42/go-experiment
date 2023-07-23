@@ -68,11 +68,11 @@ class MCT():
         return legal_moves[random.randint(0,len(legal_moves)-1)]
 
     def selection(self, node):
-        #clock = time.clock_gettime_ns(0)
+        clock = time.clock_gettime(0)
         if not node.is_feuille():
             # print(self)
             return self.selection(node.best_child())
-        #print ("selection: ", time.clock_gettime_ns(0) - clock)
+        print ("selection: ", time.clock_gettime(0) - clock)
         return node
 
     def expension(self, noeud):
@@ -89,15 +89,18 @@ class MCT():
             self.back_propagation(noeud, noeud.state)     #if there are no legal moves, skips expension and simulation
 
     def simulation(self, noeud):
+        clock = time.clock_gettime(0)
         nv_state = noeud.state.clone()
         if not self.game.is_over(nv_state):
             sim = self.game.rand_simulation(nv_state)
         else:
             sim = nv_state
         #print(sim)
+        print ("simulation: ", time.clock_gettime(0) - clock)
         self.back_propagation(noeud, sim)
 
     def back_propagation(self, noeud, state):
+        clock = time.clock_gettime(0)
         winner = self.game.winner(state)
         def _bp_rec(noeud):
             noeud.weight[1] += 1
@@ -106,6 +109,7 @@ class MCT():
             if not noeud.is_racine():
                 _bp_rec(noeud.parent)
         _bp_rec(noeud)
+        print ("back propagaiton: ", time.clock_gettime(0) - clock)
 
     def tree_search(self, root):
         self.expension(self.selection(root))
@@ -118,6 +122,7 @@ class MCT():
         return (best[0], list(self.root.enfants.keys())[list(self.root.enfants.values()).index(best[0])])  #(node, move)
 
     def new_move(self, search_depth):
+        clock = time.clock_gettime(0)
         for i in range(search_depth):
             self.tree_search(self.root)
             if i%100 == 0:
@@ -128,6 +133,7 @@ class MCT():
         self.root = best_node[0]
         self.game.board = self.root.state
         print('root state: ', self.root.state, '\n', self.root.state.current_player)
+        print("new move: ", time.clock_gettime(0) - clock)
         self.pretty_print()
     
     def opponent_played(self, state):
