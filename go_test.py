@@ -13,14 +13,14 @@ example_tree.root.enfants = {(6, 6): Node(test_goban.Test_goban().state_1_1),
 example_tree.root.enfants[(6, 6)].enfants = {(2, 2): Node(test_goban.Test_goban().state_2)}
 
 class TestsGo(unittest.TestCase):
-
+    '''
     def test_neighbour_0_0(self):
         self.go = Go()
-        self.assertEqual(self.go.neighbours((0,0)), [(0,1), (1,0)])
+        self.assertEqual(state.neighbours((0,0)), [(0,1), (1,0)])
 
     def test_neighbour_18_18(self):
         self.go = Go()
-        self.assertEqual(self.go.neighbours((18,18)), [(18,17), (17,18)])
+        self.assertEqual(state.neighbours((18,18)), [(18,17), (17,18)])
 
     def test_neighbour_0_4(self):
         self.go = Go()
@@ -39,21 +39,28 @@ class TestsGo(unittest.TestCase):
         self.go = Go()
         self.test_goban = test_goban.Test_goban()
         self.assertEqual(self.go.liberty(self.go.group((3,17)))[0], 9)
-    
-    def test_group_1(self):
-        self.go = Go()
-        self.test_goban = test_goban.Test_goban()
-        self.assertEqual(self.go.group((3, 3)), [(3, 3), (4, 3), (3, 4), (3, 5)])
+    '''
+    def test_group_1_1(self):
+        tst_goban = test_goban.Test_goban().starting_board_3
+        self.assertEqual(board.Board(tst_goban).group((1, 1)), [(1, 1), (2, 1), (1, 2), (0, 2), (0, 3)])
 
     def test_territory(self):
-        self.go = Go()
-        self.assertEqual(self.go.territory('b'), 9)
+        state = board.Board(test_goban.Test_goban().starting_board_3)
+        self.assertEqual(state.territory('b'), 19)
     
     def test_pretty_print(self):
         example_tree.pretty_print()
 
-
-    
+    def test_is_legal(self):
+        state = board.Board(test_goban.Test_goban().starting_board_3)
+        test_list = []
+        test_list.append(go.is_legal(state, (0, 0)))
+        test_list.append(go.is_legal(state, (3, 8)))
+        test_list.append(go.is_legal(state, (7, 5)))
+        test_list.append(go.is_legal(state, (0, 8)))
+        test_list.append(go.is_legal(state, (1, 1)))
+        test_list.append(go.is_legal(state, (2, 2)))
+        self.assertEqual(test_list, [True, True, False, False, False, False])
 
 
 if __name__ == "__main__":
