@@ -80,7 +80,7 @@ class Go():
         clock = time.clock_gettime(0)
         leg_moves = list(filter(self.is_legal_fn(state), state.all_coords()))
         leg_moves.append('pass')
-        #print("legal moves: ", time.clock_gettime(0) - clock)
+        print("legal moves: ", time.clock_gettime(0) - clock)
         return leg_moves
 
     def is_over(self, state):
@@ -88,7 +88,7 @@ class Go():
     
     def play_random(self, state):
         clock = time.clock_gettime(0)
-        leg_moves = self.legal_moves(state)
+        leg_moves = self.legal_moves(state)            #TODO store legal moves in a state and just change it without recalculating everything a each moves
         i = random.randint(0, len(leg_moves)-1)
         #print("play random: ", time.clock_gettime(0) - clock)
         return self.play_at(state, leg_moves[i])
@@ -96,10 +96,10 @@ class Go():
     def rand_simulation(self, state):
         '''returns the new_state of the game after a randomly played game'''
         new_state = state.clone()
+        i = 0
         while not self.is_over(new_state):
-        #for i in range(20):                                          #for testing time......................................................
             new_state = self.play_random(new_state)
-            #print(new_state)
-            #print(new_state.two_previous_moves)
+            i += 1
+        print(i)
         return new_state
     
