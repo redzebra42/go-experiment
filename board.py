@@ -256,6 +256,7 @@ class Board():
                         self.leg_move_board[neighb[1]][neighb[0]].remove(self.opposite(curr_player))
 
     def initiate_legal_moves(self):
+        self.leg_move_board = [[[] for i in range(self.size)] for j in range(self.size)]
         for coord in self.all_coords():
             if self.is_legal(coord, 'w'):
                 self.leg_move_board[coord[1]][coord[0]].append('w')

@@ -52,7 +52,7 @@ class TestsGo(unittest.TestCase):
         example_tree.pretty_print()
 
     def test_is_legal(self):
-        state = board.Board(test_goban.Test_goban().starting_board_3)
+        state = board.Board(test_goban.Test_goban().starting_board_4)
         test_list = []
         test_list.append(go.is_legal(state, (0, 0)))
         test_list.append(go.is_legal(state, (3, 8)))
@@ -60,8 +60,28 @@ class TestsGo(unittest.TestCase):
         test_list.append(go.is_legal(state, (0, 8)))
         test_list.append(go.is_legal(state, (1, 1)))
         test_list.append(go.is_legal(state, (2, 2)))
-        self.assertEqual(test_list, [True, True, False, False, False, False])
+        test_list.append(go.is_legal(state, (8, 8)))
+        self.assertEqual(test_list, [True, True, False, False, False, False, False])
 
+    def test_is_suicide(self):
+        #self.maxDiff = None
+        state = board.Board(test_goban.Test_goban().starting_board_4)
+        test_list = [[] for k in range(state.size)]
+        for i in range(state.size):
+            for j in range(state.size):
+                test_list[i].append((not state.is_suicide((j, i), 'w')) and state.is_legal((j, i), 'w'))
+        res_list = [
+            [True, True, True, True, True, True, True, True, True],
+            [True, False, False, True, True, False, False, False, False],
+            [False, False, False, False, False, False, False, False, False],
+            [False, False, False, False, False, False, False, False, False],
+            [False, True, True, False, False, False, False, False, False],
+            [False, False, False, False, False, False, False, False, False],
+            [False, False, False, False, False, False, False, False, False],
+            [False, False, False, False, False, False, False, False, False],
+            [False, False, False, True, False, False, False, False, False],
+                    ]
+        self.assertEqual(test_list, res_list)
 
 if __name__ == "__main__":
     unittest.main()
