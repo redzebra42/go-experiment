@@ -54,7 +54,7 @@ class Go():
         if coord == 'pass':
             return True
         else:
-            return state.is_legal(coord)
+            return state.current_player in state.leg_move_board[coord[1]][coord[0]]
 
     def winner(self, state):
         w_pts = state.territory('w') + state.captured_pieces['w'] + self.komi
@@ -78,7 +78,11 @@ class Go():
     
     def legal_moves(self, state):
         clock = time.clock_gettime(0)
-        leg_moves = list(filter(self.is_legal_fn(state), state.all_coords()))
+        leg_moves = []
+        for i in range(state.size):
+            for j in range(state.size):
+                if state.current_player in state.leg_move_board[i][j]:
+                    leg_moves.append((i, j))
         leg_moves.append('pass')
         print("legal moves: ", time.clock_gettime(0) - clock)
         return leg_moves
@@ -88,10 +92,10 @@ class Go():
     
     def play_random(self, state):
         clock = time.clock_gettime(0)
-        leg_moves = self.legal_moves(state)            #TODO store legal moves in a state and just change it without recalculating everything a each moves
-        i = random.randint(0, len(leg_moves)-1)
+        leg_moves = self.legal_moves(state)
+        k = random.randint(0, len(leg_moves)-1)
         #print("play random: ", time.clock_gettime(0) - clock)
-        return self.play_at(state, leg_moves[i])
+        return self.play_at(state, leg_moves[k])
     
     def rand_simulation(self, state):
         '''returns the new_state of the game after a randomly played game'''

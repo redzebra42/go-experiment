@@ -27,6 +27,8 @@ class Board():
         self.goban = copy.deepcopy(goban)
         self.captured_pieces =  copy.copy(captured_pieces)
         self.two_previous_moves = copy.deepcopy(two_previous_moves)
+        self.leg_move_board = [[[] for i in range(self.size)] for j in range(self.size)]
+        self.initiate_legal_moves()
 
     def neighbours(self, coord):
         '''Returns an array of neighbouring coordinates, of length 2 to 4.'''
@@ -140,7 +142,9 @@ class Board():
     def move(self, coord, player):
         result = Board(self.goban, self.captured_pieces, player, self.two_previous_moves, self.size)
         result.goban[coord[1]][coord[0]] = player
-        result.captured_pieces[player] += result.capture(coord, self.opposite(player))
+        captures = result.capture(coord, self.opposite(player))
+        result.captured_pieces[player] += captures
+        result.update_legal_moves(coord, player, captures)
         return result
 
     def capture(self, new_coord, opp_player):
@@ -150,8 +154,9 @@ class Board():
         result = 0
         goban = self.goban
         for neighb in self.neighbours(new_coord):
-            if goban[neighb[1]][neighb[0]] == opp_player and self.liberty(self.group(neighb))[0] == 0:
-                for coord in self.group(neighb):
+            neighb_group = self.group(neighb)
+            if goban[neighb[1]][neighb[0]] == opp_player and self.liberty(neighb_group)[0] == 0:
+                for coord in neighb_group:
                     result += 1
                     goban[coord[1]][coord[0]] = '0'
         return result
@@ -165,7 +170,7 @@ class Board():
                     neighb_coords.append(neighb)
         return neighb_coords
 
-    def is_suicide(self, coord, player):
+    def old_is_suicide(self, coord, player):
         i = 0
         group_coord = self.group(coord)
         neighbours = self.group_neighbours(group_coord)
@@ -177,6 +182,22 @@ class Board():
         if i == len(neighbours):
             return True
         return False
+    
+    def is_suicide(self, coord, player):
+        neighbours = self.neighbours(coord)
+        i = 0
+        for neighb in neighbours:
+            if self.goban[neighb[1]][neighb[0]] == player:
+                if self.liberty(self.group(neighb))[0] > 1:
+                    return False
+                else:
+                    i += 1
+            elif self.goban[neighb[1]][neighb[0]] == self.opposite(player):
+                i += 1
+        if i == len(neighbours):
+            return True
+        else:
+            return False
 
     def territory(self, color):
         points = 0
@@ -202,15 +223,44 @@ class Board():
         res = [(i, j) for i in range(self.size) for j in range(self.size)]
         return res
 
-    def is_legal(self, coord):
+    def is_legal(self, coord, player):
         res = 0
         neighbours = self.neighbours(coord)
         for neighb in neighbours:
-            if self.goban[neighb[1]][neighb[0]] == self.opposite(self.current_player) and self.liberty(self.group(neighb))[0] > 1:
+            if self.goban[neighb[1]][neighb[0]] == self.opposite(player) and self.liberty(self.group(neighb))[0] > 1:
                 res += 1
-            elif self.goban[neighb[1]][neighb[0]] == self.current_player and self.liberty(self.group(neighb))[0] == 1:
+            elif self.goban[neighb[1]][neighb[0]] == player and self.liberty(self.group(neighb))[0] == 1:
                 res += 1
         return (res != len(neighbours) and self.goban[coord[1]][coord[0]] == '0')
+    
+    def update_legal_moves(self, move, curr_player, captures):
+        self.leg_move_board[move[1]][move[0]] = []
+        if captures > 0:
+            self.initiate_legal_moves()
+        else:
+            move_lib = self.liberty(self.group(move))
+            new_coord = move_lib[1][0]
+            if move_lib[0] == 1:
+                self.leg_move_board[new_coord[1]][new_coord[0]].remove(curr_player)
+            for neighb in self.neighbours(move):
+                nei_group = self.group(neighb)
+                nei_lib = self.liberty(nei_group)
+                if self.goban[neighb[1]][neighb[0]] == self.opposite(curr_player) and nei_lib[0] == 1:
+                    new_coord = nei_lib[1][0]
+                    if self.is_suicide(new_coord, self.opposite(curr_player)):
+                        self.leg_move_board[new_coord[1]][new_coord[0]].remove(self.opposite(curr_player))
+                elif self.goban[neighb[1]][neighb[0]] == '0':
+                    if self.is_suicide(neighb, curr_player):
+                        self.leg_move_board[neighb[1]][neighb[0]].remove(curr_player)
+                    elif self.is_suicide(neighb, self.opposite(curr_player)):
+                        self.leg_move_board[neighb[1]][neighb[0]].remove(self.opposite(curr_player))
+
+    def initiate_legal_moves(self):
+        for coord in self.all_coords():
+            if self.is_legal(coord, 'w'):
+                self.leg_move_board[coord[1]][coord[0]].append('w')
+            if self.is_legal(coord, 'b'):
+                self.leg_move_board[coord[1]][coord[0]].append('b')
 
     def __str__(self) -> str:
         res = ''
