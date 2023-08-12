@@ -169,19 +169,6 @@ class Board():
                 if (not (neighb in neighb_coords)) and self.goban[neighb[1]][neighb[0]] != self.goban[coord[1]][coord[0]]:
                     neighb_coords.append(neighb)
         return neighb_coords
-
-    def old_is_suicide(self, coord, player):
-        i = 0
-        group_coord = self.group(coord)
-        neighbours = self.group_neighbours(group_coord)
-        for neighb in neighbours:
-            if self.goban[neighb[1]][neighb[0]] == self.opposite(player):
-                i += 1
-            else:
-                return False
-        if i == len(neighbours):
-            return True
-        return False
     
     def is_suicide(self, coord, player):
         neighbours = self.neighbours(coord)
@@ -234,6 +221,10 @@ class Board():
         return (res != len(neighbours) and self.goban[coord[1]][coord[0]] == '0')
     
     def update_legal_moves(self, move, curr_player, captures):
+        '''
+        Updates the legal_move_board
+        could be optimized by not checking multiple times the same group in the neighb loop
+        '''
         self.leg_move_board[move[1]][move[0]] = []
         if captures > 0:
             self.initiate_legal_moves()
@@ -250,9 +241,9 @@ class Board():
                     if self.is_suicide(new_coord, self.opposite(curr_player)):
                         self.leg_move_board[new_coord[1]][new_coord[0]].remove(self.opposite(curr_player))
                 elif self.goban[neighb[1]][neighb[0]] == '0':
-                    if self.is_suicide(neighb, curr_player):
+                    if self.is_suicide(neighb, curr_player) and curr_player in self.leg_move_board[neighb[1]][neighb[0]]:
                         self.leg_move_board[neighb[1]][neighb[0]].remove(curr_player)
-                    elif self.is_suicide(neighb, self.opposite(curr_player)):
+                    elif self.is_suicide(neighb, self.opposite(curr_player)) and self.opposite(curr_player) in self.leg_move_board[neighb[1]][neighb[0]]:
                         self.leg_move_board[neighb[1]][neighb[0]].remove(self.opposite(curr_player))
 
     def initiate_legal_moves(self):
