@@ -54,7 +54,7 @@ class Go():
         if coord == 'pass':
             return True
         else:
-            return state.current_player in state.leg_move_board[coord[1]][coord[0]]
+            return state.current_player in state.leg_move_board[coord[0]][coord[1]]
 
     def winner(self, state):
         w_pts = state.territory('w') + state.captured_pieces['w'] + self.komi
@@ -84,7 +84,7 @@ class Go():
                 if state.current_player in state.leg_move_board[i][j]:
                     leg_moves.append((i, j))
         leg_moves.append('pass')
-        print("legal moves: ", time.clock_gettime(0) - clock)
+        #print("legal moves: ", time.clock_gettime(0) - clock)
         return leg_moves
 
     def is_over(self, state):
@@ -101,7 +101,7 @@ class Go():
         '''returns the new_state of the game after a randomly played game'''
         new_state = state.clone()
         i = 0
-        while not self.is_over(new_state):
+        while not self.is_over(new_state) and i < 500:
             new_state = self.play_random(new_state)
             i += 1
         print(i)

@@ -55,16 +55,16 @@ class TestsGo(unittest.TestCase):
         state = board.Board(test_goban.Test_goban().starting_board_4)
         test_list = []
         test_list.append(go.is_legal(state, (0, 0)))
-        test_list.append(go.is_legal(state, (3, 8)))
-        test_list.append(go.is_legal(state, (7, 5)))
-        test_list.append(go.is_legal(state, (0, 8)))
+        test_list.append(go.is_legal(state, (8, 3)))
+        test_list.append(go.is_legal(state, (5, 7)))
+        test_list.append(go.is_legal(state, (8, 0)))
         test_list.append(go.is_legal(state, (1, 1)))
         test_list.append(go.is_legal(state, (2, 2)))
         test_list.append(go.is_legal(state, (8, 8)))
         self.assertEqual(test_list, [True, True, False, False, False, False, False])
 
     def test_is_suicide(self):
-        #self.maxDiff = None
+        self.maxDiff = None
         state = board.Board(test_goban.Test_goban().starting_board_4)
         test_list = [[] for k in range(state.size)]
         for i in range(state.size):

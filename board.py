@@ -2,6 +2,7 @@ from tkinter import *
 #from tkinter import ttk
 import copy
 import starting_state as st
+import time
 
 starting_board_1 = [['0' for i in range(st.size)] for j in range(st.size)]
 starting_board_2 = [['w', 'w', 'w', 'b', 'b', 'w', 'b', 'b', '0'],
@@ -225,26 +226,29 @@ class Board():
         Updates the legal_move_board
         could be optimized by not checking multiple times the same group in the neighb loop
         '''
-        self.leg_move_board[move[1]][move[0]] = []
-        if captures > 0:
-            self.initiate_legal_moves()
-        else:
-            move_lib = self.liberty(self.group(move))
-            new_coord = move_lib[1][0]
-            if move_lib[0] == 1:
-                self.leg_move_board[new_coord[1]][new_coord[0]].remove(curr_player)
-            for neighb in self.neighbours(move):
-                nei_group = self.group(neighb)
-                nei_lib = self.liberty(nei_group)
-                if self.goban[neighb[1]][neighb[0]] == self.opposite(curr_player) and nei_lib[0] == 1:
-                    new_coord = nei_lib[1][0]
-                    if self.is_suicide(new_coord, self.opposite(curr_player)):
-                        self.leg_move_board[new_coord[1]][new_coord[0]].remove(self.opposite(curr_player))
-                elif self.goban[neighb[1]][neighb[0]] == '0':
-                    if self.is_suicide(neighb, curr_player) and curr_player in self.leg_move_board[neighb[1]][neighb[0]]:
-                        self.leg_move_board[neighb[1]][neighb[0]].remove(curr_player)
-                    elif self.is_suicide(neighb, self.opposite(curr_player)) and self.opposite(curr_player) in self.leg_move_board[neighb[1]][neighb[0]]:
-                        self.leg_move_board[neighb[1]][neighb[0]].remove(self.opposite(curr_player))
+        clock = time.clock_gettime(0)
+        if move != 'pass':
+            self.leg_move_board[move[1]][move[0]] = []
+            if captures > 0 or self.liberty(self.group(move))[0] == 0:
+                self.initiate_legal_moves()
+            else:
+                move_lib = self.liberty(self.group(move))
+                new_coord = move_lib[1][0]
+                if move_lib[0] == 1 and curr_player in self.leg_move_board[new_coord[1]][new_coord[0]]:
+                    self.leg_move_board[new_coord[1]][new_coord[0]].remove(curr_player)
+                for neighb in self.neighbours(move):
+                    nei_group = self.group(neighb)
+                    nei_lib = self.liberty(nei_group)
+                    if self.goban[neighb[1]][neighb[0]] == self.opposite(curr_player) and nei_lib[0] == 1:
+                        new_coord = nei_lib[1][0]
+                        if self.is_suicide(new_coord, self.opposite(curr_player)) and self.opposite(curr_player) in self.leg_move_board[new_coord[1]][new_coord[0]]:
+                            self.leg_move_board[new_coord[1]][new_coord[0]].remove(self.opposite(curr_player))
+                    elif self.goban[neighb[1]][neighb[0]] == '0':
+                        if self.is_suicide(neighb, curr_player) and curr_player in self.leg_move_board[neighb[1]][neighb[0]]:
+                            self.leg_move_board[neighb[1]][neighb[0]].remove(curr_player)
+                        elif self.is_suicide(neighb, self.opposite(curr_player)) and self.opposite(curr_player) in self.leg_move_board[neighb[1]][neighb[0]]:
+                            self.leg_move_board[neighb[1]][neighb[0]].remove(self.opposite(curr_player))
+        print("update legal moves: ", time.clock_gettime(0) - clock)
 
     def initiate_legal_moves(self):
         self.leg_move_board = [[[] for i in range(self.size)] for j in range(self.size)]
