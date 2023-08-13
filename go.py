@@ -94,7 +94,7 @@ class Go():
         clock = time.clock_gettime(0)
         leg_moves = self.legal_moves(state)
         k = random.randint(0, len(leg_moves)-1)
-        #print("play random: ", time.clock_gettime(0) - clock)
+        print("play random: ", time.clock_gettime(0) - clock)
         return self.play_at(state, leg_moves[k])
     
     def rand_simulation(self, state):

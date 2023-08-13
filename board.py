@@ -248,7 +248,7 @@ class Board():
                             self.leg_move_board[neighb[1]][neighb[0]].remove(curr_player)
                         elif self.is_suicide(neighb, self.opposite(curr_player)) and self.opposite(curr_player) in self.leg_move_board[neighb[1]][neighb[0]]:
                             self.leg_move_board[neighb[1]][neighb[0]].remove(self.opposite(curr_player))
-        print("update legal moves: ", time.clock_gettime(0) - clock)
+        #print("update legal moves: ", time.clock_gettime(0) - clock)
 
     def initiate_legal_moves(self):
         self.leg_move_board = [[[] for i in range(self.size)] for j in range(self.size)]
