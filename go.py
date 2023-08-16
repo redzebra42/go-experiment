@@ -27,14 +27,17 @@ class Go():
             new_state.current_player = 'w'
 
     def play_at(self, state, coord):
+        clock = time.clock_gettime(0)
         if coord == 'pass':
             new_state = state.clone()
             self._next_turn(new_state, coord)
+            #print("play_at: ", time.clock_gettime(0) - clock)
             return new_state
         else:
             if self.is_legal(state, coord):
                 new_state = state.move(coord, state.current_player)
                 self._next_turn(new_state, coord)
+                #print("play_at: ", time.clock_gettime(0) - clock)
                 return new_state
             else:
                 raise RuntimeError
@@ -51,10 +54,10 @@ class Go():
         return next_goban
 
     def is_legal(self, state, coord):
-        if coord == 'pass':
+        if coord == 'pass' or type(coord) == str:
             return True
         else:
-            return state.current_player in state.leg_move_board[coord[0]][coord[1]]
+            return state.current_player in state.leg_move_board[coord[1]][coord[0]]
 
     def winner(self, state):
         w_pts = state.territory('w') + state.captured_pieces['w'] + self.komi
@@ -84,7 +87,7 @@ class Go():
                 if state.current_player in state.leg_move_board[i][j]:
                     leg_moves.append((i, j))
         leg_moves.append('pass')
-        #print("legal moves: ", time.clock_gettime(0) - clock)
+        print("legal moves: ", time.clock_gettime(0) - clock)
         return leg_moves
 
     def is_over(self, state):
@@ -94,8 +97,13 @@ class Go():
         clock = time.clock_gettime(0)
         leg_moves = self.legal_moves(state)
         k = random.randint(0, len(leg_moves)-1)
-        print("play random: ", time.clock_gettime(0) - clock)
-        return self.play_at(state, leg_moves[k])
+        coord = leg_moves[k]
+        if coord != 'pass':
+            #print("play random: ", time.clock_gettime(0) - clock)
+            return self.play_at(state, (coord[1], coord[0]))
+        else:
+            #print("play random: ", time.clock_gettime(0) - clock)
+            return self.play_at(state, coord)
     
     def rand_simulation(self, state):
         '''returns the new_state of the game after a randomly played game'''
