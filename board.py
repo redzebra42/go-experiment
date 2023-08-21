@@ -22,14 +22,17 @@ class Board():
     has all the information needed to play from here (board, captures)
     '''
 
-    def __init__(self, goban=st.goban, captured_pieces=st.caps, curr_player=st.player ,two_previous_moves=st.two_prev_moves, size=st.size):
+    def __init__(self, goban=st.goban, captured_pieces=st.caps, curr_player=st.player ,two_previous_moves=st.two_prev_moves, size=st.size, leg_move_board=None):
         self.size = size
         self.current_player = curr_player
         self.goban = copy.deepcopy(goban)
         self.captured_pieces =  copy.copy(captured_pieces)
         self.two_previous_moves = copy.deepcopy(two_previous_moves)
-        self.leg_move_board = [[[] for i in range(self.size)] for j in range(self.size)]
-        self.initiate_legal_moves()
+        self.leg_move_board = copy.deepcopy(leg_move_board)
+        if leg_move_board == None:
+            self.leg_move_board = self.initiate_legal_moves()
+        else:
+            self.leg_move_board = copy.deepcopy(leg_move_board)
 
     def neighbours(self, coord):
         '''Returns an array of neighbouring coordinates, of length 2 to 4.'''
@@ -141,7 +144,7 @@ class Board():
             raise RuntimeError('Illegal argument, player should be "b" or "w"')
 
     def move(self, coord, player):
-        result = Board(self.goban, self.captured_pieces, player, self.two_previous_moves, self.size)
+        result = Board(self.goban, self.captured_pieces, player, self.two_previous_moves, self.size, self.leg_move_board)
         result.goban[coord[1]][coord[0]] = player
         captures = result.capture(coord, self.opposite(player))
         result.captured_pieces[player] += captures
@@ -230,7 +233,7 @@ class Board():
         if move != 'pass':
             self.leg_move_board[move[1]][move[0]] = []
             if captures > 0 or self.liberty(self.group(move))[0] == 0:
-                self.initiate_legal_moves()
+                self.leg_move_board = self.initiate_legal_moves()
             else:
                 move_lib = self.liberty(self.group(move))
                 new_coord = move_lib[1][0]
@@ -251,12 +254,13 @@ class Board():
         #print("update legal moves: ", time.clock_gettime(0) - clock)
 
     def initiate_legal_moves(self):
-        self.leg_move_board = [[[] for i in range(self.size)] for j in range(self.size)]
+        leg_move_board = [[[] for i in range(self.size)] for j in range(self.size)]
         for coord in self.all_coords():
             if self.is_legal(coord, 'w'):
-                self.leg_move_board[coord[1]][coord[0]].append('w')
+                leg_move_board[coord[1]][coord[0]].append('w')
             if self.is_legal(coord, 'b'):
-                self.leg_move_board[coord[1]][coord[0]].append('b')
+                leg_move_board[coord[1]][coord[0]].append('b')
+        return leg_move_board
 
     def __str__(self) -> str:
         res = ''

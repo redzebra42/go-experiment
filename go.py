@@ -87,7 +87,7 @@ class Go():
                 if state.current_player in state.leg_move_board[i][j]:
                     leg_moves.append((i, j))
         leg_moves.append('pass')
-        print("legal moves: ", time.clock_gettime(0) - clock)
+        #print("legal moves: ", time.clock_gettime(0) - clock)
         return leg_moves
 
     def is_over(self, state):
