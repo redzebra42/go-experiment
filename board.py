@@ -133,7 +133,10 @@ class Board():
         return (liberties, lib_coords)
 
     def play_at(self, coord, player):
-        self.move(coord, player)
+        self.goban[coord[1]][coord[0]] = player
+        captures = self.capture(coord, self.opposite(player))
+        self.captured_pieces[player] += captures
+        self.update_legal_moves(coord, player, captures)
 
     def opposite(self, player):
         if player == 'w':
@@ -145,10 +148,11 @@ class Board():
 
     def move(self, coord, player):
         result = Board(self.goban, self.captured_pieces, player, self.two_previous_moves, self.size, self.leg_move_board)
-        result.goban[coord[1]][coord[0]] = player
-        captures = result.capture(coord, self.opposite(player))
-        result.captured_pieces[player] += captures
-        result.update_legal_moves(coord, player, captures)
+        if type(coord) != str:
+            result.goban[coord[1]][coord[0]] = player
+            captures = result.capture(coord, self.opposite(player))
+            result.captured_pieces[player] += captures
+            result.update_legal_moves(coord, player, captures)
         return result
 
     def capture(self, new_coord, opp_player):

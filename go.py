@@ -29,16 +29,13 @@ class Go():
     def play_at(self, state, coord):
         clock = time.clock_gettime(0)
         if coord == 'pass':
-            new_state = state.clone()
-            self._next_turn(new_state, coord)
+            self._next_turn(state, coord)
             #print("play_at: ", time.clock_gettime(0) - clock)
-            return new_state
         else:
             if self.is_legal(state, coord):
-                new_state = state.move(coord, state.current_player)
-                self._next_turn(new_state, coord)
+                state.play_at(coord, self.current_player)
+                self._next_turn(state, coord)
                 #print("play_at: ", time.clock_gettime(0) - clock)
-                return new_state
             else:
                 raise RuntimeError
     
@@ -100,18 +97,18 @@ class Go():
         coord = leg_moves[k]
         if coord != 'pass':
             #print("play random: ", time.clock_gettime(0) - clock)
-            return self.play_at(state, (coord[1], coord[0]))
+            self.play_at(state, (coord[1], coord[0]))
         else:
             #print("play random: ", time.clock_gettime(0) - clock)
-            return self.play_at(state, coord)
+            self.play_at(state, coord)
     
     def rand_simulation(self, state):
         '''returns the new_state of the game after a randomly played game'''
-        new_state = state.clone()
+        #new_state = state.clone()
         i = 0
-        while not self.is_over(new_state) and i < 500:
-            new_state = self.play_random(new_state)
+        while not self.is_over(state) and i < 500:
+            self.play_random(state)
             i += 1
         print(i)
-        return new_state
+        return state
     

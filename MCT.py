@@ -1,6 +1,5 @@
 import random
 from math import log, sqrt
-import numpy as np
 from go import *
 import time
 
@@ -60,7 +59,7 @@ class MCT():
 
     def new_child(self, noeud, move):
         # new_state = noeud.state.clone()
-        new_state = self.game.play_at(noeud.state, move)
+        new_state = noeud.state.move(move, noeud.state.current_player)
         return noeud.add_child(move, new_state)
 
     def random_move(self, state):

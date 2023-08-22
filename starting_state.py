@@ -19,7 +19,7 @@ goban_3 = [['0','0','0','0','0','0','0','0','0'],
          ['0','w','b','0','w','w','b','b','0']]
 goban_2 = [['0' for i in range(size)] for j in range(size)]
 
-goban = goban_1
+goban = goban_2
 caps = {'w': 1,'b': 0}
 player = 'w'
 two_prev_moves = [(1,8), (2,8)]
