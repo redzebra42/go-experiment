@@ -38,6 +38,11 @@ class Go():
                 #print("play_at: ", time.clock_gettime(0) - clock)
             else:
                 raise RuntimeError
+            
+    def play_mct(self, state, coord, player):
+        new_state = state.move(coord, player)
+        self._next_turn(new_state, coord)
+        return new_state
     
     def _mct_move(self, state, move):
         new_state = state.clone()

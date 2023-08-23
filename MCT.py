@@ -59,7 +59,7 @@ class MCT():
 
     def new_child(self, noeud, move):
         # new_state = noeud.state.clone()
-        new_state = noeud.state.move(move, noeud.state.current_player)
+        new_state = self.game.play_mct(noeud.state, move, noeud.state.current_player)
         return noeud.add_child(move, new_state)
 
     def random_move(self, state):
@@ -71,7 +71,7 @@ class MCT():
         if not node.is_feuille():
             # print(self)
             return self.selection(node.best_child())
-        print ("selection: ", time.clock_gettime(0) - clock)
+        #print ("selection: ", time.clock_gettime(0) - clock)
         return node
 
     def expension(self, noeud):
@@ -95,7 +95,7 @@ class MCT():
         else:
             sim = nv_state
         #print(sim)
-        print ("simulation: ", time.clock_gettime(0) - clock)
+        #print ("simulation: ", time.clock_gettime(0) - clock)
         self.back_propagation(noeud, sim)
 
     def back_propagation(self, noeud, state):
@@ -108,7 +108,7 @@ class MCT():
             if not noeud.is_racine():
                 _bp_rec(noeud.parent)
         _bp_rec(noeud)
-        print ("back propagaiton: ", time.clock_gettime(0) - clock)
+        #print ("back propagaiton: ", time.clock_gettime(0) - clock)
 
     def tree_search(self, root):
         self.expension(self.selection(root))

@@ -1,3 +1,5 @@
 
-(weight = [0, 2], size = 1
+(weight = [4, 4], size = 3
+  (weight = [0, 1], size = 0)
+  (weight = [0, 1], size = 0)
   (weight = [0, 1], size = 0))
