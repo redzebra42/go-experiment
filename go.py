@@ -33,7 +33,7 @@ class Go():
             #print("play_at: ", time.clock_gettime(0) - clock)
         else:
             if self.is_legal(state, coord):
-                state.play_at(coord, self.current_player)
+                state.play_at(coord, state.current_player)
                 self._next_turn(state, coord)
                 #print("play_at: ", time.clock_gettime(0) - clock)
             else:
@@ -115,5 +115,7 @@ class Go():
             self.play_random(state)
             i += 1
         print(i)
+        if i > 60:
+            pass
         return state
     
