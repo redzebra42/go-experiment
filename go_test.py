@@ -51,7 +51,7 @@ class TestsGo(unittest.TestCase):
     def test_pretty_print(self):
         example_tree.pretty_print()
 
-    def test_is_legal(self):
+    def test_is_legal(self): #coord = (x, y)
         state = board.Board(test_goban.Test_goban().starting_board_4)
         test_list = []
         test_list.append(go.is_legal(state, (0, 0)))

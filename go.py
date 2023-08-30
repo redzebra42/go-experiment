@@ -87,7 +87,7 @@ class Go():
         for i in range(state.size):
             for j in range(state.size):
                 if state.current_player in state.leg_move_board[i][j]:
-                    leg_moves.append((i, j))
+                    leg_moves.append((j, i))
         leg_moves.append('pass')
         #print("legal moves: ", time.clock_gettime(0) - clock)
         return leg_moves
@@ -100,12 +100,7 @@ class Go():
         leg_moves = self.legal_moves(state)
         k = random.randint(0, len(leg_moves)-1)
         coord = leg_moves[k]
-        if coord != 'pass':
-            #print("play random: ", time.clock_gettime(0) - clock)
-            self.play_at(state, (coord[1], coord[0]))
-        else:
-            #print("play random: ", time.clock_gettime(0) - clock)
-            self.play_at(state, coord)
+        self.play_at(state, coord)
     
     def rand_simulation(self, state):
         '''returns the new_state of the game after a randomly played game'''
