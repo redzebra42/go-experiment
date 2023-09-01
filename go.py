@@ -109,7 +109,7 @@ class Go():
         while not self.is_over(state) and i < 500:
             self.play_random(state)
             i += 1
-        print(i)
+        #print(i)
         if i > 60:
             pass
         return state

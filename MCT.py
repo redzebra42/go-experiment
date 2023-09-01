@@ -77,7 +77,7 @@ class MCT():
     def expension(self, noeud):
         legal_moves = self.game.legal_moves(noeud.state)
         random.shuffle(legal_moves)
-        print(f'Found {len(legal_moves)} legal moves')
+        #print(f'Found {len(legal_moves)} legal moves')
         if not self.game.is_over(noeud.state):
             for move in legal_moves:
                 if not (move in noeud.enfants.keys()):
@@ -129,11 +129,11 @@ class MCT():
         best_node = self.choose_best_node()
         self.game._mct_move(best_node[0].state, best_node[1])
         #self.game.play_at(self.root.state, best_node[1])
+        self.pretty_print()
         self.root = best_node[0]
         self.game.board = self.root.state
         #print('root state: ', self.root.state, '\n', self.root.state.current_player)
         print("new move: ", time.clock_gettime(0) - clock)
-        self.pretty_print()
     
     def opponent_played(self, state):
         for node in [enf for enf in self.root.enfants.values()]:
