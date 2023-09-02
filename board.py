@@ -89,6 +89,7 @@ class Board():
 
     def print_tkinter_board(self, cnvs,):
         size = self.size
+        move = self.two_previous_moves[0]
         cnvs.pack(side=LEFT)
         cnvs.create_rectangle(40, 40, 80+35*(size-1), 80+35*(size-1), width=3, fill="orange", outline="orange")
         cnvs.create_rectangle(60, 60, 60+35*(size-1), 60+35*(size-1), width=3)
@@ -107,7 +108,10 @@ class Board():
         for i in range(len(self.goban)):
             for j in range(len(self.goban[0])):
                 self.print_tile_canvas((i,j), cnvs)
-
+        if move != None:
+            if move != 'pass':
+                y, x = 60+35*move[1], 60+35*move[0]
+                cnvs.create_oval(x-5, y-5, x+5, y+5, fill="red")
     def _group_rec(self, coord, group_list):
         neighbours = self.neighbours(coord)
         group_list.append(coord)
