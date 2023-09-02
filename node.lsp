@@ -1,0 +1,12 @@
+
+(weight = [2, 10], size = 10, move = (4, 6)
+  (weight = [1, 1], size = 0, move = (7, 2))
+  (weight = [0, 1], size = 0, move = (4, 3))
+  (weight = [1, 1], size = 0, move = (4, 5))
+  (weight = [1, 1], size = 0, move = (6, 3))
+  (weight = [1, 1], size = 0, move = (5, 0))
+  (weight = [0, 1], size = 0, move = (1, 3))
+  (weight = [1, 1], size = 0, move = (3, 2))
+  (weight = [1, 1], size = 0, move = (0, 0))
+  (weight = [1, 1], size = 0, move = (8, 1))
+  (weight = [1, 1], size = 0, move = (7, 3)))

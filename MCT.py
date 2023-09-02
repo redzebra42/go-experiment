@@ -38,7 +38,7 @@ class Node():
         return best[0]
     
     def __str__(self) -> str:
-        return str(f'weight = {self.weight}, size = {len(self.enfants)}')
+        return str(f'weight = {self.weight}, size = {len(self.enfants)}, move = {self.state.two_previous_moves[0]}')
 
 class MCT():
 
@@ -160,7 +160,16 @@ class MCT():
 
     def pretty_print(self):
         file = open("tree.lsp", "w")
+        root = self.root
+        while not root.is_racine():
+            root = root.parent
+        self._pretty_print(root, 0, file)
+        self.node_pretty_print()
+
+    def node_pretty_print(self):
+        file = open("node.lsp", "w")
         self._pretty_print(self.root, 0, file)
+
 
     def __str__(self) -> str:
         return str(f'root = {self.root}')
