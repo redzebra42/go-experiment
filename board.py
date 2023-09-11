@@ -199,16 +199,19 @@ class Board():
             return False
 
     def territory(self, color):
+        clock = time.clock_gettime(0)
         points = 0
         already_counted = []
         for i in range(len(self.goban)):
             for j in range(len(self.goban[0])):
                     coord = (j,i)
-                    if self.goban[i][j] == "0" and not(coord in already_counted) and all(self.goban[x[1]][x[0]] == color for x in self.group_neighbours(self.group(coord))):
-                        points += len(self.group(coord))
+                    coord_group = self.group(coord)
+                    if self.goban[i][j] == "0" and not(coord in already_counted) and all(self.goban[x[1]][x[0]] == color for x in self.group_neighbours(coord_group)):
+                        points += len(coord_group)
                     if not(coord in already_counted):
-                        for k in range(len(self.group(coord))):
-                            already_counted.append(self.group(coord)[k])
+                        for k in range(len(coord_group)):
+                            already_counted.append(coord_group[k])
+        #print("territory: ", time.clock_gettime(0) - clock)
         return points
     
     def clone(self):

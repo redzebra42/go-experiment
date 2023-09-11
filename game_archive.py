@@ -4,7 +4,11 @@ class Game_archive():
         pass
 
     def sfg_to_move_list():
-        sfg = open('game_1.sgf')
-        print(sfg[1])
+        file = open("Game_1.sgf", "r")
+        line = file.readline()
+        while line != ";":
+            print(line)
+            line = file.readline()
+        print(line)
 
 Game_archive.sfg_to_move_list()
