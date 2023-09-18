@@ -76,41 +76,70 @@ class Oboard():
         else:
             return 1
 
-    def is_legal(self, move):
+    def is_legal_dir(self, move):
         if self.board[move[0]][move[1]] in (0, 3):
             if move[0] < self.size - 1:
                 i = move[0] + 1
                 while self.board[i][move[1]] == self.opp_player():
                     i += 1
                 if (i != move[0] + 1) and (self.board[i][move[1]] == self.current_player):
-                    return True
+                    return (True, 'U')
             if move[0] > 0:
                 i = move[0] - 1
                 while self.board[i][move[1]] == self.opp_player():
                     i -= 1
                 if (i != move[0] - 1) and (self.board[i][move[1]] == self.current_player):
-                    return True
+                    return (True, 'D')
             if move[1] < self.size - 1:
                 j = move[1] + 1
                 while self.board[j][move[0]] == self.opp_player():
                     j += 1
                 if (j != move[1] + 1) and (self.board[move[0]][j] == self.current_player):
-                    return True
+                    return (True, 'R')
             if move[1] > 0:
                 j = move[1] - 1
                 while self.board[j][move[0]] == self.opp_player():
                     j -= 1
                 if (j != move[1] - 1) and (self.board[move[0]][j] == self.current_player):
-                    return True
-            return False
+                    return (True, 'L')
+            return (False, None)
         else:
-            return False
+            return (False, None)
+    
+    def is_legal(self, move):
+        return self.is_legal_dir(move)[0]
+    
+    def reverse(self, move, dir):
+        if dir == 'R':
+            i = move[1] + 1
+            while self.board[move[0]][i] == self.opp_player():
+                self.board[move[0]][i] = self.current_player
+                i += 1
+        elif dir == 'L':
+            i = move[1] - 1
+            while self.board[move[0]][i] == self.opp_player():
+                self.board[move[0]][i] = self.current_player
+                i -= 1
+        elif dir == 'U':
+            i = move[0] + 1
+            while self.board[i][move[1]] == self.opp_player():
+                self.board[i][move[1]] = self.current_player
+                i += 1
+        elif dir == 'D':
+            i = move[0] - 1
+            while self.board[i][move[1]] == self.opp_player():
+                self.board[i][move[1]] = self.current_player
+                i -= 1
+
 
     def play_at(self, move):
         print(move)
-        if self.is_legal(move):
-            self.board[move[0]][move[0]] == self.current_player
-            self.current_player = self.opp_player(self.current_player)
+        legal_dir = self.is_legal_dir(move)
+        print(legal_dir[1])
+        if legal_dir[0]:
+            self.reverse(move, legal_dir[1])
+            self.board[move[0]][move[1]] = self.current_player
+            self.current_player = self.opp_player()
             self.print_board()
         else:
             print("illegal move")
