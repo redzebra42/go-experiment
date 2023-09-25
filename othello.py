@@ -1,4 +1,5 @@
 import copy
+import random
 
 def init_board(board):
     "initialize the board to the starting position"
@@ -6,14 +7,21 @@ def init_board(board):
 
 class Oboard():
 
-    def __init__(self, board=None ) -> None:
+    def __init__(self, board=None, player=2, size=8, prev_move=None) -> None:
         self.board = copy.deepcopy(board)        #(0: empty, 1: white, 2: black, 3: legal move)
         if self.board == None:
             self.board = [[0 for i in range(8)] for j in range(8)]
             init_board(self.board)
-        self.current_player = 2
-        self.size = 8
-        self.prev_move = None
+        self.current_player = player
+        self.size = size
+        self.prev_move = prev_move
+
+    def curr_player(self):
+        return self.current_player
+    
+    def clone(self):
+        new_child = Oboard(self.board, self.player, self.size, self.prev_move)
+        return new_child
 
     def int_to_player(self, n):
         if n == 0:
@@ -230,13 +238,21 @@ class Oboard():
                 return 2
             else:
                 return 0
+            
+    def play_random(self):
+        leg_moves = self.legal_moves()
+        i = random.randint(0, len(leg_moves) - 1)
+        self.play_at_and_print(leg_moves[i])
+
+    def rand_simulation(self):
+        while not self.is_over():
+            self.play_random()
 
     def play_at(self, move):
         if move == 'pass':
             self.current_player = self.opp_player()
             self.prev_move = move
             self.legal_moves()
-            self.print_board()
         else:
             legal_dir = self.is_legal_dir(move)
             if legal_dir[0]:
@@ -245,9 +261,12 @@ class Oboard():
                 self.current_player = self.opp_player()
                 self.prev_move = move
                 self.legal_moves()
-                self.print_board()
             else:
                 print("illegal move")
+    
+    def play_at_and_print(self, move):
+        self.play_at(move)
+        self.print_board()
     
 class Ogame():
 
@@ -261,9 +280,9 @@ class Ogame():
         X is_over(state)
         X winner(state)
         0 rand_simulation(state)
-        0 state class with the following funcyions:
-        0 curr_player()
-        0 clone()
+        state class with the following funcyions:
+        X curr_player()
+        X clone()
         '''
     
     def txt_move_to_coord(self, move):
@@ -273,17 +292,20 @@ class Ogame():
         L = ['a','b','c','d','e','f','g','h']
         return (int(move[1:])-1, L.index(move[0]))
     
-    def legal_moves(state):
+    def legal_moves(self, state):
         state.legal_moves()
     
     def play_at(self, state, move):
         state.play_at(move)
 
-    def is_over(state):
+    def is_over(self, state):
         state.is_over()
 
-    def winner(state):
+    def winner(self, state):
         state.winner()
+
+    def rand_simulation(self, state):
+        state.rand_simulation()
 
 
 def is_legal_test(board1):
@@ -306,12 +328,15 @@ if __name__ == "__main__":
 
 
     while True:
+
+        game.rand_simulation(board)
+
         move = input(str('next move: '))
 
         if move == None:
             continue
 
         coord = game.txt_move_to_coord(move)
-        game.play_at(board, coord)
+        board.play_at_and_print(coord)
 
 
