@@ -113,28 +113,28 @@ class Oboard():
                     i += 1
                     j += 1
                 if (i != move[0] + 1) and (self.board[i][j] == self.current_player):
-                    return (True, 'UR')
+                    return (True, 'DR')
             if move[0] < self.size - 1 and move[1] > 0:
                 i,j = move[0] + 1, move[1] - 1
                 while self.board[i][j] == self.opp_player():
                     i += 1
                     j -= 1
                 if (i != move[0] + 1) and (self.board[i][j] == self.current_player):
-                    return (True, 'UL')
+                    return (True, 'DL')
             if move[0] > 0 and move[1] > 0:
                 i,j = move[0] - 1, move[1] - 1
                 while self.board[i][j] == self.opp_player():
                     i -= 1
                     j -= 1
                 if (i != move[0] - 1) and (self.board[i][j] == self.current_player):
-                    return (True, 'DL')
+                    return (True, 'UL')
             if move[0] > 0 and move[1] < self.size - 1:
                 i,j = move[0] - 1, move[1] + 1
                 while self.board[i][j] == self.opp_player():
                     i -= 1
                     j += 1
                 if (i != move[0] - 1) and (self.board[i][j] == self.current_player):
-                    return (True, 'DR')
+                    return (True, 'UR')
             return (False, None)
         else:
             return (False, None)
@@ -163,6 +163,34 @@ class Oboard():
             while self.board[i][move[1]] == self.opp_player():
                 self.board[i][move[1]] = self.current_player
                 i -= 1
+        elif dir == 'DR':
+            i = move[0] + 1
+            j = move[1] + 1
+            while self.board[i][j] == self.opp_player():
+                self.board[i][j] = self.current_player
+                i += 1
+                j += 1
+        elif dir == 'UR':
+            i = move[0] - 1
+            j = move[1] + 1
+            while self.board[i][j] == self.opp_player():
+                self.board[i][j] = self.current_player
+                i -= 1
+                j += 1
+        elif dir == 'DL':
+            i = move[0] + 1
+            j = move[1] - 1
+            while self.board[i][j] == self.opp_player():
+                self.board[i][j] = self.current_player
+                i += 1
+                j -= 1
+        elif dir == 'UL':
+            i = move[0] - 1
+            j = move[1] - 1
+            while self.board[i][j] == self.opp_player():
+                self.board[i][j] = self.current_player
+                i -= 1
+                j -= 1 
 
 
     def play_at(self, move):
