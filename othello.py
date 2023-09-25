@@ -1,13 +1,16 @@
 import copy
+
 def init_board(board):
     "initialize the board to the starting position"
     board[3][3], board[4][4], board[3][4], board[4][3] = 1, 1, 2, 2
 
 class Oboard():
 
-    def __init__(self, board=[[0 for i in range(8)] for j in range(8)] ) -> None:
+    def __init__(self, board=None ) -> None:
         self.board = copy.deepcopy(board)        #(0: empty, 1: white, 2: black, 3: legal move)
-        init_board(self.board)
+        if self.board == None:
+            self.board = [[0 for i in range(8)] for j in range(8)]
+            init_board(self.board)
         self.current_player = 2
         self.size = 8
 
@@ -77,6 +80,8 @@ class Oboard():
             return 1
 
     def is_legal_dir(self, move):
+        if move == (4, 6):  #debug
+            move = (4, 6)
         if self.board[move[0]][move[1]] in (0, 3):
             if move[0] < self.size - 1:
                 i = move[0] + 1
@@ -92,16 +97,44 @@ class Oboard():
                     return (True, 'D')
             if move[1] < self.size - 1:
                 j = move[1] + 1
-                while self.board[j][move[0]] == self.opp_player():
+                while self.board[move[0]][j] == self.opp_player():
                     j += 1
                 if (j != move[1] + 1) and (self.board[move[0]][j] == self.current_player):
                     return (True, 'R')
             if move[1] > 0:
                 j = move[1] - 1
-                while self.board[j][move[0]] == self.opp_player():
+                while self.board[move[0]][j] == self.opp_player():
                     j -= 1
                 if (j != move[1] - 1) and (self.board[move[0]][j] == self.current_player):
                     return (True, 'L')
+            if move[0] < self.size - 1 and move[1] < self.size - 1:
+                i,j = move[0] + 1, move[1] + 1
+                while self.board[i][j] == self.opp_player():
+                    i += 1
+                    j += 1
+                if (i != move[0] + 1) and (self.board[i][j] == self.current_player):
+                    return (True, 'UR')
+            if move[0] < self.size - 1 and move[1] > 0:
+                i,j = move[0] + 1, move[1] - 1
+                while self.board[i][j] == self.opp_player():
+                    i += 1
+                    j -= 1
+                if (i != move[0] + 1) and (self.board[i][j] == self.current_player):
+                    return (True, 'UL')
+            if move[0] > 0 and move[1] > 0:
+                i,j = move[0] - 1, move[1] - 1
+                while self.board[i][j] == self.opp_player():
+                    i -= 1
+                    j -= 1
+                if (i != move[0] - 1) and (self.board[i][j] == self.current_player):
+                    return (True, 'DL')
+            if move[0] > 0 and move[1] < self.size - 1:
+                i,j = move[0] - 1, move[1] + 1
+                while self.board[i][j] == self.opp_player():
+                    i -= 1
+                    j += 1
+                if (i != move[0] - 1) and (self.board[i][j] == self.current_player):
+                    return (True, 'DR')
             return (False, None)
         else:
             return (False, None)
@@ -168,20 +201,22 @@ def is_legal_test(board1):
             if legal_board[i][j]:
                 board1.board[i][j] = 3
 
-board = Oboard()
-game = Ogame()
-is_legal_test(board)
-board.print_board()
-print(board.occupied_tiles())
+
+if __name__ == "__main__":
+    board = Oboard()
+    game = Ogame()
+    is_legal_test(board)
+    board.print_board()
+    print(board.occupied_tiles())
 
 
-while True:
-    move = input(str('next move: '))
+    while True:
+        move = input(str('next move: '))
 
-    if move == None:
-        continue
+        if move == None:
+            continue
 
-    coord = game.txt_move_to_coord(move)
-    game.play_at(board, coord)
+        coord = game.txt_move_to_coord(move)
+        game.play_at(board, coord)
 
 
