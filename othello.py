@@ -13,6 +13,7 @@ class Oboard():
             init_board(self.board)
         self.current_player = 2
         self.size = 8
+        self.prev_move = None
 
     def int_to_player(self, n):
         if n == 0:
@@ -191,32 +192,98 @@ class Oboard():
                 self.board[i][j] = self.current_player
                 i -= 1
                 j -= 1 
-
+    
+    def legal_moves(self):
+        leg_moves = []
+        for i in range(self.size):
+            for j in range(self.size):
+                move = (i, j)
+                if self.is_legal(move):
+                    self.board[move[0]][move[1]] = 3
+                    leg_moves.append(move)
+                elif self.board[move[0]][move[1]] == 3:
+                    self.board[move[0]][move[1]] = 0
+        leg_moves.append('pass')
+        return leg_moves
+    
+    def is_over(self):
+        return (self.prev_move == 'pass') and (len(self.legal_moves()) == 1)
+    
+    def score(self):
+        b = 0
+        w = 0
+        for line in self.board:
+            for stone in line:
+                if stone == 1:
+                    w += 1
+                elif stone == 2:
+                    b += 1
+        return w - b
+    
+    def winner(self):
+        '''return 1 for white, 2 for black, 0 for equal scores'''
+        if self.is_over():
+            score = self.score()
+            if score > 0:
+                return 1
+            elif score < 0:
+                return 2
+            else:
+                return 0
 
     def play_at(self, move):
-        print(move)
-        legal_dir = self.is_legal_dir(move)
-        print(legal_dir[1])
-        if legal_dir[0]:
-            self.reverse(move, legal_dir[1])
-            self.board[move[0]][move[1]] = self.current_player
+        if move == 'pass':
             self.current_player = self.opp_player()
+            self.prev_move = move
+            self.legal_moves()
             self.print_board()
         else:
-            print("illegal move")
+            legal_dir = self.is_legal_dir(move)
+            if legal_dir[0]:
+                self.reverse(move, legal_dir[1])
+                self.board[move[0]][move[1]] = self.current_player
+                self.current_player = self.opp_player()
+                self.prev_move = move
+                self.legal_moves()
+                self.print_board()
+            else:
+                print("illegal move")
     
 class Ogame():
 
     def __init__(self) -> None:
         self.state = Oboard()
+
+        '''
+        game class that has the following functions:
+        X legal_moves(state) 
+        X play_at(state, move)
+        X is_over(state)
+        X winner(state)
+        0 rand_simulation(state)
+        0 state class with the following funcyions:
+        0 curr_player()
+        0 clone()
+        '''
     
     def txt_move_to_coord(self, move):
+        if move == 'pass':
+            return move
         '''Convert a textual hand like c12 into coordinates like (2, 12).'''
         L = ['a','b','c','d','e','f','g','h']
         return (int(move[1:])-1, L.index(move[0]))
     
+    def legal_moves(state):
+        state.legal_moves()
+    
     def play_at(self, state, move):
         state.play_at(move)
+
+    def is_over(state):
+        state.is_over()
+
+    def winner(state):
+        state.winner()
 
 
 def is_legal_test(board1):
