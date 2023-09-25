@@ -20,7 +20,7 @@ class Oboard():
         return self.current_player
     
     def clone(self):
-        new_child = Oboard(self.board, self.player, self.size, self.prev_move)
+        new_child = Oboard(self.board, self.current_player, self.size, self.prev_move)
         return new_child
 
     def int_to_player(self, n):
@@ -94,52 +94,52 @@ class Oboard():
         if self.board[move[0]][move[1]] in (0, 3):
             if move[0] < self.size - 1:
                 i = move[0] + 1
-                while self.board[i][move[1]] == self.opp_player():
+                while i < self.size - 1 and self.board[i][move[1]] == self.opp_player():
                     i += 1
                 if (i != move[0] + 1) and (self.board[i][move[1]] == self.current_player):
                     return (True, 'U')
             if move[0] > 0:
                 i = move[0] - 1
-                while self.board[i][move[1]] == self.opp_player():
+                while i > 0 and self.board[i][move[1]] == self.opp_player():
                     i -= 1
                 if (i != move[0] - 1) and (self.board[i][move[1]] == self.current_player):
                     return (True, 'D')
             if move[1] < self.size - 1:
                 j = move[1] + 1
-                while self.board[move[0]][j] == self.opp_player():
+                while j < self.size - 1 and self.board[move[0]][j] == self.opp_player():
                     j += 1
                 if (j != move[1] + 1) and (self.board[move[0]][j] == self.current_player):
                     return (True, 'R')
             if move[1] > 0:
                 j = move[1] - 1
-                while self.board[move[0]][j] == self.opp_player():
+                while j > 0 and self.board[move[0]][j] == self.opp_player():
                     j -= 1
                 if (j != move[1] - 1) and (self.board[move[0]][j] == self.current_player):
                     return (True, 'L')
             if move[0] < self.size - 1 and move[1] < self.size - 1:
                 i,j = move[0] + 1, move[1] + 1
-                while self.board[i][j] == self.opp_player():
+                while i < self.size - 1 and j < self.size - 1 and self.board[i][j] == self.opp_player():
                     i += 1
                     j += 1
                 if (i != move[0] + 1) and (self.board[i][j] == self.current_player):
                     return (True, 'DR')
             if move[0] < self.size - 1 and move[1] > 0:
                 i,j = move[0] + 1, move[1] - 1
-                while self.board[i][j] == self.opp_player():
+                while i < self.size - 1 and j > 0 and self.board[i][j] == self.opp_player():
                     i += 1
                     j -= 1
                 if (i != move[0] + 1) and (self.board[i][j] == self.current_player):
                     return (True, 'DL')
             if move[0] > 0 and move[1] > 0:
                 i,j = move[0] - 1, move[1] - 1
-                while self.board[i][j] == self.opp_player():
+                while i > 0 and  j > 0 and self.board[i][j] == self.opp_player():
                     i -= 1
                     j -= 1
                 if (i != move[0] - 1) and (self.board[i][j] == self.current_player):
                     return (True, 'UL')
             if move[0] > 0 and move[1] < self.size - 1:
                 i,j = move[0] - 1, move[1] + 1
-                while self.board[i][j] == self.opp_player():
+                while i > 0 and j < self.size - 1 and self.board[i][j] == self.opp_player():
                     i -= 1
                     j += 1
                 if (i != move[0] - 1) and (self.board[i][j] == self.current_player):
@@ -215,7 +215,12 @@ class Oboard():
         return leg_moves
     
     def is_over(self):
-        return (self.prev_move == 'pass') and (len(self.legal_moves()) == 1)
+        if len(self.legal_moves()) == 1:
+            new_state = self.clone()
+            new_state.play_at('pass')
+            if len(new_state.legal_moves()) == 1:
+                return True
+        return False
     
     def score(self):
         b = 0
@@ -245,8 +250,11 @@ class Oboard():
         self.play_at_and_print(leg_moves[i])
 
     def rand_simulation(self):
+        i = 0
         while not self.is_over():
             self.play_random()
+            i += 1
+            print(i)
 
     def play_at(self, move):
         if move == 'pass':

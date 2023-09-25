@@ -13,7 +13,18 @@ b1 = [
     [0, 0, 0, 3, 3, 3, 3, 0],
     [0, 0, 0, 0, 0, 0, 0, 0]
       ]
+b2 = [
+    [0, 3, 3, 2, 1, 2, 3, 0],
+    [0, 0, 2, 2, 2, 2, 3, 3],
+    [0, 0, 1, 1, 1, 2, 2, 3],
+    [3, 0, 1, 1, 1, 1, 0, 3],
+    [3, 2, 1, 2, 1, 0, 0, 0],
+    [3, 0, 1, 3, 2, 0, 0, 0],
+    [0, 0, 1, 0, 3, 2, 0, 0],
+    [0, 0, 0, 0, 0, 0, 3, 0]
+      ]
 board2 = Oboard(b1)
+board3 = Oboard(b2, 1, 8, (2, 3))
 
 class TestsOthello(unittest.TestCase):
 
@@ -33,10 +44,6 @@ class TestsOthello(unittest.TestCase):
             [False, False, False, False, False, False, False, False],
             [False, False, False, False, False, False, False, False],
                           ]
-        board1.print_board()
-        for line in legal_board:
-            print(line)
-        print("")
         self.assertEqual(legal_board, expected_board)
     
     def test_is_legal_2(self):
@@ -55,10 +62,10 @@ class TestsOthello(unittest.TestCase):
             [False, False, False, True, True, True, True, False],
             [False, False, False, False, False, False, False, False],
                           ]
-        board2.print_board()
-        for line in legal_board:
-            print(line)
         self.assertEqual(legal_board, expected_board)
+
+    def test_legal_moves(self):
+        board3.legal_moves()
 
 
 if __name__ == "__main__":
