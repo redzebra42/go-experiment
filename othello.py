@@ -1,5 +1,6 @@
 import copy
 import random
+from MCT import *
 
 def init_board(board):
     "initialize the board to the starting position"
@@ -15,6 +16,8 @@ class Oboard():
         self.current_player = player
         self.size = size
         self.prev_move = prev_move
+        self.two_previous_moves = [self.prev_move]
+        self.legal_moves()
 
     def curr_player(self):
         return self.current_player
@@ -247,14 +250,11 @@ class Oboard():
     def play_random(self):
         leg_moves = self.legal_moves()
         i = random.randint(0, len(leg_moves) - 1)
-        self.play_at_and_print(leg_moves[i])
+        self.play_at(leg_moves[i])
 
     def rand_simulation(self):
-        i = 0
         while not self.is_over():
             self.play_random()
-            i += 1
-            print(i)
 
     def play_at(self, move):
         if move == 'pass':
@@ -287,7 +287,8 @@ class Ogame():
         X play_at(state, move)
         X is_over(state)
         X winner(state)
-        0 rand_simulation(state)
+        X rand_simulation(state)
+        X play_mct()
         state class with the following funcyions:
         X curr_player()
         X clone()
@@ -301,19 +302,31 @@ class Ogame():
         return (int(move[1:])-1, L.index(move[0]))
     
     def legal_moves(self, state):
-        state.legal_moves()
+        return state.legal_moves()
     
     def play_at(self, state, move):
         state.play_at(move)
 
     def is_over(self, state):
-        state.is_over()
+        return state.is_over()
 
     def winner(self, state):
-        state.winner()
+        return state.winner()
 
     def rand_simulation(self, state):
         state.rand_simulation()
+        return state
+
+    def play_mct(self, state, coord, player):
+        res = Oboard(state.board, player, state.size, state.prev_move)
+        res.play_at(coord)
+        return res
+    
+    def _mct_move(self, state, move):
+        new_state = state.clone()
+        new_state.curr_player = new_state.opp_player()
+        new_state.prev_move = move
+        new_state.legal_moves()
 
 
 def is_legal_test(board1):
@@ -328,16 +341,27 @@ def is_legal_test(board1):
 
 
 if __name__ == "__main__":
-    board = Oboard()
     game = Ogame()
-    is_legal_test(board)
-    board.print_board()
-    print(board.occupied_tiles())
+    state = game.state
+    mct = MCT(game, state)
+
+    def play_at(coord, state=state):
+        if state.is_legal(coord):
+            game.play_at(state, coord)
+            state.print_board()
+            mct.set_played_move(coord)
+        else:
+            print("illegal move")
+
+    def tree_search(search_depth):
+        mct.new_move(search_depth)
+        #state = mct.root.state
+        state.print_board()
+
+    mct.root.state.print_board()
 
 
     while True:
-
-        game.rand_simulation(board)
 
         move = input(str('next move: '))
 
@@ -345,6 +369,6 @@ if __name__ == "__main__":
             continue
 
         coord = game.txt_move_to_coord(move)
-        board.play_at_and_print(coord)
-
+        play_at(coord)
+        tree_search(100)
 

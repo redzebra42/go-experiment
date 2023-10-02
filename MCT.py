@@ -1,12 +1,13 @@
 import random
 from math import log, sqrt
+from othello import Ogame
 from go import *
 import time
 
 class Node():
 
     def __init__(self, state):
-        self.game = Go()
+        self.game = Ogame()
         self.weight = [0,0]
         self.state = state
         self.enfants = {}
@@ -52,7 +53,9 @@ class MCT():
         is_over(state)
         winner(state)
         rand_simulation(state)
-        state class with the following funcyions:
+        play_mct()
+
+        state class with the following functions:
         curr_player()
         clone()
         '''
