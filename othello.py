@@ -357,6 +357,24 @@ if __name__ == "__main__":
         mct.new_move(search_depth)
         mct.root.state.print_board()
 
+    def time_tree_search(sec):
+        mct.new_move_time(sec)
+        mct.root.state.print_board()
+
+    def rand_vs_robot():
+        for i in range(2):
+            robot_wins = 0
+            while not game.is_over():
+                leg_moves = state.legal_moves()
+                i = random.randint(0, len(leg_moves))
+                play_at(leg_moves[i])
+                time_tree_search(1)
+                state = mct.root.state
+            if game.winner(state) == 1:
+                robot_wins += 1
+        return robot_wins
+
+
     mct.root.state.print_board()
 
     while True:
@@ -368,6 +386,6 @@ if __name__ == "__main__":
 
         coord = game.txt_move_to_coord(move)
         play_at(coord, state)
-        tree_search(100)
+        time_tree_search(4)
         state = mct.root.state
 

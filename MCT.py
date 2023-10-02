@@ -137,6 +137,21 @@ class MCT():
         self.game.board = self.root.state
         #print('root state: ', self.root.state, '\n', self.root.state.current_player)
         print("new move: ", time.clock_gettime(0) - clock)
+
+    def new_move_time(self, sec):
+        clock = time.clock_gettime(0)
+        i = 1
+        while sec - time.clock_gettime(0) + clock > 0:
+            self.tree_search(self.root)
+            i += 1
+            if i%100 == 0:
+                print(i)
+        best_node = self.choose_best_node()
+        self.game._mct_move(best_node[0].state, best_node[1])
+        self.pretty_print()
+        self.root = best_node[0]
+        self.game.board = self.root.state
+        print("new move: ", time.clock_gettime(0) - clock)
     
     def opponent_played(self, state):
         for node in [enf for enf in self.root.enfants.values()]:
