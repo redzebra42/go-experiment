@@ -355,11 +355,9 @@ if __name__ == "__main__":
 
     def tree_search(search_depth):
         mct.new_move(search_depth)
-        #state = mct.root.state
-        state.print_board()
+        mct.root.state.print_board()
 
     mct.root.state.print_board()
-
 
     while True:
 
@@ -369,6 +367,7 @@ if __name__ == "__main__":
             continue
 
         coord = game.txt_move_to_coord(move)
-        play_at(coord)
+        play_at(coord, state)
         tree_search(100)
+        state = mct.root.state
 

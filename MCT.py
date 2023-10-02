@@ -45,7 +45,7 @@ class MCT():
 
     def __init__(self, game, state):
         self.game = game
-        self.root = Node(state)
+        self.root = Node(state.clone())
         '''
         game class that has the following functions:
         legal_moves(state)
