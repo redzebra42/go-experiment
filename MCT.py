@@ -7,7 +7,7 @@ import time
 class Node():
 
     def __init__(self, state):
-        self.game = Ogame()
+        self.game = Go()
         self.weight = [0,0]
         self.state = state
         self.enfants = {}
@@ -144,8 +144,8 @@ class MCT():
         while sec - time.clock_gettime(0) + clock > 0:
             self.tree_search(self.root)
             i += 1
-            if i%100 == 0:
-                print(i)
+            if i%20 == 0:
+                print('.', end='')
         best_node = self.choose_best_node()
         self.game._mct_move(best_node[0].state, best_node[1])
         self.pretty_print()

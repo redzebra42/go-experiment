@@ -152,7 +152,7 @@ class Oboard():
             return (False, None)
     
     def is_legal(self, move):
-        return self.is_legal_dir(move)[0]
+        return move == "pass" or self.is_legal_dir(move)[0]
     
     def reverse(self, move, dir):
         if dir == 'R':
@@ -345,11 +345,11 @@ if __name__ == "__main__":
     state = game.state
     mct = MCT(game, state)
 
-    def play_at(coord, state=state):
+    def play_at(coord, tree, state=state):
         if state.is_legal(coord):
             game.play_at(state, coord)
-            state.print_board()
-            mct.set_played_move(coord)
+            #state.print_board()
+            tree.set_played_move(coord)
         else:
             print("illegal move")
 
@@ -357,20 +357,27 @@ if __name__ == "__main__":
         mct.new_move(search_depth)
         mct.root.state.print_board()
 
-    def time_tree_search(sec):
-        mct.new_move_time(sec)
-        mct.root.state.print_board()
+    def time_tree_search(sec, tree):
+        tree.new_move_time(sec)
+        #tree.root.state.print_board()
 
-    def rand_vs_robot():
-        for i in range(2):
-            robot_wins = 0
-            while not game.is_over():
-                leg_moves = state.legal_moves()
-                i = random.randint(0, len(leg_moves))
-                play_at(leg_moves[i])
-                time_tree_search(1)
-                state = mct.root.state
-            if game.winner(state) == 1:
+    def rand_vs_robot(n, time):
+        robot_wins = 0
+        j = 0
+        while j < n:
+            j += 1
+            tree = MCT(Ogame(), Oboard())
+            print("new game\n\n\n")
+            while not game.is_over(tree.root.state):
+                leg_moves = tree.root.state.legal_moves()
+                i = random.randint(0, len(leg_moves)-1)
+                print("random move: ")
+                play_at(leg_moves[i], tree, tree.root.state)
+                if not(game.is_over(tree.root.state)):
+                    print("MCT move: ")
+                    time_tree_search(time, tree)    
+            tree.root.state.print_board()
+            if game.winner(tree.root.state) == 1:
                 robot_wins += 1
         return robot_wins
 
@@ -379,13 +386,15 @@ if __name__ == "__main__":
 
     while True:
 
+        print(rand_vs_robot(20, 0.5))
         move = input(str('next move: '))
+        """
 
         if move == None:
             continue
-
+        
         coord = game.txt_move_to_coord(move)
         play_at(coord, state)
         time_tree_search(4)
         state = mct.root.state
-
+"""
