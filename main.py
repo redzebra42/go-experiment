@@ -23,9 +23,11 @@ if __name__ == "__main__":
         play_at(state, coord)
 
     def play_at(coord, state=go_board):
+        clock = time.clock_gettime(0)
         if go.is_legal(state, coord):
             go.play_at(state, coord)
             go.board.print_tkinter_board(my_canvas)
+            print("play_at", time.clock_gettime(0) - clock)
             mct.set_played_move(coord)
             # go.legal_moves(new_state)
         else:

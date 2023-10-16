@@ -7,7 +7,7 @@ import time
 class Node():
 
     def __init__(self, state):
-        self.game = Go()
+        self.game = Ogame()
         self.weight = [0,0]
         self.state = state
         self.enfants = {}

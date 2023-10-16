@@ -270,7 +270,7 @@ class Oboard():
                 self.prev_move = move
                 self.legal_moves()
             else:
-                print("illegal move")
+                print("illegal move from state")
     
     def play_at_and_print(self, move):
         self.play_at(move)
@@ -351,7 +351,7 @@ if __name__ == "__main__":
             #state.print_board()
             tree.set_played_move(coord)
         else:
-            print("illegal move")
+            print("illegal move from main")
 
     def tree_search(search_depth):
         mct.new_move(search_depth)
@@ -364,20 +364,24 @@ if __name__ == "__main__":
     def rand_vs_robot(n, time):
         robot_wins = 0
         j = 0
+        k = 0
         while j < n:
             j += 1
             tree = MCT(Ogame(), Oboard())
             print("new game\n\n\n")
             while not game.is_over(tree.root.state):
                 leg_moves = tree.root.state.legal_moves()
+                k += 1
                 i = random.randint(0, len(leg_moves)-1)
                 print("random move: ")
                 play_at(leg_moves[i], tree, tree.root.state)
+                print(leg_moves[i], " ", k)
                 if not(game.is_over(tree.root.state)):
                     print("MCT move: ")
                     time_tree_search(time, tree)    
             tree.root.state.print_board()
             if game.winner(tree.root.state) == 1:
+                print("win")
                 robot_wins += 1
         return robot_wins
 
@@ -386,7 +390,7 @@ if __name__ == "__main__":
 
     while True:
 
-        print(rand_vs_robot(20, 0.5))
+        print(rand_vs_robot(1, 0.5))
         move = input(str('next move: '))
         """
 
