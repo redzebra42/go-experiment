@@ -17,16 +17,22 @@ curr_player()
 clone()
 '''
 
+
 class RGTstate():
 
     def __init__(self, position=(0, 1), best_move=random.randint(1, math.factorial(global_size)), board_size=global_size) -> None:
         self.board_size = board_size
         self.best_move = best_move
         self.position = position
-    
-    def best_path(self):
+        self.tree = {}
+        self.init_tree(self.tree)
+
+    def init_tree(self, tree):
+        pass #TODO dictionnary with the values of the tree's nodes (best path values are initialized here and random values will be added when calculating a score)
+
+    def path(self, destination):
         nb_tot_moves = (math.factorial(self.board_size))
-        frac = self.best_move/nb_tot_moves
+        frac = destination/nb_tot_moves
         path = []
         for i in range(self.board_size - 1):
             largeur = nb_tot_moves/math.factorial(self.board_size - i - 1)
@@ -65,6 +71,7 @@ class RGT():
         return state.position[0] == state.board_size - 1
 
     def winner(self, state):
+        #TODO attention, les valeurs de [-1,1] des noeuds doivent être consistantes (donc pas juste aléatoire a chaque fois qu'on évalue le score)
         pass
 
     def rand_simulation(self, state):
@@ -86,4 +93,5 @@ if __name__ == "__main__":
     print(rgt.legal_moves(state))
     print(rgt.is_over(state))
     print(state.best_move)
-    print(state.best_path())
+    print(state.path(state.best_move))
+    print(state.path(1234))
