@@ -28,8 +28,8 @@ class RGTstate():
         nb_tot_moves = (math.factorial(self.board_size))
         frac = self.best_move/nb_tot_moves
         path = []
-        for i in range(self.board_size):
-            largeur = nb_tot_moves/(self.board_size - i)
+        for i in range(self.board_size - 1):
+            largeur = nb_tot_moves/math.factorial(self.board_size - i - 1)
             j = 0
             while j/largeur < frac:
                 j += 1
@@ -62,7 +62,7 @@ class RGT():
         state.position = move
 
     def is_over(self, state):
-        return state.position[0] == state.board_size
+        return state.position[0] == state.board_size - 1
 
     def winner(self, state):
         pass
@@ -85,4 +85,5 @@ if __name__ == "__main__":
     rgt.play_at(state, (7,34))
     print(rgt.legal_moves(state))
     print(rgt.is_over(state))
+    print(state.best_move)
     print(state.best_path())
