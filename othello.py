@@ -390,7 +390,7 @@ if __name__ == "__main__":
 
     while True:
 
-        print(rand_vs_robot(1, 0.5))
+        print(rand_vs_robot(4, 0.5))
         move = input(str('next move: '))
         """
 

@@ -1,128 +1,95 @@
 
-(weight = [0, 1522], size = 3, move = (6, 4)
-  (weight = [507, 507], size = 2, move = (0, 5)
-    (weight = [0, 253], size = 2, move = (1, 0)
-      (weight = [126, 126], size = 2, move = pass
-        (weight = [0, 63], size = 0, move = pass)
-        (weight = [0, 62], size = 2, move = pass
-          (weight = [31, 31], size = 2, move = pass
-            (weight = [0, 15], size = 2, move = pass
-              (weight = [7, 7], size = 2, move = pass
-                (weight = [0, 3], size = 2, move = pass
-                  (weight = [1, 1], size = 0, move = pass)
-                  (weight = [1, 1], size = 0, move = pass))
-                (weight = [0, 3], size = 0, move = pass))
-              (weight = [7, 7], size = 0, move = pass))
-            (weight = [0, 15], size = 0, move = pass))
-          (weight = [30, 30], size = 0, move = pass)))
-      (weight = [126, 126], size = 0, move = pass))
-    (weight = [0, 253], size = 0, move = (1, 0)))
-  (weight = [507, 507], size = 1, move = (0, 5)
-    (weight = [0, 506], size = 2, move = (4, 6)
-      (weight = [253, 253], size = 1, move = pass
-        (weight = [0, 252], size = 2, move = pass
-          (weight = [126, 126], size = 0, move = pass)
-          (weight = [125, 125], size = 1, move = pass
-            (weight = [0, 124], size = 2, move = pass
-              (weight = [62, 62], size = 1, move = pass
-                (weight = [0, 61], size = 2, move = pass
-                  (weight = [30, 30], size = 1, move = pass
-                    (weight = [0, 29], size = 2, move = pass
-                      (weight = [14, 14], size = 1, move = pass
-                        (weight = [0, 13], size = 2, move = pass
-                          (weight = [6, 6], size = 0, move = pass)
-                          (weight = [6, 6], size = 1, move = pass
-                            (weight = [0, 5], size = 2, move = pass
-                              (weight = [2, 2], size = 0, move = pass)
-                              (weight = [2, 2], size = 1, move = pass
-                                (weight = [0, 1], size = 0, move = pass))))))
-                      (weight = [14, 14], size = 0, move = pass)))
-                  (weight = [30, 30], size = 0, move = pass)))
-              (weight = [61, 61], size = 0, move = pass)))))
-      (weight = [252, 252], size = 0, move = pass)))
-  (weight = [507, 507], size = 2, move = (0, 5)
-    (weight = [0, 253], size = 2, move = pass
-      (weight = [126, 126], size = 1, move = (4, 6)
-        (weight = [0, 125], size = 2, move = pass
-          (weight = [62, 62], size = 0, move = pass)
-          (weight = [62, 62], size = 1, move = pass
-            (weight = [0, 61], size = 2, move = pass
-              (weight = [30, 30], size = 1, move = pass
-                (weight = [0, 29], size = 2, move = pass
-                  (weight = [14, 14], size = 1, move = pass
-                    (weight = [0, 13], size = 2, move = pass
-                      (weight = [6, 6], size = 0, move = pass)
-                      (weight = [6, 6], size = 1, move = pass
-                        (weight = [0, 5], size = 2, move = pass
-                          (weight = [2, 2], size = 1, move = pass
+(weight = [11, 676], size = 7, move = (2, 7)
+  (weight = [6, 7], size = 6, move = (2, 0)
+    (weight = [0, 1], size = 0, move = pass)
+    (weight = [0, 1], size = 0, move = pass)
+    (weight = [0, 1], size = 0, move = pass)
+    (weight = [1, 1], size = 0, move = pass)
+    (weight = [1, 1], size = 0, move = pass)
+    (weight = [1, 1], size = 0, move = pass))
+  (weight = [657, 658], size = 10, move = (2, 0)
+    (weight = [3, 648], size = 7, move = (7, 1)
+      (weight = [5, 6], size = 5, move = (1, 3)
+        (weight = [0, 1], size = 0, move = (6, 6))
+        (weight = [0, 1], size = 0, move = (6, 6))
+        (weight = [0, 1], size = 0, move = (6, 6))
+        (weight = [0, 1], size = 0, move = (6, 6))
+        (weight = [1, 1], size = 0, move = (6, 6)))
+      (weight = [636, 636], size = 9, move = (1, 3)
+        (weight = [2, 627], size = 7, move = (0, 2)
+          (weight = [620, 620], size = 6, move = (1, 1)
+            (weight = [0, 1], size = 0, move = (0, 1))
+            (weight = [1, 614], size = 5, move = (0, 1)
+              (weight = [609, 609], size = 4, move = (0, 0)
+                (weight = [0, 605], size = 4, move = (6, 6)
+                  (weight = [601, 601], size = 4, move = (6, 0)
+                    (weight = [0, 597], size = 3, move = (1, 7)
+                      (weight = [594, 594], size = 3, move = (3, 6)
+                        (weight = [0, 591], size = 2, move = pass
+                          (weight = [589, 589], size = 2, move = (0, 4)
+                            (weight = [0, 587], size = 2, move = pass
+                              (weight = [585, 585], size = 2, move = pass
+                                (weight = [0, 583], size = 0, move = pass)
+                                (weight = [0, 1], size = 0, move = pass))
+                              (weight = [1, 1], size = 0, move = pass))
                             (weight = [0, 1], size = 0, move = pass))
-                          (weight = [2, 2], size = 0, move = pass)))))
-                  (weight = [14, 14], size = 0, move = pass)))
-              (weight = [30, 30], size = 0, move = pass)))))
-      (weight = [126, 126], size = 0, move = (4, 6)))
-    (weight = [0, 253], size = 3, move = pass
-      (weight = [84, 84], size = 2, move = pass
-        (weight = [0, 42], size = 0, move = (1, 0))
-        (weight = [0, 41], size = 2, move = (1, 0)
-          (weight = [20, 20], size = 2, move = pass
-            (weight = [0, 10], size = 2, move = pass
-              (weight = [5, 5], size = 0, move = pass)
-              (weight = [4, 4], size = 2, move = pass
-                (weight = [0, 2], size = 0, move = pass)
-                (weight = [0, 1], size = 0, move = pass)))
-            (weight = [0, 9], size = 0, move = pass))
-          (weight = [20, 20], size = 0, move = pass)))
-      (weight = [84, 84], size = 2, move = pass
-        (weight = [0, 42], size = 2, move = pass
-          (weight = [21, 21], size = 1, move = (4, 6)
-            (weight = [0, 20], size = 2, move = pass
-              (weight = [10, 10], size = 1, move = pass
-                (weight = [0, 9], size = 2, move = pass
-                  (weight = [4, 4], size = 0, move = pass)
-                  (weight = [4, 4], size = 1, move = pass
-                    (weight = [0, 3], size = 2, move = pass
-                      (weight = [1, 1], size = 0, move = pass)
-                      (weight = [1, 1], size = 0, move = pass)))))
-              (weight = [9, 9], size = 0, move = pass)))
-          (weight = [20, 20], size = 0, move = (4, 6)))
-        (weight = [0, 41], size = 3, move = pass
-          (weight = [14, 14], size = 1, move = pass
-            (weight = [0, 13], size = 2, move = (4, 6)
-              (weight = [6, 6], size = 0, move = pass)
-              (weight = [6, 6], size = 1, move = pass
-                (weight = [0, 5], size = 2, move = pass
-                  (weight = [2, 2], size = 1, move = pass
-                    (weight = [0, 1], size = 0, move = pass))
-                  (weight = [2, 2], size = 0, move = pass)))))
-          (weight = [13, 13], size = 2, move = pass
-            (weight = [0, 6], size = 2, move = (1, 0)
-              (weight = [3, 3], size = 0, move = pass)
-              (weight = [2, 2], size = 1, move = pass
-                (weight = [0, 1], size = 0, move = pass)))
-            (weight = [0, 6], size = 0, move = (1, 0)))
-          (weight = [13, 13], size = 2, move = pass
-            (weight = [0, 6], size = 2, move = pass
-              (weight = [3, 3], size = 0, move = (4, 6))
-              (weight = [2, 2], size = 1, move = (4, 6)
-                (weight = [0, 1], size = 0, move = pass)))
-            (weight = [0, 6], size = 3, move = pass
-              (weight = [2, 2], size = 1, move = pass
-                (weight = [0, 1], size = 0, move = (1, 0)))
-              (weight = [2, 2], size = 1, move = pass
-                (weight = [0, 1], size = 0, move = (4, 6)))
-              (weight = [1, 1], size = 0, move = pass)))))
-      (weight = [84, 84], size = 1, move = pass
-        (weight = [0, 83], size = 2, move = (4, 6)
-          (weight = [41, 41], size = 0, move = pass)
-          (weight = [41, 41], size = 1, move = pass
-            (weight = [0, 40], size = 2, move = pass
-              (weight = [20, 20], size = 0, move = pass)
-              (weight = [19, 19], size = 1, move = pass
-                (weight = [0, 18], size = 2, move = pass
-                  (weight = [9, 9], size = 0, move = pass)
-                  (weight = [8, 8], size = 1, move = pass
-                    (weight = [0, 7], size = 2, move = pass
-                      (weight = [3, 3], size = 0, move = pass)
-                      (weight = [3, 3], size = 1, move = pass
-                        (weight = [0, 2], size = 1, move = pass
-                          (weight = [1, 1], size = 0, move = pass))))))))))))))
+                          (weight = [1, 1], size = 0, move = (0, 4)))
+                        (weight = [0, 1], size = 0, move = pass)
+                        (weight = [0, 1], size = 0, move = pass))
+                      (weight = [1, 1], size = 0, move = (3, 6))
+                      (weight = [1, 1], size = 0, move = (3, 6)))
+                    (weight = [0, 1], size = 0, move = (1, 7))
+                    (weight = [0, 1], size = 0, move = (1, 7))
+                    (weight = [0, 1], size = 0, move = (1, 7)))
+                  (weight = [1, 1], size = 0, move = (6, 0))
+                  (weight = [1, 1], size = 0, move = (6, 0))
+                  (weight = [1, 1], size = 0, move = (6, 0)))
+                (weight = [0, 1], size = 0, move = (6, 6))
+                (weight = [0, 1], size = 0, move = (6, 6))
+                (weight = [0, 1], size = 0, move = (6, 6)))
+              (weight = [1, 1], size = 0, move = (0, 0))
+              (weight = [1, 1], size = 0, move = (0, 0))
+              (weight = [1, 1], size = 0, move = (0, 0))
+              (weight = [1, 1], size = 0, move = (0, 0)))
+            (weight = [0, 1], size = 0, move = (0, 1))
+            (weight = [0, 1], size = 0, move = (0, 1))
+            (weight = [0, 1], size = 0, move = (0, 1))
+            (weight = [0, 1], size = 0, move = (0, 1)))
+          (weight = [1, 1], size = 0, move = (1, 1))
+          (weight = [1, 1], size = 0, move = (1, 1))
+          (weight = [1, 1], size = 0, move = (1, 1))
+          (weight = [1, 1], size = 0, move = (1, 1))
+          (weight = [1, 1], size = 0, move = (1, 1))
+          (weight = [1, 1], size = 0, move = (1, 1)))
+        (weight = [0, 1], size = 0, move = (0, 2))
+        (weight = [0, 1], size = 0, move = (0, 2))
+        (weight = [0, 1], size = 0, move = (0, 2))
+        (weight = [0, 1], size = 0, move = (0, 2))
+        (weight = [0, 1], size = 0, move = (0, 2))
+        (weight = [0, 1], size = 0, move = (0, 2))
+        (weight = [0, 1], size = 0, move = (0, 2))
+        (weight = [0, 1], size = 0, move = (0, 2)))
+      (weight = [1, 1], size = 0, move = (1, 3))
+      (weight = [1, 1], size = 0, move = (1, 3))
+      (weight = [1, 1], size = 0, move = (1, 3))
+      (weight = [1, 1], size = 0, move = (1, 3))
+      (weight = [1, 1], size = 0, move = (1, 3)))
+    (weight = [0, 1], size = 0, move = (7, 1))
+    (weight = [0, 1], size = 0, move = (7, 1))
+    (weight = [0, 1], size = 0, move = (7, 1))
+    (weight = [0, 1], size = 0, move = (7, 1))
+    (weight = [0, 1], size = 0, move = (7, 1))
+    (weight = [0, 1], size = 0, move = (7, 1))
+    (weight = [0, 1], size = 0, move = (7, 1))
+    (weight = [0, 1], size = 0, move = (7, 1))
+    (weight = [0, 1], size = 0, move = (7, 1)))
+  (weight = [1, 2], size = 1, move = (2, 0)
+    (weight = [1, 1], size = 0, move = (6, 6)))
+  (weight = [1, 2], size = 1, move = (2, 0)
+    (weight = [1, 1], size = 0, move = (3, 6)))
+  (weight = [0, 1], size = 0, move = (2, 0))
+  (weight = [2, 3], size = 2, move = (2, 0)
+    (weight = [0, 1], size = 0, move = (0, 4))
+    (weight = [1, 1], size = 0, move = (0, 4)))
+  (weight = [1, 2], size = 1, move = (2, 0)
+    (weight = [1, 1], size = 0, move = (1, 3))))

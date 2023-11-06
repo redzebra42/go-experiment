@@ -33,7 +33,7 @@ class Node():
         best = (None, -1)
         # list = [(enf.weight[0] / enf.weight[1]) + sqrt(2) * sqrt(log(node.weight[1]) / enf.weight[1]) for enf in node.enfants.values()]
         for enf in self.enfants.values():
-            score = (enf.weight[0] / enf.weight[1]) + sqrt(2 * log(self.weight[1]) / enf.weight[1])
+            score = (enf.weight[0] / enf.weight[1]) #(enf.weight[0] / enf.weight[1]) + sqrt(2 * log(self.weight[1]) / enf.weight[1])
             if (score > best[1]):
                 best = (enf, score)
         return best[0]
