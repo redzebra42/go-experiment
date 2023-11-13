@@ -70,13 +70,13 @@ class RGT():
     def __init__(self, state=RGTstate()) -> None:
         self.state = state
 
-    def legal_moves(self, state):
+    def legal_moves(self, state) -> list:
         return state.enfants(state.position)
 
-    def play_at(self, state, move):
+    def play_at(self, state, move) -> None:
         state.position = move
 
-    def is_over(self, state):
+    def is_over(self, state) -> bool:
         return state.position[0] == state.board_size - 1
 
     def winner(self, state):
@@ -95,8 +95,13 @@ class RGT():
         else:
             raise RuntimeError
 
-    def rand_simulation(self, state):
-        pass
+    def rand_simulation(self, state) -> None:
+        i = 0
+        while not(self.is_over(state)):
+            leg_moves = self.legal_moves(state)
+            move = (i, random.randint(0, len(leg_moves) - 1))
+            self.play_at(state, move)
+            i += 1
 
     def play_mct(self):
         pass
@@ -131,16 +136,6 @@ if __name__ == "__main__":
     state = RGTstate(pos)
     rgt = RGT(state)
 
-    print(rgt.legal_moves(state))
-    rgt.play_at(state, (4,18))
-    print(rgt.legal_moves(state))
-    print(rgt.is_over(state))
-    rgt.play_at(state, (6,34))
-    print(rgt.legal_moves(state))
-    print(rgt.is_over(state))
-    print(state.best_move)
-    print(state.path(state.best_move))
-    print(rgt.winner(state))
-    print(len(state.tree))
-    print(rgt.state.enfants((1,3)))
-    rgt.pretty_print(open("RGT_tree.lsp", "w"))
+    rgt.rand_simulation(rgt.state)
+    print(rgt.winner(rgt.state))
+    print(rgt.state.tree)
