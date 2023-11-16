@@ -13,8 +13,13 @@ class test_RGT(unittest.TestCase):
         self.assertEqual(test_tree_1.state.enfants((2, 4)), [(3, 8), (3, 9)])
 
     def test_best_path(self):
+        best_path = test_tree_1.state.path
         for i in range(math.factorial(test_tree_1.state.board_size)):
-            self.assertEqual(i, test_tree_1.state.path(i)[test_tree_1.state.board_size - 2][1])
+            self.assertEqual(i, best_path(i)[test_tree_1.state.board_size - 2][1])
+        for i in range(math.factorial(test_tree_1.state.board_size) - 1):
+            for j in range(test_tree_1.state.board_size):
+                self.assertTrue(best_path(i)[j+1] in test_tree_1.state.enfants(best_path(i)[j]))
+
 
 if __name__ == "__main__":
     unittest.main()
