@@ -1,7 +1,8 @@
 import random
 import math
+import time
 
-global_size = 7
+global_size = 81
 
 '''
 game class that has the following functions:
@@ -133,7 +134,7 @@ class RGT():
     
     def pretty_print(self, file):
         '''prints depth/position/value for each nodes with a value'''
-        #TODO seems to work better, but still doesn't work for multiple rand_simulation (maybe it's the rand_simulation that doesn't work...)
+        #TODO print something else becaus it's unreadable rn
         self._pretty_print_rec((0, 1), file)
         
 if __name__ == "__main__":
@@ -141,14 +142,13 @@ if __name__ == "__main__":
     state = RGTstate(pos)
     rgt = RGT(state)
 
+    clock = time.clock_gettime(0)
     for i in range(100):
         rgt.rand_simulation(rgt.state)
         rgt.play_at(rgt.state, (0, 1))
-    print(rgt.state.tree)
+    print(time.clock_gettime(0) - clock)
     print(rgt.state.best_move)
     best_path = rgt.state.path(rgt.state.best_move)
-    print(best_path)
-    for node in best_path:
-        print(rgt.state.enfants(node))
+    
     file = open("RGT_tree.lsp", "w")
     rgt.pretty_print(file)
