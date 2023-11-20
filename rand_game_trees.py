@@ -20,11 +20,11 @@ clone()
 
 class RGTstate():
 
-    def __init__(self, position=(0, 0), best_move=random.randint(1, math.factorial(global_size)), board_size=global_size) -> None:
+    def __init__(self, position=(0, 1), best_move=random.randint(1, math.factorial(global_size)), board_size=global_size) -> None:
         self.board_size = board_size
         self.best_move = best_move
         self.position = position
-        self.tree = {(0, 0):0}
+        self.tree = {(0, 1):0}
         self.init_tree()
 
     def init_tree(self):
@@ -36,23 +36,27 @@ class RGTstate():
         for pos in path:
             if not (pos in self.tree.keys()) :
                 self.tree[pos] = random.randint(-10,10)/10
-
-    def path(self, destination:int):
-        nb_tot_moves = (math.factorial(self.board_size))
-        frac = destination/nb_tot_moves
-        path = []
-        for i in range(self.board_size - 1):
-            largeur = nb_tot_moves/math.factorial(self.board_size - i - 1)
-            j = 0
-            while j/largeur < frac:
-                j += 1
-            path.append((i + 1, j))
-        return path
     
+    def parent(self, node:tuple) -> tuple:
+        if node[0] > 0:
+            largeur = self.board_size - node[0] + 1
+            return (node[0] - 1, math.ceil(node[1] / largeur))
+        else:
+            return None
+    
+    def path(self, destination:int) -> list:
+        node = (self.board_size, destination)
+        path = [node]
+        while node[0] > 1:
+            node = self.parent(node)
+            path.append(node)
+        list.reverse(path)
+        return path
+
     def enfants(self, node) -> list:
         enf_list = []
-        for i in range(self.board_size - node[0]):
-            enf_list.append((node[0] + 1, node[1] * (self.board_size - node[0]) + i))
+        for i in range(1, self.board_size - node[0] + 1):
+            enf_list.append((node[0] + 1, (node[1] - 1) * (self.board_size - node[0]) + i))
         return enf_list
 
 
@@ -129,7 +133,7 @@ class RGT():
     def pretty_print(self, file):
         '''prints depth/position/value for each nodes with a value'''
         #TODO doesn't work yet, could try a non-recursive approach, or just give up, this function doesn't really matters anyways...
-        self._pretty_print_rec((0, 0), file)
+        self._pretty_print_rec((0, 1), file)
         
 if __name__ == "__main__":
     pos = (3, 5)
@@ -139,3 +143,9 @@ if __name__ == "__main__":
     rgt.rand_simulation(rgt.state)
     print(rgt.winner(rgt.state))
     print(rgt.state.tree)
+    print(rgt.state.best_move)
+    best_path = rgt.state.path(rgt.state.best_move)
+    print(best_path)
+    for node in best_path:
+        print(rgt.state.enfants(node))
+    print(math.ceil(3/2))
