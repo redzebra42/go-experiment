@@ -77,13 +77,13 @@ class RGT():
     def legal_moves(self, state) -> list:
         return state.enfants(state.position)
 
-    def play_at(self, state, move) -> None:
+    def play_at(self, state:RGTstate, move:tuple) -> None:
         state.position = move
 
     def is_over(self, state) -> bool:
         return state.position[0] == state.board_size - 1
 
-    def winner(self, state):
+    def winner(self, state:RGTstate) -> int:
         #TODO peut etre switch les valeurs du gagnant (ou y reflechir au moins) on rappelle que le score 
         #d'une case est positif si elle est bénéfique au joueur 1 (ou 0 mais faut se décider) et ce pour tout noeud.
         if self.is_over(state):
@@ -99,18 +99,19 @@ class RGT():
         else:
             raise RuntimeError
 
-    def rand_simulation(self, state) -> None:
+    def rand_simulation(self, state:RGTstate) -> None:
         i = 0
         while not(self.is_over(state)):
             leg_moves = self.legal_moves(state)
-            move = (i, random.randint(0, len(leg_moves) - 1))
+            move = random.choice(leg_moves)
             self.play_at(state, move)
             i += 1
+        self.winner(state)            
 
     def play_mct(self):
         pass
 
-    def _tree_dict_to_list(self):
+    def _tree_dict_to_list(self) -> None:
         node_list = [[] for i in range(self.state.board_size)]
         for i in range(self.state.board_size):
             for node in self.state.tree:
@@ -119,11 +120,11 @@ class RGT():
     
     def _pretty_print_rec(self, node, file):
         if node[0] != 0:
-            file.write("\n")
+            file.write("}\n")
             for i in range(node[0]):
-                file.write("    ")
+                file.write("   ")
         else:
-            file.write(str(self.state.tree) + "\n")
+            file.write(str(self.state.tree) + "\n" + "{")
         file.write(f"({node[0]}/{node[1]}/{self.state.tree[node]})")
         for enf in self.state.enfants(node):
             if enf in self.state.tree:
@@ -132,7 +133,7 @@ class RGT():
     
     def pretty_print(self, file):
         '''prints depth/position/value for each nodes with a value'''
-        #TODO doesn't work yet, could try a non-recursive approach, or just give up, this function doesn't really matters anyways...
+        #TODO seems to work better, but still doesn't work for multiple rand_simulation (maybe it's the rand_simulation that doesn't work...)
         self._pretty_print_rec((0, 1), file)
         
 if __name__ == "__main__":
@@ -140,12 +141,14 @@ if __name__ == "__main__":
     state = RGTstate(pos)
     rgt = RGT(state)
 
-    rgt.rand_simulation(rgt.state)
-    print(rgt.winner(rgt.state))
+    for i in range(100):
+        rgt.rand_simulation(rgt.state)
+        rgt.play_at(rgt.state, (0, 1))
     print(rgt.state.tree)
     print(rgt.state.best_move)
     best_path = rgt.state.path(rgt.state.best_move)
     print(best_path)
     for node in best_path:
         print(rgt.state.enfants(node))
-    print(math.ceil(3/2))
+    file = open("RGT_tree.lsp", "w")
+    rgt.pretty_print(file)
