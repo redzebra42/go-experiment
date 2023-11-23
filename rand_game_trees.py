@@ -1,6 +1,7 @@
 import random
 import math
 import time
+from decimal import Decimal
 
 global_size = 81
 
@@ -26,6 +27,7 @@ class RGTstate():
         self.best_move = best_move
         self.position = position
         self.tree = {(0, 1):0}
+        self.current_player = self.curr_player()
         self.init_tree()
 
     def init_tree(self):
@@ -61,7 +63,7 @@ class RGTstate():
         return enf_list
 
 
-    def curr_player(self):
+    def curr_player(self) -> int:
         return self.position[0] % 2
 
     def clone(self):
@@ -75,13 +77,13 @@ class RGT():
     def __init__(self, state=RGTstate()) -> None:
         self.state = state
 
-    def legal_moves(self, state) -> list:
+    def legal_moves(self, state:RGTstate()) -> list:
         return state.enfants(state.position)
 
     def play_at(self, state:RGTstate, move:tuple) -> None:
         state.position = move
 
-    def is_over(self, state) -> bool:
+    def is_over(self, state:RGTstate()) -> bool:
         return state.position[0] == state.board_size - 1
 
     def winner(self, state:RGTstate) -> int:
@@ -109,7 +111,7 @@ class RGT():
             i += 1
         self.winner(state)            
 
-    def play_mct(self):
+    def play_mct(self, state, coord, player) -> None:
         pass
 
     def _tree_dict_to_list(self) -> None:
@@ -119,24 +121,25 @@ class RGT():
                 node_list[i].append(node[1])
         return node_list
     
-    def _pretty_print_rec(self, node, file):
+    def _pretty_print_rec(self, node:tuple, file:str)-> None:
         if node[0] != 0:
             file.write("}\n")
             for i in range(node[0]):
                 file.write("   ")
         else:
-            file.write(str(self.state.tree) + "\n" + "{")
-        file.write(f"({node[0]}/{node[1]}/{self.state.tree[node]})")
+            #file.write(str(self.state.tree) + "\n" + "{")
+            pass
+        file.write(f"({node[0]}/{'%.2E' % Decimal(node[1])}/{self.state.tree[node]})")
         for enf in self.state.enfants(node):
             if enf in self.state.tree:
                 self._pretty_print_rec(enf, file)
-        
     
-    def pretty_print(self, file):
+    def pretty_print(self, file:str) -> None:
         '''prints depth/position/value for each nodes with a value'''
-        #TODO print something else becaus it's unreadable rn
+        #TODO only goes to depth 9 to 11 for some reason
         self._pretty_print_rec((0, 1), file)
-        
+
+
 if __name__ == "__main__":
     pos = (3, 5)
     state = RGTstate(pos)
@@ -148,6 +151,7 @@ if __name__ == "__main__":
         rgt.play_at(rgt.state, (0, 1))
     print(time.clock_gettime(0) - clock)
     print(rgt.state.best_move)
+    print(rgt.state.path(rgt.state.best_move))
     best_path = rgt.state.path(rgt.state.best_move)
     
     file = open("RGT_tree.lsp", "w")

@@ -3,11 +3,12 @@ from math import log, sqrt
 from othello import Ogame
 from go import *
 import time
+from rand_game_trees import RGT
 
 class Node():
 
     def __init__(self, state):
-        self.game = Ogame()
+        self.game = RGT()
         self.weight = [0,0]
         self.state = state
         self.enfants = {}
