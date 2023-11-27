@@ -7,14 +7,14 @@ global_size = 81
 
 '''
 game class that has the following functions:
-legal_moves(state)
 play_at(state, move)
-is_over(state)
-winner(state)
 rand_simulation(state)
 play_mct()
 
 state class with the following functions:
+is_over()
+winner()
+legal_moves()
 curr_player()
 clone()
 '''
@@ -61,7 +61,29 @@ class RGTstate():
         for i in range(1, self.board_size - node[0] + 1):
             enf_list.append((node[0] + 1, (node[1] - 1) * (self.board_size - node[0]) + i))
         return enf_list
-
+    
+    
+    def legal_moves(self) -> list:
+        return self.enfants(self.position)
+    
+    def is_over(self) -> bool:
+        return self.position[0] == self.board_size - 1
+    
+    def winner(self) -> int:
+        #TODO peut etre switch les valeurs du gagnant (ou y reflechir au moins) on rappelle que le score 
+        #d'une case est positif si elle est bénéfique au joueur 1 (ou 0 mais faut se décider) et ce pour tout noeud.
+        if self.is_over():
+            path = self.path(self.position[1])
+            self.update_tree(path)
+            res = 0
+            for pos in path:
+                res += self.tree[pos]
+            if res > 0:
+                return 1
+            else:
+                return 0
+        else:
+            raise RuntimeError
 
     def curr_player(self) -> int:
         return self.position[0] % 2
@@ -77,39 +99,17 @@ class RGT():
     def __init__(self, state=RGTstate()) -> None:
         self.state = state
 
-    def legal_moves(self, state:RGTstate()) -> list:
-        return state.enfants(state.position)
-
     def play_at(self, state:RGTstate, move:tuple) -> None:
         state.position = move
 
-    def is_over(self, state:RGTstate()) -> bool:
-        return state.position[0] == state.board_size - 1
-
-    def winner(self, state:RGTstate) -> int:
-        #TODO peut etre switch les valeurs du gagnant (ou y reflechir au moins) on rappelle que le score 
-        #d'une case est positif si elle est bénéfique au joueur 1 (ou 0 mais faut se décider) et ce pour tout noeud.
-        if self.is_over(state):
-            path = state.path(state.position[1])
-            state.update_tree(path)
-            res = 0
-            for pos in path:
-                res += state.tree[pos]
-            if res > 0:
-                return 1
-            else:
-                return 0
-        else:
-            raise RuntimeError
-
     def rand_simulation(self, state:RGTstate) -> None:
         i = 0
-        while not(self.is_over(state)):
-            leg_moves = self.legal_moves(state)
+        while not(state.is_over()):
+            leg_moves = state.legal_moves()
             move = random.choice(leg_moves)
             self.play_at(state, move)
             i += 1
-        self.winner(state)            
+        state.winner()            
 
     def play_mct(self, state, coord, player) -> None:
         pass
@@ -145,14 +145,12 @@ if __name__ == "__main__":
     state = RGTstate(pos)
     rgt = RGT(state)
 
-    clock = time.clock_gettime(0)
-    for i in range(100):
-        rgt.rand_simulation(rgt.state)
-        rgt.play_at(rgt.state, (0, 1))
-    print(time.clock_gettime(0) - clock)
-    print(rgt.state.best_move)
-    print(rgt.state.path(rgt.state.best_move))
-    best_path = rgt.state.path(rgt.state.best_move)
+    def time_check(nuber_of_tests):
+        clock = time.clock_gettime(0)
+        for i in range(nuber_of_tests):
+            rgt.rand_simulation(rgt.state)
+            rgt.play_at(rgt.state, (0, 1))
+        file = open("RGT_tree.lsp", "w")
+        rgt.pretty_print(file)
+        print(time.clock_gettime(0) - clock)
     
-    file = open("RGT_tree.lsp", "w")
-    rgt.pretty_print(file)
