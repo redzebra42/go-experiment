@@ -101,6 +101,7 @@ class RGT():
 
     def play_at(self, state:RGTstate, move:tuple) -> None:
         state.position = move
+        state.current_player = (state.current_player + 1) % 2
 
     def rand_simulation(self, state:RGTstate) -> None:
         i = 0
@@ -153,4 +154,4 @@ if __name__ == "__main__":
         file = open("RGT_tree.lsp", "w")
         rgt.pretty_print(file)
         print(time.clock_gettime(0) - clock)
-    
+
