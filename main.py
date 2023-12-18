@@ -12,7 +12,7 @@ if __name__ == "__main__":
     root = Tk()
     root.geometry("1100x800")
     my_canvas = Canvas(root, width=707, height= 707)
-    mct = MCT(go, go_board)
+    mct = MCT(go_board, go)
     # print(mct)
     # mct.new_move(10)
     
@@ -50,19 +50,19 @@ if __name__ == "__main__":
     
     def tree_search(search_depth):
         mct.new_move(search_depth)
-        mct.root.state.print_tkinter_board(my_canvas)
+        mct.state.print_tkinter_board(my_canvas)
 
 
     my_canvas.bind("<ButtonPress>", on_click)
     text_box = Entry(root)
     text_box.place(x=825, y=100)
 
-    terr_button = ttk.Button(root, text= "calculate territory", command = lambda: print_terr())
-    captures_button = ttk.Button(root, text= "show captures", command = lambda: print_capt())
-    pos_button = ttk.Button(root, text= "play", command = lambda: play_from_text_box())
+    terr_button = ttk.Button(root, text= "calculer le territoire", command = lambda: print_terr())
+    captures_button = ttk.Button(root, text= "captures", command = lambda: print_capt())
+    pos_button = ttk.Button(root, text= "jouer", command = lambda: play_from_text_box())
     tree_search_button = ttk.Button(root, text= "tree search", command = lambda: mct.MCTS(mct.root, 10))
     print_tree_button = ttk.Button(root, text= "print tree", command = lambda: mct.pretty_print())
-    pass_button = ttk.Button(root, text = "pass", command = lambda: go.play_pass())
+    pass_button = ttk.Button(root, text = "passer", command = lambda: go.play_pass())
     pass_button.place(x=825, y=400)
     print_tree_button.place(x=825, y=350)
     tree_search_button.place(x=825, y=300)
@@ -70,7 +70,7 @@ if __name__ == "__main__":
     pos_button.place(x=825, y=150)
     captures_button.place(x=825, y=250)
 
-    mct.root.state.print_tkinter_board(my_canvas)
+    mct.state.print_tkinter_board(my_canvas)
 
     def on_closing():
         if messagebox.askokcancel("Quit", "Do you want to quit?"):

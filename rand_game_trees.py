@@ -22,23 +22,24 @@ clone()
 
 class RGTstate():
 
-    def __init__(self, position=(0, 1), best_move=random.randint(1, math.factorial(global_size)), board_size=global_size) -> None:
+    def __init__(self, position=(0, 1), best_move=random.randint(1, math.factorial(global_size)), board_size=global_size, good_move_val=1) -> None:
         self.board_size = board_size
         self.best_move = best_move
         self.position = position
         self.tree = {(0, 1):0}
         self.current_player = self.curr_player()
+        self.good_move_val = good_move_val
         self.init_tree()
 
     def init_tree(self):
         #dictionnary with the values of the tree's nodes (best path values are initialized here and random values will be added when calculating a score)
         for pos in self.path(self.best_move):
-            self.tree[pos] = 1
+            self.tree[pos] = self.good_move_val
 
     def update_tree(self, path):
         for pos in path:
             if not (pos in self.tree.keys()) :
-                self.tree[pos] = random.randint(-10,10)/10
+                self.tree[pos] = random.randint(-100,100)/100
     
     def parent(self, node:tuple) -> tuple:
         if node[0] > 0:

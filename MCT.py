@@ -30,19 +30,19 @@ class MCT():
         return best[0]
     
     
-        '''
-        game class that has the following functions:
-        legal_moves(state)
-        play_at(state, move)
-        is_over(state)
-        winner(state)
-        rand_simulation(state)
-        play_mct()
+    '''
+    game class that has the following functions:
+    rand_simulation(state)
+    play_mct()
 
-        state class with the following functions:
-        curr_player()
-        clone()
-        '''
+    state class with the following functions:
+    legal_moves()
+    play_at(move)
+    is_over()
+    winner()
+    curr_player()
+    clone()
+    '''
 
     def selection(self):
         return self.best_child()
@@ -73,12 +73,12 @@ class MCT():
     def back_propagation(self, sim_winner):
         '''update le poids d'un noeud selon le résultat de la simulation'''
         self.weight[1] += 1
-        if self.state.curr_player == sim_winner:
+        if self.state.current_player == sim_winner:
             self.weight[0] += 1
 
-    def tree_search(self, start_node, duration:int, debug:bool = False):
-        if debug:
-            for i in range(100):
+    def tree_search(self, start_node, duration:int, iter:bool = False, nb_iter:int=100):
+        if iter:
+            for i in range(nb_iter):
                 curr_node = start_node
                 while not(curr_node.is_feuille()):
                     curr_node = curr_node.selection()
@@ -88,21 +88,24 @@ class MCT():
                     curr_node.back_propagation(sim_res)
                     curr_node = curr_node.parent
             return start_node.choose_best_node()
-        start_time = time.clock_gettime(0)
-        while duration > time.clock_gettime(0) - start_time:
-            curr_node = start_node
-            while not(curr_node.is_feuille()):
-                curr_node = curr_node.selection()
-            curr_node = curr_node.expension()
-            sim_res = curr_node.simulation()
-            while not(curr_node.is_racine()):
-                curr_node.back_propagation(sim_res)
-                curr_node = curr_node.parent
-        return start_node.choose_best_node()
+        else:
+            start_time = time.clock_gettime(0)
+            i = 0
+            while duration > time.clock_gettime(0) - start_time:
+                i += 1
+                curr_node = start_node
+                while not(curr_node.is_feuille()):
+                    curr_node = curr_node.selection()
+                curr_node = curr_node.expension()
+                sim_res = curr_node.simulation()
+                while not(curr_node.is_racine()):
+                    curr_node.back_propagation(sim_res)
+                    curr_node = curr_node.parent
+            return start_node.choose_best_node()
         
 
     def choose_best_node(self):
-        '''retourne l'enfant le plus visité du noeud self'''
+        '''retourne l'enfant le plus visité du noeud self et le move associé'''
         best = (None, -1)
         for enf in self.enfants.values():
             if enf.weight[1] > best[1]:
