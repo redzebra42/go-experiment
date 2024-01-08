@@ -54,7 +54,8 @@ if __name__ == "__main__":
         (new_current_node, new_move) = mct.tree_search(start_node, None, True, search_depth)
         mct.current_node = new_current_node
         play_at(new_move)
-        print(current_node)
+        print(new_current_node)
+        mct.pretty_print()
     
 
     my_canvas.bind("<ButtonPress>", on_click)

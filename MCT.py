@@ -60,7 +60,7 @@ class MCT():
             new_node = MCT(new_state, self.game)
             new_node.parent = self
             self.enfants[new_move] = new_node
-            return random.choice(list(self.enfants.values()))
+            return new_node
         else:
             return self
             raise RuntimeError #on ne devrait pas arriver a un état fini déja testé lors de la séléction
@@ -82,6 +82,7 @@ class MCT():
 
     def tree_search(self, start_node, duration:int, iter:bool = False, nb_iter:int=100) -> tuple:
         if iter:
+            clock = time.clock_gettime(0)
             for i in range(nb_iter):
                 curr_node = start_node
                 while not(curr_node.is_feuille()):
@@ -91,6 +92,8 @@ class MCT():
                 while not(curr_node.is_racine()):
                     curr_node.back_propagation(sim_res)
                     curr_node = curr_node.parent
+            print("tree_search time: ", time.clock_gettime(0) - clock)
+            print("mean time per search :", (time.clock_gettime(0) - clock) / nb_iter)
             return start_node.choose_best_node()                                                 #(node, move)
         else:
             start_time = time.clock_gettime(0)
