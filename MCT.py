@@ -34,10 +34,10 @@ class MCT():
     game class that has the following functions:
     rand_simulation(state)
     play_mct()
+    play_at(move)
 
     state class with the following functions:
     legal_moves()
-    play_at(move)
     is_over()
     winner()
     curr_player()
@@ -76,7 +76,7 @@ class MCT():
         if self.state.current_player == sim_winner:
             self.weight[0] += 1
 
-    def tree_search(self, start_node, duration:int, iter:bool = False, nb_iter:int=100):
+    def tree_search(self, start_node, duration:int, iter:bool = False, nb_iter:int=100) -> tuple:
         if iter:
             for i in range(nb_iter):
                 curr_node = start_node
@@ -87,7 +87,7 @@ class MCT():
                 while not(curr_node.is_racine()):
                     curr_node.back_propagation(sim_res)
                     curr_node = curr_node.parent
-            return start_node.choose_best_node()
+            return start_node.choose_best_node()                                                 #(node, move)
         else:
             start_time = time.clock_gettime(0)
             i = 0
@@ -102,7 +102,6 @@ class MCT():
                     curr_node.back_propagation(sim_res)
                     curr_node = curr_node.parent
             return start_node.choose_best_node()
-        
 
     def choose_best_node(self):
         '''retourne l'enfant le plus visité du noeud self et le move associé'''

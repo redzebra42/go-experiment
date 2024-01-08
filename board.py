@@ -22,13 +22,15 @@ class Board():
     has all the information needed to play from here (board, captures)
     '''
 
-    def __init__(self, goban=st.goban, captured_pieces=st.caps, curr_player=st.player ,two_previous_moves=st.two_prev_moves, size=st.size, leg_move_board=None):
+    def __init__(self, goban=st.goban, captured_pieces=st.caps, curr_player=st.player ,two_previous_moves=st.two_prev_moves, size=st.size, leg_move_board=None, is_chinese_rule_set=True, komi=3.5):
         self.size = size
         self.current_player = curr_player
         self.goban = copy.deepcopy(goban)
         self.captured_pieces =  copy.copy(captured_pieces)
         self.two_previous_moves = copy.deepcopy(two_previous_moves)
         self.leg_move_board = copy.deepcopy(leg_move_board)
+        self.is_chinese_rule_set = is_chinese_rule_set
+        self.komi = komi
         if leg_move_board == None:
             self.leg_move_board = self.initiate_legal_moves()
         else:
@@ -272,6 +274,33 @@ class Board():
             if self.is_legal(coord, 'b'):
                 leg_move_board[coord[1]][coord[0]].append('b')
         return leg_move_board
+    
+    def winner(self):
+        w_pts = self.territory('w') + self.captured_pieces['w'] + self.komi
+        b_pts = self.territory('b') + self.captured_pieces['b']
+        if self.is_chinese_rule_set:
+            for line in self.goban:
+                for piece in line:
+                    if piece == 'w':
+                        w_pts += 1
+                    elif piece == 'b':
+                        b_pts += 1
+        if w_pts > b_pts:
+            return 'w'
+        elif w_pts < b_pts:
+            return 'b'
+    
+    def is_over(self):
+        return self.two_previous_moves == ['pass', 'pass']
+    
+    def legal_moves(self):
+        leg_moves = []
+        for i in range(self.size):
+            for j in range(self.size):
+                if self.current_player in self.leg_move_board[i][j]:
+                    leg_moves.append((j, i))
+        leg_moves.append('pass')
+        return leg_moves
 
     def __str__(self) -> str:
         res = ''

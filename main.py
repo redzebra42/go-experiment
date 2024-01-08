@@ -13,6 +13,7 @@ if __name__ == "__main__":
     root.geometry("1100x800")
     my_canvas = Canvas(root, width=707, height= 707)
     mct = MCT(go_board, go)
+    current_node = mct
     # print(mct)
     # mct.new_move(10)
     
@@ -48,8 +49,9 @@ if __name__ == "__main__":
         print("w caps: ", go.board.captured_pieces['w'])
         print("b caps: ", go.board.captured_pieces['b'])
     
-    def tree_search(search_depth):
-        mct.new_move(search_depth)
+    def tree_search(start_node, search_depth):
+        current_node = mct.tree_search(start_node, search_depth)[0]
+        print("finish")
         mct.state.print_tkinter_board(my_canvas)
 
 
@@ -60,7 +62,7 @@ if __name__ == "__main__":
     terr_button = ttk.Button(root, text= "calculer le territoire", command = lambda: print_terr())
     captures_button = ttk.Button(root, text= "captures", command = lambda: print_capt())
     pos_button = ttk.Button(root, text= "jouer", command = lambda: play_from_text_box())
-    tree_search_button = ttk.Button(root, text= "tree search", command = lambda: mct.MCTS(mct.root, 10))
+    tree_search_button = ttk.Button(root, text= "tree search", command = lambda: tree_search(current_node, 10)) #TODO trouver comment garder l'état a chaque fois et jouer à partir de celui-ci
     print_tree_button = ttk.Button(root, text= "print tree", command = lambda: mct.pretty_print())
     pass_button = ttk.Button(root, text = "passer", command = lambda: go.play_pass())
     pass_button.place(x=825, y=400)
