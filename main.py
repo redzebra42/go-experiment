@@ -51,7 +51,7 @@ if __name__ == "__main__":
         print("b caps: ", go.board.captured_pieces['b'])
     
     def tree_search(start_node, search_depth):
-        (new_current_node, new_move) = mct.tree_search(start_node, search_depth)
+        (new_current_node, new_move) = mct.tree_search(start_node, None, True, search_depth)
         mct.current_node = new_current_node
         play_at(new_move)
         print(current_node)

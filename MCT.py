@@ -7,7 +7,7 @@ class MCT():
 
     def __init__(self, state, game) -> None:
         self.game = game
-        self.weight = [1,1]  #[nb de fois testé, nb de fois gagné]
+        self.weight = [0,0]  #[nb de fois testé, nb de fois gagné]
         self.state = state
         self.enfants = {}  #(key:move, value:MCT)
         self.parent = None
@@ -52,14 +52,14 @@ class MCT():
         return self.best_child()
 
     def expension(self):
-        '''ajoute aux enfants de self les nouveau noeuds correspondent a tout les coups légaux '''
+        '''ajoute aux enfants de self les nouveau noeuds correspondent a UN nouveu coup légal'''
         if not(self.state.is_over()):
-            for new_move in self.state.legal_moves():
-                new_state = self.state.clone()
-                self.game.play_at(new_state, new_move)
-                new_node = MCT(new_state, self.game)
-                new_node.parent = self
-                self.enfants[new_move] = new_node
+            new_move = random.choice([e for e in self.state.legal_moves() if not e in self.enfants.keys()]) #liste des legal_moves sans les moves déja testés
+            new_state = self.state.clone()
+            self.game.play_at(new_state, new_move)
+            new_node = MCT(new_state, self.game)
+            new_node.parent = self
+            self.enfants[new_move] = new_node
             return random.choice(list(self.enfants.values()))
         else:
             return self
@@ -136,7 +136,7 @@ class MCT():
 
     def pretty_print(self):
         file = open("tree.lsp", "w")
-        root = self.root
+        root = self
         while not root.is_racine():
             root = root.parent
         self._pretty_print(root, 0, file)
@@ -144,7 +144,7 @@ class MCT():
 
     def node_pretty_print(self):
         file = open("node.lsp", "w")
-        self._pretty_print(self.root, 0, file)
+        self._pretty_print(self, 0, file)
     
     def __str__(self) -> str:
         return str(f'weight = {self.weight}, size = {len(self.enfants)}, move = {self.state.two_previous_moves[0]}')

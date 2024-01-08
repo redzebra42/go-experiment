@@ -6,11 +6,11 @@ from board import *
 
 go = Go()
 state = Board()
-example_tree = MCT(go, state)
-node_1 = Node(state)
-example_tree.root.enfants = {(6, 6): Node(test_goban.Test_goban().state_1_1),
-                             (2, 2): Node(test_goban.Test_goban().state_1_2)}
-example_tree.root.enfants[(6, 6)].enfants = {(2, 2): Node(test_goban.Test_goban().state_2)}
+example_tree = MCT(state, go)
+node_1 = MCT(state, go)
+example_tree.enfants = {(6, 6): MCT(test_goban.Test_goban().state_1_1, go),
+                             (2, 2): MCT(test_goban.Test_goban().state_1_2, go)}
+example_tree.enfants[(6, 6)].enfants = {(2, 2): MCT(test_goban.Test_goban().state_2, go)}
 
 class TestsGo(unittest.TestCase):
     '''
@@ -52,7 +52,7 @@ class TestsGo(unittest.TestCase):
         example_tree.pretty_print()
 
     def test_is_legal(self): #coord = (x, y)
-        state = board.Board(test_goban.Test_goban().starting_board_4)
+        state = board.Board(test_goban.Test_goban().starting_board_4, {'w': 0,'b': 0}, 'w')
         test_list = []
         test_list.append(go.is_legal(state, (0, 0)))
         test_list.append(go.is_legal(state, (3, 8)))
