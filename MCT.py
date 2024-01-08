@@ -7,7 +7,7 @@ class MCT():
 
     def __init__(self, state, game) -> None:
         self.game = game
-        self.weight = [0,0]  #[nb de fois testé, nb de fois gagné]
+        self.weight = [0,0]  #[nb de fois gagné, nb de fois testé]
         self.state = state
         self.enfants = {}  #(key:move, value:MCT)
         self.parent = None
@@ -92,6 +92,9 @@ class MCT():
                 while not(curr_node.is_racine()):
                     curr_node.back_propagation(sim_res)
                     curr_node = curr_node.parent
+                #on refait une dernière backpropagation pour la racine
+                curr_node.back_propagation(sim_res)
+                curr_node = curr_node.parent
             print("tree_search time: ", time.clock_gettime(0) - clock)
             print("mean time per search :", (time.clock_gettime(0) - clock) / nb_iter)
             return start_node.choose_best_node()                                                 #(node, move)
