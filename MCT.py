@@ -12,6 +12,10 @@ class MCT():
         self.enfants = {}  #(key:move, value:MCT)
         self.parent = None
         self.depth = 0
+        #la racine garde en mémoire le current_node de la partie
+        self.current_node = None
+        if self.is_racine():
+            self.current_node = self
 
     def is_feuille(self) -> bool:
         #print(len(self.game.legal_moves(self.state)))
@@ -110,6 +114,14 @@ class MCT():
             if enf.weight[1] > best[1]:
                 best = (enf, enf.weight[1])
         return (best[0], list(self.enfants.keys())[list(self.enfants.values()).index(best[0])])  #(node, move)
+    
+    def add_move(self, from_node, move):
+        #TODO ne sert a rien en fait, car tout les états sont créés a partir d'un état, ou meme si ils ne le sont pas tous, le mct va pas retourner ce noeud
+        '''ajoute un état ou move a été joué a partir de l'état from_node'''
+        new_node = MCT(from_node.clone(), self.game)
+        new_node.state.play_at(move, new_node.state.current_player)
+        from_node.enfants[move] = new_node
+
     
     def _pretty_print(self, node, acc, file):
         file.write("\n")

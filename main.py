@@ -13,6 +13,7 @@ if __name__ == "__main__":
     root.geometry("1100x800")
     my_canvas = Canvas(root, width=707, height= 707)
     mct = MCT(go_board, go)
+    global current_node
     current_node = mct
     # print(mct)
     # mct.new_move(10)
@@ -29,8 +30,8 @@ if __name__ == "__main__":
             go.play_at(state, coord)
             go.board.print_tkinter_board(my_canvas)
             print("play_at", time.clock_gettime(0) - clock)
-            mct.set_played_move(coord)
-            # go.legal_moves(new_state)
+            #mct.set_played_move(coord)
+            #go.legal_moves(new_state)
         else:
             print("illegal move")
         
@@ -50,10 +51,11 @@ if __name__ == "__main__":
         print("b caps: ", go.board.captured_pieces['b'])
     
     def tree_search(start_node, search_depth):
-        current_node = mct.tree_search(start_node, search_depth)[0]
-        print("finish")
-        mct.state.print_tkinter_board(my_canvas)
-
+        (new_current_node, new_move) = mct.tree_search(start_node, search_depth)
+        mct.current_node = new_current_node
+        play_at(new_move)
+        print(current_node)
+    
 
     my_canvas.bind("<ButtonPress>", on_click)
     text_box = Entry(root)
@@ -62,7 +64,7 @@ if __name__ == "__main__":
     terr_button = ttk.Button(root, text= "calculer le territoire", command = lambda: print_terr())
     captures_button = ttk.Button(root, text= "captures", command = lambda: print_capt())
     pos_button = ttk.Button(root, text= "jouer", command = lambda: play_from_text_box())
-    tree_search_button = ttk.Button(root, text= "tree search", command = lambda: tree_search(current_node, 10)) #TODO trouver comment garder l'état a chaque fois et jouer à partir de celui-ci
+    tree_search_button = ttk.Button(root, text= "tree search", command = lambda: tree_search(mct.current_node, 5))
     print_tree_button = ttk.Button(root, text= "print tree", command = lambda: mct.pretty_print())
     pass_button = ttk.Button(root, text = "passer", command = lambda: go.play_pass())
     pass_button.place(x=825, y=400)
