@@ -15,6 +15,29 @@ starting_board_2 = [['w', 'w', 'w', 'b', 'b', 'w', 'b', 'b', '0'],
 ['0', '0', 'w', 'w', 'w', 'w', '0', '0', 'w'],
 ['w', 'w', 'w', 'w', 'w', '0', '0', 'w', '0']]
 
+
+
+
+
+
+
+
+
+
+#TODO représenter un plateau par un nombre binaire (dans l'ordre de lecture du plateau)
+#ou chaque case est 00 pour vide, 01 pour blanc 10 pour noir et 11 pour oeuil par exemple (pour éviter de jouer dans les yeux).
+#permetterai peut être d'éviter les doublons dans l'arbre... (si on retrouve une configuration dèja rencontrée, faire qqchose)
+#capture et tout ça peut peut être se trouver en faisant des opérations sur les bits, mait jsp si c'est faisable en python
+
+
+
+
+
+
+
+
+
+
 class Board():
 
     '''
@@ -22,13 +45,15 @@ class Board():
     has all the information needed to play from here (board, captures)
     '''
 
-    def __init__(self, goban=st.goban, captured_pieces=st.caps, curr_player=st.player ,two_previous_moves=st.two_prev_moves, size=st.size, leg_move_board=None, is_chinese_rule_set=True, komi=3.5):
+    def __init__(self, goban=st.goban, captured_pieces=st.caps, curr_player=st.player ,two_previous_moves=st.two_prev_moves, size=st.size, leg_move_board=None, is_chinese_rule_set=True, komi=3.5, groups=None):
         self.size = size
         self.current_player = curr_player
         self.goban = copy.deepcopy(goban)
         self.captured_pieces =  copy.copy(captured_pieces)
         self.two_previous_moves = copy.deepcopy(two_previous_moves)
         self.leg_move_board = copy.deepcopy(leg_move_board)
+        self.groups = copy.deepcopy(groups) #dictionnaire (clé: tuple (couleur ('w', 'b', '0'), coord du premier élément du groupe), valeur: liste des coordonnées des éléments du groupe)
+        self.init_groups()
         self.is_chinese_rule_set = is_chinese_rule_set
         self.komi = komi
         if leg_move_board == None:
@@ -66,21 +91,6 @@ class Board():
                         (coord[0]+1, coord[1]),
                         (coord[0], coord[1]-1),
                         (coord[0], coord[1]+1)]
-   
-    def goban_to_print(self, tile):
-        if tile == '0':
-            return '|  '
-        elif tile == 'b':
-            return '| 0'
-        elif tile == 'w':
-            return '| O'
-        elif tile == 'x':
-            return '| x'
-        
-    def print_board(self):
-        print("  A  B  C  D  E  F  G  H  J  K  L  M  N  O  P  Q  R  S  T")
-        for i in range(len(self.goban)):
-            print("".join([self.goban_to_print(self.goban[i][j]) for j in range(len(self.goban[0]))]), str(i+1))
 
     def print_tile_canvas(self, coord, cnvs):
         i,j = coord[0], coord[1]
@@ -114,6 +124,7 @@ class Board():
             if move != 'pass':
                 y, x = 60+35*move[1], 60+35*move[0]
                 cnvs.create_oval(x-5, y-5, x+5, y+5, fill="red")
+
     def _group_rec(self, coord, group_list):
         neighbours = self.neighbours(coord)
         group_list.append(coord)
@@ -126,6 +137,19 @@ class Board():
         group_list = []
         self._group_rec(coord, group_list)
         return group_list
+    
+    def init_groups(self):
+        for j in range(len(self.goban)):
+            for i in range(len(self.goban[0])):
+                coord = (i, j)
+                already_done = False
+                for grp in self.groups.values():
+                    if coord in grp:
+                        already_done = True
+                        break
+                if not already_done:
+                    self.groups[(self.goban[j][i], coord)] = self.group(coord)
+
 
     def liberty(self, group):
         '''returns a tuple (number of liberties, list of all liberties)'''
@@ -142,6 +166,10 @@ class Board():
         self.goban[coord[1]][coord[0]] = player
         captures = self.capture(coord, self.opposite(player))
         self.captured_pieces[player] += captures
+        if captures > 0:
+            self.init_groups()
+        else:
+            self.update_groups()
         self.update_legal_moves(coord, player, captures)
 
     def opposite(self, player):
@@ -201,7 +229,7 @@ class Board():
             return False
 
     def territory(self, color):
-        clock = time.clock_gettime(0)
+        #clock = time.clock_gettime(0)
         points = 0
         already_counted = []
         for i in range(len(self.goban)):

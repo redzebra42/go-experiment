@@ -82,6 +82,15 @@ class TestsGo(unittest.TestCase):
             [False, False, False, True, False, False, False, False, False],
                     ]
         self.assertEqual(test_list, res_list)
+    
+    def test_groups1(self):
+        state = board.Board(test_goban.Test_goban().starting_board_5)
+        self.assertEqual(14, len(state.groups))
+
+    def test_groups2(self):
+        state = board.Board(test_goban.Test_goban().starting_board_5)
+        self.assertEqual(len(state.groups[('b', (1,1))]), 5)
+
 
 if __name__ == "__main__":
     unittest.main()
