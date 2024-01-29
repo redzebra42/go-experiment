@@ -20,17 +20,10 @@ starting_board_2 = [['w', 'w', 'w', 'b', 'b', 'w', 'b', 'b', '0'],
 
 
 
-
-
-
-
 #TODO représenter un plateau par un nombre binaire (dans l'ordre de lecture du plateau)
 #ou chaque case est 00 pour vide, 01 pour blanc 10 pour noir et 11 pour oeuil par exemple (pour éviter de jouer dans les yeux).
 #permetterai peut être d'éviter les doublons dans l'arbre... (si on retrouve une configuration dèja rencontrée, faire qqchose)
 #capture et tout ça peut peut être se trouver en faisant des opérations sur les bits, mait jsp si c'est faisable en python
-
-
-
 
 
 
@@ -52,7 +45,8 @@ class Board():
         self.captured_pieces =  copy.copy(captured_pieces)
         self.two_previous_moves = copy.deepcopy(two_previous_moves)
         self.leg_move_board = copy.deepcopy(leg_move_board)
-        self.groups = copy.deepcopy(groups) #dictionnaire (clé: tuple (couleur ('w', 'b', '0'), coord du premier élément du groupe), valeur: liste des coordonnées des éléments du groupe)
+        self.groups = copy.deepcopy(groups)
+        self.max_groups = 0
         self.init_groups()
         self.is_chinese_rule_set = is_chinese_rule_set
         self.komi = komi
@@ -91,15 +85,21 @@ class Board():
                         (coord[0]+1, coord[1]),
                         (coord[0], coord[1]-1),
                         (coord[0], coord[1]+1)]
+            
+    
+    def rgb_hack(self, rgb):
+        return "#%02x%02x%02x" % rgb  
 
     def print_tile_canvas(self, coord, cnvs):
         i,j = coord[0], coord[1]
+        grp = self.groups[j][i]
         if self.goban[j][i] == "b":
             cnvs.create_oval(43+35*i,43+35*j,77+35*i,77+35*j, fill="black")
         elif self.goban[j][i] == "w":
             cnvs.create_oval(43+35*i,43+35*j,77+35*i,77+35*j, fill="white", outline="white")
+        cnvs.create_oval(53+35*i,53+35*j,67+35*i,67+35*j, fill= self.rgb_hack(((50 + 40*grp)%255, (105 + 100*grp)% 255, (80*grp)% 255)))
 
-    def print_tkinter_board(self, cnvs,):
+    def print_tkinter_board(self, cnvs):
         size = self.size
         move = self.two_previous_moves[0]
         cnvs.pack(side=LEFT)
@@ -123,7 +123,7 @@ class Board():
         if move != None:
             if move != 'pass':
                 y, x = 60+35*move[1], 60+35*move[0]
-                cnvs.create_oval(x-5, y-5, x+5, y+5, fill="red")
+                cnvs.create_oval(x-4, y-4, x+4, y+4, fill="red")
 
     def _group_rec(self, coord, group_list):
         neighbours = self.neighbours(coord)
@@ -139,17 +139,35 @@ class Board():
         return group_list
     
     def init_groups(self):
+        '''initialise self.groups'''
+        group_board =  [[None for i in range(self.size)] for j in range(self.size)]
+        k = 0
         for j in range(len(self.goban)):
             for i in range(len(self.goban[0])):
                 coord = (i, j)
-                already_done = False
-                for grp in self.groups.values():
-                    if coord in grp:
-                        already_done = True
-                        break
-                if not already_done:
-                    self.groups[(self.goban[j][i], coord)] = self.group(coord)
+                if group_board[j][i] == None:
+                    for crd in self.group(coord):
+                        group_board[crd[1]][crd[0]] = k
+                    k += 1
+        self.max_groups = k
+        self.groups = group_board
 
+    def update_groups(self, move, player):
+        '''update self.groups si il n'y a pas eu de capture'''
+        merge_with = None
+        for coord in self.neighbours(move):
+            (i, j) = coord
+            if self.goban[j][i] == player:
+                if merge_with == None:
+                    merge_with = self.groups[j][i]
+                    self.groups[move[1]][move[0]] = merge_with
+                else:
+                    for crd in self.group(coord):
+                        self.groups[crd[1]][crd[0]] = merge_with
+        if merge_with == None:
+            self.groups[move[1]][move[0]] = self.max_groups + 1
+            self.max_groups += 1
+        #TODO merge les groupes potentiels alentours
 
     def liberty(self, group):
         '''returns a tuple (number of liberties, list of all liberties)'''
@@ -169,7 +187,7 @@ class Board():
         if captures > 0:
             self.init_groups()
         else:
-            self.update_groups()
+            self.update_groups(coord, player)
         self.update_legal_moves(coord, player, captures)
 
     def opposite(self, player):
