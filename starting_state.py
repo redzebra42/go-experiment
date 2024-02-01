@@ -47,7 +47,7 @@ starting_board_5 = [['0','0','0','0','0','0','0','0','0'],
 prev_move_4 = [(6, 8), (8, 0)]
 goban_2 = [['0' for i in range(size)] for j in range(size)]
 
-goban = starting_board_5
+goban = starting_board_4
 caps = {'w': 0,'b': 0}
 player = 'b'
 two_prev_moves = prev_move_4

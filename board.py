@@ -184,10 +184,7 @@ class Board():
         self.goban[coord[1]][coord[0]] = player
         captures = self.capture(coord, self.opposite(player))
         self.captured_pieces[player] += captures
-        if captures > 0:
-            self.init_groups()
-        else:
-            self.update_groups(coord, player)
+        self.update_groups(coord, player)
         self.update_legal_moves(coord, player, captures)
 
     def opposite(self, player):

@@ -83,6 +83,10 @@ class TestsGo(unittest.TestCase):
                     ]
         self.assertEqual(test_list, res_list)
 
+    def test_update_groups(self):
+        state = board.Board(test_goban.Test_goban().starting_board_4)
+
+
 
 if __name__ == "__main__":
     unittest.main()
