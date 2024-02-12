@@ -44,6 +44,11 @@ class TestsGo(unittest.TestCase):
         tst_goban = test_goban.Test_goban().starting_board_3
         self.assertEqual(board.Board(tst_goban).group((1, 1)), [(1, 1), (2, 1), (1, 2), (0, 2), (0, 3)])
 
+    def test_group_2(self):
+        tst_goban = test_goban.Test_goban().starting_board_3
+        state = board.Board(tst_goban)
+        self.assertEqual(state.group_dict[state.groups[1][1]], [(1, 1), (2, 1), (1, 2), (0, 2), (0, 3)])
+        
     def test_territory(self):
         state = board.Board(test_goban.Test_goban().starting_board_3)
         self.assertEqual(state.territory('b'), 19)
