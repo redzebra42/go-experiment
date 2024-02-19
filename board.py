@@ -46,10 +46,6 @@ class Board():
         self.captured_pieces =  copy.copy(captured_pieces)
         self.two_previous_moves = copy.deepcopy(two_previous_moves)
         self.leg_move_board = copy.deepcopy(leg_move_board)
-        self.groups = copy.deepcopy(groups)
-        self.group_dict = {}
-        self.max_groups = 0
-        self.init_groups()
         self.is_chinese_rule_set = is_chinese_rule_set
         self.komi = komi
         if leg_move_board == None:
@@ -94,15 +90,15 @@ class Board():
 
     def print_tile_canvas(self, coord, cnvs):
         i,j = coord[0], coord[1]
-        grp = self.groups[j][i]
+        #grp = self.groups[j][i]
         if self.goban[j][i] == "b":
             cnvs.create_oval(43+35*i,43+35*j,77+35*i,77+35*j, fill="black")
         elif self.goban[j][i] == "w":
             cnvs.create_oval(43+35*i,43+35*j,77+35*i,77+35*j, fill="white", outline="white")
         else:
-            pass
-            #bias = (int(100 * (self.inside_terr_bias(self.current_player, (i, j)) + self.capture_bias(self.current_player, (i, j)))))
-            #cnvs.create_oval(53+35*i,53+35*j,67+35*i,67+35*j, fill= self.rgb_hack((bias, bias, bias)))
+            #pass
+            bias = (int(100 * (self.inside_terr_bias(self.current_player, (i, j)) + self.capture_bias(self.current_player, (i, j)))))
+            cnvs.create_oval(53+35*i,53+35*j,67+35*i,67+35*j, fill= self.rgb_hack((bias, bias, bias)))
         #cnvs.create_oval(53+35*i,53+35*j,67+35*i,67+35*j, fill= self.rgb_hack(((50 + 40*grp)%255, (130 + 170*grp)% 255, (80*grp)% 255)))
 
     def print_tkinter_board(self, cnvs):
@@ -143,46 +139,6 @@ class Board():
         group_list = []
         self._group_rec(coord, group_list)
         return group_list
-    
-    def init_groups(self):
-        '''initialise self.groups'''
-        group_board =  [[None for i in range(self.size)] for j in range(self.size)]
-        k = 0
-        for j in range(len(self.goban)):
-            for i in range(len(self.goban[0])):
-                coord = (i, j)
-                if group_board[j][i] == None:
-                    for crd in self.group(coord):
-                        group_board[crd[1]][crd[0]] = k
-                        if k in self.group_dict:
-                            self.group_dict[k].append((crd[0], crd[1]))
-                        else:
-                            self.group_dict[k] = [(crd[0], crd[1])]
-                    k += 1
-        self.max_groups = k
-        self.groups = group_board
-
-    def update_groups(self, move, player):
-        #TODO case when the new stone separates territory in two, or just stop trying to do thit function, whichi doesn't even seem to be faster...
-        '''update self.groups si il n'y a pas eu de capture'''
-        merge_with = None
-        self.group_dict[self.groups[move[1]][move[0]]].remove((move[0], move[1]))
-        for coord in self.neighbours(move):
-            (i, j) = coord
-            if self.goban[j][i] == player:
-                if merge_with == None:
-                    merge_with = self.groups[j][i]
-                    self.groups[move[1]][move[0]] = merge_with
-                    self.group_dict[merge_with].append((move[0], move[1]))
-                else:
-                    self.group_dict[merge_with] += self.group_dict[self.groups[j][i]]
-                    self.group_dict[self.groups[j][i]] = []
-                    for crd in self.group(coord):
-                        self.groups[crd[1]][crd[0]] = merge_with
-        if merge_with == None:
-            self.max_groups += 1
-            self.groups[move[1]][move[0]] = self.max_groups
-            self.group_dict[self.max_groups] = [(move[0], move[1])]
 
     def liberty(self, group):
         '''returns a tuple (number of liberties, list of all liberties)'''
@@ -199,7 +155,6 @@ class Board():
         self.goban[coord[1]][coord[0]] = player
         captures = self.capture(coord, self.opposite(player))
         self.captured_pieces[player] += captures
-        self.update_groups(coord, player)
         self.update_legal_moves(coord, player, captures)       #TODO c'est cette fonction qui prend du temps (et que celle là)
 
     def opposite(self, player):
@@ -325,7 +280,7 @@ class Board():
                     leg_move_board[coord[1]][coord[0]].append('w')
                 if self.is_legal(coord, 'b'):
                     leg_move_board[coord[1]][coord[0]].append('b')
-        print("initiate legal moves: ", time.clock_gettime(0) - clock)
+        #print("initiate legal moves: ", time.clock_gettime(0) - clock)
         return leg_move_board
     
     def winner(self):
@@ -360,11 +315,12 @@ class Board():
         neighb_group = self.group_neighbours(move_group)
         coord = neighb_group[0]
         if self.goban[coord[1]][coord[0]] == player:
-            return 1 / 2*log(len(neighb_group) + 1)
+            return 1 / 2*log(len(move_group) + 1)
         else:
             return 0
 
     def capture_bias(self, player, move):
+        #TODO améliorer l'efficacité si je l'utilise dans le MCT (pas faire une copie + capture, un peu comme is_legal)
         test_board = self.clone()
         return log(1 + test_board.capture(move, self.opposite(player)))
 
