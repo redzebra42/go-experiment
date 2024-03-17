@@ -3,7 +3,7 @@ from tkinter import *
 import copy
 import starting_state as st
 import time
-from numpy import log
+from numpy import log, sqrt
 
 starting_board_1 = [['0' for i in range(st.size)] for j in range(st.size)]
 starting_board_2 = [['w', 'w', 'w', 'b', 'b', 'w', 'b', 'b', '0'],
@@ -15,21 +15,6 @@ starting_board_2 = [['w', 'w', 'w', 'b', 'b', 'w', 'b', 'b', '0'],
 ['0', '0', 'w', 'b', 'w', 'w', '0', 'w', 'w'],
 ['0', '0', 'w', 'w', 'w', 'w', '0', '0', 'w'],
 ['w', 'w', 'w', 'w', 'w', '0', '0', 'w', '0']]
-
-
-
-
-
-
-#TODO représenter un plateau par un nombre binaire (dans l'ordre de lecture du plateau)
-#ou chaque case est 00 pour vide, 01 pour blanc 10 pour noir et 11 pour oeuil par exemple (pour éviter de jouer dans les yeux).
-#permetterai peut être d'éviter les doublons dans l'arbre... (si on retrouve une configuration dèja rencontrée, faire qqchose)
-#capture et tout ça peut peut être se trouver en faisant des opérations sur les bits, mait jsp si c'est faisable en python
-
-
-
-
-
 
 
 class Board():
@@ -97,8 +82,11 @@ class Board():
             cnvs.create_oval(43+35*i,43+35*j,77+35*i,77+35*j, fill="white", outline="white")
         else:
             #pass
-            bias = (int(100 * (self.inside_terr_bias(self.current_player, (i, j)) + self.capture_bias(self.current_player, (i, j)))))
-            cnvs.create_oval(53+35*i,53+35*j,67+35*i,67+35*j, fill= self.rgb_hack((bias, bias, bias)))
+            bias = (int(50 * (self.inside_terr_bias(self.current_player, (i, j)) + self.capture_bias(self.current_player, (i, j)))))
+            if bias < 0:
+                cnvs.create_oval(53+35*i,53+35*j,67+35*i,67+35*j, fill= self.rgb_hack((255, (250 + 30*bias) % 255, (250 + 30*bias) % 255)))
+            else:
+                cnvs.create_oval(53+35*i,53+35*j,67+35*i,67+35*j, fill= self.rgb_hack(((250 - 30*bias) % 255, 255, 255)))
         #cnvs.create_oval(53+35*i,53+35*j,67+35*i,67+35*j, fill= self.rgb_hack(((50 + 40*grp)%255, (130 + 170*grp)% 255, (80*grp)% 255)))
 
     def print_tkinter_board(self, cnvs):
@@ -175,7 +163,7 @@ class Board():
         return result
 
     def capture(self, new_coord, opp_player):
-        '''tests if there is a capture for a new move and captures the stones
+        '''tests if there is a capture for a new move (that have been played) and captures the stones
         Modifies the board's goban.
         Returns the number of captured pieces, 0 if nothing is captured.'''
         result = 0
@@ -283,6 +271,16 @@ class Board():
         #print("initiate legal moves: ", time.clock_gettime(0) - clock)
         return leg_move_board
     
+    def is_eye(self, coord, player):
+        if self.goban[coord[1]][coord[0]] == '0':
+            grp = self.group(coord)
+            for (i,j) in self.group_neighbours(grp):
+                if self.goban[j][i] != player:
+                    return False
+            return True
+        else:
+            return False
+    
     def winner(self):
         w_pts = self.territory('w') + self.captured_pieces['w'] + self.komi
         b_pts = self.territory('b') + self.captured_pieces['b']
@@ -311,18 +309,22 @@ class Board():
         return leg_moves
 
     def inside_terr_bias(self, player, move):
+        #voire un peu pour ajuster la formule (un peu random pr l'instant)
         move_group = self.group(move)
         neighb_group = self.group_neighbours(move_group)
         coord = neighb_group[0]
         if self.goban[coord[1]][coord[0]] == player:
-            return 1 / 2*log(len(move_group) + 1)
+            print(move, -2*log(len(move_group) + 1))
+            return -2*log(len(move_group) + 1)
         else:
             return 0
 
     def capture_bias(self, player, move):
         #TODO améliorer l'efficacité si je l'utilise dans le MCT (pas faire une copie + capture, un peu comme is_legal)
         test_board = self.clone()
-        return log(1 + test_board.capture(move, self.opposite(player)))
+        test_board.goban[move[1]][move[0]] = player
+        res = sqrt(test_board.capture(move, self.opposite(player)))
+        return res
 
     def __str__(self) -> str:
         res = ''

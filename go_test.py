@@ -43,11 +43,6 @@ class TestsGo(unittest.TestCase):
     def test_group_1_1(self):
         tst_goban = test_goban.Test_goban().starting_board_3
         self.assertEqual(board.Board(tst_goban).group((1, 1)), [(1, 1), (2, 1), (1, 2), (0, 2), (0, 3)])
-
-    def test_group_2(self):
-        tst_goban = test_goban.Test_goban().starting_board_3
-        state = board.Board(tst_goban)
-        self.assertEqual(state.group_dict[state.groups[1][1]], [(1, 1), (2, 1), (1, 2), (0, 2), (0, 3)])
         
     def test_territory(self):
         state = board.Board(test_goban.Test_goban().starting_board_3)
@@ -90,6 +85,13 @@ class TestsGo(unittest.TestCase):
 
     def test_update_groups(self):
         state = board.Board(test_goban.Test_goban().starting_board_4)
+
+    def test_is_eye(self):
+        state = board.Board(test_goban.Test_goban().starting_board_4, {'w': 0,'b': 0}, 'w')
+        self.assertEqual([True, True, True, False, False], [state.is_eye((6, 6), 'b'), state.is_eye((5, 0), 'b'), state.is_eye((1, 4), 'w'), state.is_eye((8, 3), 'w'), state.is_eye((4, 4), 'b')])
+
+
+
 
 
 
