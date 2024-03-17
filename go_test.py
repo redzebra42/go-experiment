@@ -44,9 +44,10 @@ class TestsGo(unittest.TestCase):
         tst_goban = test_goban.Test_goban().starting_board_3
         self.assertEqual(board.Board(tst_goban).group((1, 1)), [(1, 1), (2, 1), (1, 2), (0, 2), (0, 3)])
         
-    def test_territory(self):
+    def test_old_territory(self):
+        #TODO test new territory funcion
         state = board.Board(test_goban.Test_goban().starting_board_3)
-        self.assertEqual(state.territory('b'), 19)
+        self.assertEqual(state.old_territory('b'), 19)
     
     def test_pretty_print(self):
         example_tree.pretty_print()
@@ -87,8 +88,8 @@ class TestsGo(unittest.TestCase):
         state = board.Board(test_goban.Test_goban().starting_board_4)
 
     def test_is_eye(self):
-        state = board.Board(test_goban.Test_goban().starting_board_4, {'w': 0,'b': 0}, 'w')
-        self.assertEqual([True, True, True, False, False], [state.is_eye((6, 6), 'b'), state.is_eye((5, 0), 'b'), state.is_eye((1, 4), 'w'), state.is_eye((8, 3), 'w'), state.is_eye((4, 4), 'b')])
+        state = board.Board(test_goban.Test_goban().starting_board_6, {'w': 0,'b': 0}, 'w')
+        self.assertEqual([True, False, True, False, False], [state.is_eye((6, 6), 'b'), state.is_eye((5, 0), 'b'), state.is_eye((1, 4), 'w'), state.is_eye((8, 3), 'w'), state.is_eye((4, 4), 'b')])
 
 
 

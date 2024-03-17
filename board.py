@@ -201,7 +201,7 @@ class Board():
         else:
             return False
 
-    def territory(self, color):
+    def old_territory(self, player):
         #clock = time.clock_gettime(0)
         points = 0
         already_counted = []
@@ -209,13 +209,26 @@ class Board():
             for j in range(len(self.goban[0])):
                     coord = (j,i)
                     coord_group = self.group(coord)
-                    if self.goban[i][j] == "0" and not(coord in already_counted) and all(self.goban[x[1]][x[0]] == color for x in self.group_neighbours(coord_group)):
+                    if self.goban[i][j] == "0" and not(coord in already_counted) and all(self.goban[x[1]][x[0]] == player for x in self.group_neighbours(coord_group)):
                         points += len(coord_group)
                     if not(coord in already_counted):
                         for k in range(len(coord_group)):
                             already_counted.append(coord_group[k])
         #print("territory: ", time.clock_gettime(0) - clock)
         return points
+    
+    def territory(self, player):
+        score = 0
+        already_counted = []
+        for i in range(len(self.goban[0])):
+            for j in range(len(self.goban)):
+                coord = (i, j)
+                if not (coord in already_counted):
+                    if self.is_eye(coord, player):
+                        grp = self.group(coord)
+                        score += len(grp)
+                        for crd in grp:
+                            already_counted.append(crd) 
     
     def clone(self):
         new_child = Board(self.goban, self.captured_pieces, self.current_player, self.two_previous_moves, self.size)
@@ -275,15 +288,18 @@ class Board():
         if self.goban[coord[1]][coord[0]] == '0':
             grp = self.group(coord)
             for (i,j) in self.group_neighbours(grp):
-                if self.goban[j][i] != player:
+                if (self.goban[j][i] != player) or (self.liberty(self.group((i, j)))[0] == 1):
                     return False
             return True
         else:
             return False
+
+    def is_alive(coord):
+        pass
     
     def winner(self):
-        w_pts = self.territory('w') + self.captured_pieces['w'] + self.komi
-        b_pts = self.territory('b') + self.captured_pieces['b']
+        w_pts = self.old_territory('w') + self.captured_pieces['w'] + self.komi
+        b_pts = self.old_territory('b') + self.captured_pieces['b']
         if self.is_chinese_rule_set:
             for line in self.goban:
                 for piece in line:
