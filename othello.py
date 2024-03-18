@@ -276,6 +276,28 @@ class Oboard():
     def play_at_and_print(self, move):
         self.play_at(move)
         self.print_board()
+
+    def corners(self):
+        nb_corner = 0
+        for corner in [(0, 0), (0, 7), (7, 0), (7, 7)]:
+            if self.board[corner[0]][corner[1]] == self.current_player:
+                nb_corner += 1
+        return nb_corner
+    
+    def mobilite(self):
+        mob_curr_player = len(self.legal_moves())
+        tmp_state = self.clone()
+        tmp_state.play_at('pass')
+        mob_opp_player = len(tmp_state.legal_moves())
+        return mob_curr_player - mob_opp_player
+    
+    def parity(self):
+        res = 0
+        for line in self.board:
+            for case in line:
+                if case in (1, 2):
+                    res += 1
+        return res % 2
     
 class Ogame():
 
@@ -361,37 +383,40 @@ if __name__ == "__main__":
         tree.new_move_time(sec)
         #tree.root.state.print_board()
 
-    def rand_vs_robot(n, time):
-        robot_wins = 0
+    def rand_vs_mct(n, time):
+        mct_wins = 0
         j = 0
         k = 0
         while j < n:
             j += 1
-            tree = MCT(Ogame(), Oboard())
+            tree = MCT(Oboard(), Ogame())
             print("new game\n\n\n")
-            while not game.is_over(tree.state):
-                leg_moves = tree.state.legal_moves()
+            while not tree.current_node.state.is_over():
                 k += 1
-                i = random.randint(0, len(leg_moves)-1)
-                print("random move: ")
-                play_at(leg_moves[i], tree, tree.state)
-                print(leg_moves[i], " ", k)
-                if not(game.is_over(tree.state)):
-                    print("MCT move: ")
-                    time_tree_search(time, tree)    
+                print("MCT move: ")
+                chosen_node, chosen_move = tree.tree_search(tree.current_node, time)
+                state = tree.current_node.state
+                play_at(chosen_move, state)
+                tree.current_node = chosen_node
+                if not(tree.current_node.state.is_over()): 
+                    leg_moves = tree.current_node.state.legal_moves()
+                    i = random.randint(0, len(leg_moves)-1)
+                    print("random move: ")
+                    play_at(leg_moves[i], state)
+                    tree.current_node = tree.current_node.enfants[leg_moves[i]]
+                    print(leg_moves[i], " ", k)
             tree.state.print_board()
-            if game.winner(tree.state) == 1:
+            if game.winner(tree.state) == 0:
                 print("win")
-                robot_wins += 1
-        return robot_wins
+                mct_wins += 1
+        return mct_wins
 
 
     mct.state.print_board()
 
     while True:
-        """
-        print(rand_vs_robot(4, 0.5))
-        """
+        
+        print(rand_vs_mct(4, 1))
 
         chosen_node, chosen_move = mct.tree_search(mct.current_node, 2)
         state = mct.current_node.state
