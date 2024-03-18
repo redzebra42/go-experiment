@@ -297,7 +297,7 @@ class Oboard():
             for case in line:
                 if case in (1, 2):
                     res += 1
-        return res % 2
+        return res % 2 
     
 class Ogame():
 

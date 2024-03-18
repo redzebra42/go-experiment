@@ -80,12 +80,12 @@ if __name__ == "__main__":
                     move = random.choice(state.legal_moves())
                     game.play_at(state, move)
                     position = position.enfants[move]
-                print(state.position)
+                print("position", state.position)
             if state.winner() == 1:
                 nb_vict_1 += 1
         return nb_vict_1/nb_tests
 
-    print(test_win_rate(10, 3000, 100))
+    print(test_win_rate(10, 100000, 10))
             
 
 
