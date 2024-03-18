@@ -91,68 +91,67 @@ class Oboard():
         else:
             return 1
 
-    def is_legal_dir(self, move):
-        if move == (4, 6):  #debug
-            move = (4, 6)
-        if self.board[move[0]][move[1]] in (0, 3):
+    def legal_dirs(self, move):
+        if self.board[move[0]][move[1]] in (0, 3):   #si la case est vide
+            leg_directions = []
             if move[0] < self.size - 1:
                 i = move[0] + 1
                 while i < self.size - 1 and self.board[i][move[1]] == self.opp_player():
                     i += 1
                 if (i != move[0] + 1) and (self.board[i][move[1]] == self.current_player):
-                    return (True, 'U')
+                    leg_directions.append('U')
             if move[0] > 0:
                 i = move[0] - 1
                 while i > 0 and self.board[i][move[1]] == self.opp_player():
                     i -= 1
                 if (i != move[0] - 1) and (self.board[i][move[1]] == self.current_player):
-                    return (True, 'D')
+                    leg_directions.append('D')
             if move[1] < self.size - 1:
                 j = move[1] + 1
                 while j < self.size - 1 and self.board[move[0]][j] == self.opp_player():
                     j += 1
                 if (j != move[1] + 1) and (self.board[move[0]][j] == self.current_player):
-                    return (True, 'R')
+                    leg_directions.append('R')
             if move[1] > 0:
                 j = move[1] - 1
                 while j > 0 and self.board[move[0]][j] == self.opp_player():
                     j -= 1
                 if (j != move[1] - 1) and (self.board[move[0]][j] == self.current_player):
-                    return (True, 'L')
+                    leg_directions.append('L')
             if move[0] < self.size - 1 and move[1] < self.size - 1:
                 i,j = move[0] + 1, move[1] + 1
                 while i < self.size - 1 and j < self.size - 1 and self.board[i][j] == self.opp_player():
                     i += 1
                     j += 1
                 if (i != move[0] + 1) and (self.board[i][j] == self.current_player):
-                    return (True, 'DR')
+                    leg_directions.append('DR')
             if move[0] < self.size - 1 and move[1] > 0:
                 i,j = move[0] + 1, move[1] - 1
                 while i < self.size - 1 and j > 0 and self.board[i][j] == self.opp_player():
                     i += 1
                     j -= 1
                 if (i != move[0] + 1) and (self.board[i][j] == self.current_player):
-                    return (True, 'DL')
+                    leg_directions.append('DL')
             if move[0] > 0 and move[1] > 0:
                 i,j = move[0] - 1, move[1] - 1
                 while i > 0 and  j > 0 and self.board[i][j] == self.opp_player():
                     i -= 1
                     j -= 1
                 if (i != move[0] - 1) and (self.board[i][j] == self.current_player):
-                    return (True, 'UL')
+                    leg_directions.append('UL')
             if move[0] > 0 and move[1] < self.size - 1:
                 i,j = move[0] - 1, move[1] + 1
                 while i > 0 and j < self.size - 1 and self.board[i][j] == self.opp_player():
                     i -= 1
                     j += 1
                 if (i != move[0] - 1) and (self.board[i][j] == self.current_player):
-                    return (True, 'UR')
-            return (False, None)
+                    leg_directions.append('UR')
+            return leg_directions
         else:
-            return (False, None)
+            return []
     
     def is_legal(self, move):
-        return move == "pass" or self.is_legal_dir(move)[0]
+        return move == "pass" or (len(self.legal_dirs(move)) != 0)
     
     def reverse(self, move, dir):
         if dir == 'R':
@@ -262,15 +261,17 @@ class Oboard():
             self.prev_move = move
             self.legal_moves()
         else:
-            legal_dir = self.is_legal_dir(move)
-            if legal_dir[0]:
-                self.reverse(move, legal_dir[1])
+            leg_directions = self.legal_dirs(move)
+            if len(leg_directions) != 0:
+                for legal_dir in leg_directions:
+                    self.reverse(move, legal_dir)
                 self.board[move[0]][move[1]] = self.current_player
                 self.current_player = self.opp_player()
                 self.prev_move = move
                 self.legal_moves()
             else:
                 print("illegal move from state")
+                raise RuntimeError
     
     def play_at_and_print(self, move):
         self.play_at(move)
@@ -343,19 +344,18 @@ def is_legal_test(board1):
 if __name__ == "__main__":
     game = Ogame()
     state = game.state
-    mct = MCT(game, state)
+    mct = MCT(state, game)
 
-    def play_at(coord, tree, state=state):
+    def play_at(coord, state=state):
         if state.is_legal(coord):
             game.play_at(state, coord)
-            #state.print_board()
-            tree.set_played_move(coord)
+            state.print_board()
         else:
             print("illegal move from main")
 
     def tree_search(search_depth):
         mct.new_move(search_depth)
-        mct.root.state.print_board()
+        mct.state.print_board()
 
     def time_tree_search(sec, tree):
         tree.new_move_time(sec)
@@ -369,36 +369,44 @@ if __name__ == "__main__":
             j += 1
             tree = MCT(Ogame(), Oboard())
             print("new game\n\n\n")
-            while not game.is_over(tree.root.state):
-                leg_moves = tree.root.state.legal_moves()
+            while not game.is_over(tree.state):
+                leg_moves = tree.state.legal_moves()
                 k += 1
                 i = random.randint(0, len(leg_moves)-1)
                 print("random move: ")
-                play_at(leg_moves[i], tree, tree.root.state)
+                play_at(leg_moves[i], tree, tree.state)
                 print(leg_moves[i], " ", k)
-                if not(game.is_over(tree.root.state)):
+                if not(game.is_over(tree.state)):
                     print("MCT move: ")
                     time_tree_search(time, tree)    
-            tree.root.state.print_board()
-            if game.winner(tree.root.state) == 1:
+            tree.state.print_board()
+            if game.winner(tree.state) == 1:
                 print("win")
                 robot_wins += 1
         return robot_wins
 
 
-    mct.root.state.print_board()
+    mct.state.print_board()
 
     while True:
-
-        print(rand_vs_robot(4, 0.5))
-        move = input(str('next move: '))
         """
+        print(rand_vs_robot(4, 0.5))
+        """
+
+        chosen_node, chosen_move = mct.tree_search(mct.current_node, 2)
+        state = mct.current_node.state
+        play_at(chosen_move, state)
+        mct.current_node = chosen_node
+
+        move = input(str('next move: '))
 
         if move == None:
             continue
         
         coord = game.txt_move_to_coord(move)
         play_at(coord, state)
-        time_tree_search(4)
-        state = mct.root.state
-"""
+        mct.current_node = mct.current_node.enfants[coord]
+
+
+
+        #TODO les "captures" marchent pas vraiment... (genre si ça retourne plusieur truc, ça retourne pas tout)
