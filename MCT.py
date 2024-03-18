@@ -77,7 +77,7 @@ class MCT():
     def back_propagation(self, sim_winner):
         '''update le poids d'un noeud selon le résultat de la simulation'''
         self.weight[1] += 1
-        if self.state.current_player == sim_winner:
+        if self.state.current_player != sim_winner:
             self.weight[0] += 1
 
     def tree_search(self, start_node, duration:int, iter:bool = False, nb_iter:int=100) -> tuple:
@@ -103,6 +103,8 @@ class MCT():
             i = 0
             while duration > time.clock_gettime(0) - start_time:
                 i += 1
+                if i % 50 == 0:
+                    print(i)
                 curr_node = start_node
                 while not(curr_node.is_feuille()):
                     curr_node = curr_node.selection()
@@ -111,6 +113,10 @@ class MCT():
                 while not(curr_node.is_racine()):
                     curr_node.back_propagation(sim_res)
                     curr_node = curr_node.parent
+                #on refait une dernière backpropagation pour la racine
+                curr_node.back_propagation(sim_res)
+                curr_node = curr_node.parent
+            print(i)
             return start_node.choose_best_node()
 
     def choose_best_node(self):

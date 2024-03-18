@@ -76,6 +76,7 @@ class Board():
     def print_tile_canvas(self, coord, cnvs):
         i,j = coord[0], coord[1]
         #grp = self.groups[j][i]
+        inter = self.interior(self.group((4, 4)))
         if self.goban[j][i] == "b":
             cnvs.create_oval(43+35*i,43+35*j,77+35*i,77+35*j, fill="black")
         elif self.goban[j][i] == "w":
@@ -87,6 +88,9 @@ class Board():
                 cnvs.create_oval(53+35*i,53+35*j,67+35*i,67+35*j, fill= self.rgb_hack((255, (250 + 30*bias) % 255, (250 + 30*bias) % 255)))
             else:
                 cnvs.create_oval(53+35*i,53+35*j,67+35*i,67+35*j, fill= self.rgb_hack(((250 - 30*bias) % 255, 255, 255)))
+        if (i, j) in inter:
+            cnvs.create_oval(43+35*i,43+35*j,77+35*i,77+35*j, outline="red", width=3)
+            
         #cnvs.create_oval(53+35*i,53+35*j,67+35*i,67+35*j, fill= self.rgb_hack(((50 + 40*grp)%255, (130 + 170*grp)% 255, (80*grp)% 255)))
 
     def print_tkinter_board(self, cnvs):
@@ -218,6 +222,8 @@ class Board():
         return points
     
     def territory(self, player):
+        #TODO capturer tout les groupes morts avant de compter les points
+        new_state = self.clone()
         score = 0
         already_counted = []
         for i in range(len(self.goban[0])):
@@ -294,7 +300,30 @@ class Board():
         else:
             return False
 
-    def is_alive(coord):
+    def interior(self, grp):
+        '''renvoie l'interieur large du contours d'un groupe'''
+        #TODO marche pas pour les groupes qui traversent le plateau et qui ont le bords du plateau comme limite
+        #il faudrais genre ajouter les coord des angles ([-1, -1], [-1, 9], etc) qui correspondent (pas que les coins en fait...)
+        #TODO en fait marche pas du tout car il faudrait des groupes reliés par les coins... (nv fonction a faire let's go)
+        # en fait non, l'argument d'au dessus marche pas, ma fonction marche, (mais seullement suffisante(en fait non), pas necessaire, mais c deja bien)
+        inter = []
+        x_grp = [x[0] for x in grp]
+        y_grp = [y[1] for y in grp]
+        for i in range(min(x_grp), max(x_grp)):
+            for j in range(min(y_grp), max(y_grp)):
+                line = []
+                for coord in grp:
+                    if coord[1] == j:
+                        line.append(coord[0])
+                col = []
+                for coord in grp:
+                    if coord[0] == i:
+                        col.append(coord[1])
+                if (i < max(line) and i > min(line)) and (j < max(col) and j > min(col)):
+                    inter.append((i, j))
+        return inter
+
+    def is_alive(grp):
         pass
     
     def winner(self):
