@@ -19,28 +19,28 @@ class MinMaxNode():
 
         '''
 
-    def minimax(self, depth):
-        if self.state.is_over() or depth == 0:
-            return self.state.evaluation()
+    def minimax(self, state, depth: int):
+        if state.is_over() or depth == 0:
+            return (None, state.evaluation())
         if self.is_max:
             best_score = np.NINF
-            for move in self.state.legal_moves():
-                tmp_state = self.state.clone()
+            for move in state.legal_moves():
+                tmp_state = state.clone()
                 tmp_state.play_at(move)
-                score = tmp_state.minimax(depth - 1)
+                score = self.minimax(tmp_state, depth - 1)[1]
                 if score > best_score:
                     best_score = score
                     best_move = move
         else:
             best_score = np.Inf
-            for move in self.state.legal_moves():
-                tmp_state = self.state.clone()
+            for move in state.legal_moves():
+                tmp_state = state.clone()
                 tmp_state.play_at(move)
-                score = tmp_state.minimax(depth - 1)
+                score = self.minimax(tmp_state, depth - 1)[1]
                 if score < best_score:
                     best_score = score
                     best_move = move
-        return best_move
+        return (best_move, best_score)
     
     def AlphaBeta(self, depth, alpha, beta):
         if self.state.is_over() or depth == 0:

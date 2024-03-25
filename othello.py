@@ -1,6 +1,7 @@
 import copy
 import random
 from MCT import *
+import MinMax
 
 def init_board(board):
     "initialize the board to the starting position"
@@ -18,6 +19,10 @@ class Oboard():
         self.prev_move = prev_move
         self.two_previous_moves = [self.prev_move]
         self.legal_moves()
+        self.max_player = 2
+        self.min_player = 1
+        self.nb_coups_max = 0
+        self.nb_coups_min = 0
 
     def curr_player(self):
         return self.current_player
@@ -268,6 +273,10 @@ class Oboard():
                 self.board[move[0]][move[1]] = self.current_player
                 self.current_player = self.opp_player()
                 self.prev_move = move
+                if self.current_player == self.max_player:
+                    self.nb_coups_max += 1
+                else:
+                    self.nb_coups_min += 1
                 self.legal_moves()
             else:
                 print("illegal move from state")
@@ -278,31 +287,45 @@ class Oboard():
         self.print_board()
 
     def corners(self):
-        nb_corner = 0
+        corner_min = 0
+        corner_max = 0
         for corner in [(0, 0), (0, 7), (7, 0), (7, 7)]:
-            if self.board[corner[0]][corner[1]] == self.current_player:
-                nb_corner += 1
-        return nb_corner
+            if self.board[corner[0]][corner[1]] == self.min_player:
+                corner_min += 1
+            elif self.board[corner[0]][corner[1]] == self.max_player:
+                corner_max += 2
+        if corner_max + corner_min != 0:
+            return (corner_max - corner_min) / (corner_min + corner_max)
+        else:
+            return 0
     
-    def mobilite(self):
+    def mobility(self):
         mob_curr_player = len(self.legal_moves())
         tmp_state = self.clone()
         tmp_state.play_at('pass')
         mob_opp_player = len(tmp_state.legal_moves())
-        return mob_curr_player - mob_opp_player
-    
+        if mob_curr_player + mob_opp_player == 0:
+            return 0
+        else:
+            if self.current_player == self.max_player:     #if currnet player is MAX
+                return (mob_curr_player - mob_opp_player) / (mob_curr_player + mob_opp_player)
+            else:
+                return (mob_opp_player - mob_curr_player) / (mob_curr_player + mob_opp_player)
+
     def parity(self):
-        res = 0
-        for line in self.board:
-            for case in line:
-                if case in (1, 2):
-                    res += 1
-        return res % 2 
+        return (self.nb_coups_max - self.nb_coups_min)
+    
+    def evaluation(self):
+        corner_bias = 1
+        mobility_bias = 1
+        parity_bias = 1
+        return (corner_bias * self.corners() + mobility_bias * self.mobility() + parity_bias * self.parity())
     
 class Ogame():
 
     def __init__(self) -> None:
         self.state = Oboard()
+        self.max_player = 2
 
         '''
         game class that has the following functions:
@@ -412,26 +435,65 @@ if __name__ == "__main__":
         return mct_wins
 
 
+    what_to_play = input(str("what do you want to play ? (mct/minmax/mct vs minmax)\n"))
     mct.state.print_board()
 
     while True:
+
+        if what_to_play == 'mct':
+            
+            print(rand_vs_mct(4, 1))
+
+            chosen_node, chosen_move = mct.tree_search(mct.current_node, 2)
+            state = mct.current_node.state
+            play_at(chosen_move, state)
+            mct.current_node = chosen_node
+
+            move = input(str('next move: '))
+
+            if move == None:
+                continue
+            
+            coord = game.txt_move_to_coord(move)
+            play_at(coord, state)
+            mct.current_node = mct.current_node.enfants[coord]
         
-        print(rand_vs_mct(4, 1))
+        elif what_to_play == 'minmax':
+            minmax = MinMax.MinMaxNode(game, state)
+            play_at(minmax.minimax(state, 4)[0])
 
-        chosen_node, chosen_move = mct.tree_search(mct.current_node, 2)
-        state = mct.current_node.state
-        play_at(chosen_move, state)
-        mct.current_node = chosen_node
+            #Debug
+            print("corners: ", state.corners())
+            print("mobility: ", state.mobility())
+            print("parity: ", state.parity())
 
-        move = input(str('next move: '))
+            move = input(str('next move: '))
+            if move == None:
+                continue
+            coord = game.txt_move_to_coord(move)
+            play_at(coord, state)
 
-        if move == None:
-            continue
-        
-        coord = game.txt_move_to_coord(move)
-        play_at(coord, state)
-        mct.current_node = mct.current_node.enfants[coord]
+            #Debug
+            print("corners: ", state.corners())
+            print("mobility: ", state.mobility())
+            print("parity: ", state.parity())
 
+        elif what_to_play == 'mct vs minmax':
+            
+            chosen_node, chosen_move = mct.tree_search(mct.current_node, 2)
+            state = mct.current_node.state
+            play_at(chosen_move, state)
+            mct.current_node = chosen_node
 
+            move = input(str('next move: '))
 
-        #TODO les "captures" marchent pas vraiment... (genre si ça retourne plusieur truc, ça retourne pas tout)
+            if move == None:
+                continue
+            
+            coord = game.txt_move_to_coord(move)
+            play_at(coord, state)
+            mct.current_node = mct.current_node.enfants[coord]
+
+        else:
+            raise RuntimeError
+
