@@ -271,12 +271,12 @@ class Oboard():
                 for legal_dir in leg_directions:
                     self.reverse(move, legal_dir)
                 self.board[move[0]][move[1]] = self.current_player
-                self.current_player = self.opp_player()
-                self.prev_move = move
                 if self.current_player == self.max_player:
                     self.nb_coups_max += 1
                 else:
                     self.nb_coups_min += 1
+                self.current_player = self.opp_player()
+                self.prev_move = move
                 self.legal_moves()
             else:
                 print("illegal move from state")
@@ -313,10 +313,10 @@ class Oboard():
                 return (mob_opp_player - mob_curr_player) / (mob_curr_player + mob_opp_player)
 
     def parity(self):
-        return (self.nb_coups_max - self.nb_coups_min)
+        return (self.nb_coups_min + self.nb_coups_max) % 2
     
     def evaluation(self):
-        corner_bias = 1
+        corner_bias = 10
         mobility_bias = 1
         parity_bias = 1
         return (corner_bias * self.corners() + mobility_bias * self.mobility() + parity_bias * self.parity())
@@ -435,7 +435,7 @@ if __name__ == "__main__":
         return mct_wins
 
 
-    what_to_play = input(str("what do you want to play ? (mct/minmax/mct vs minmax)\n"))
+    what_to_play = input(str("what do you want to play ? (mct/minmax/vs)\n"))
     mct.state.print_board()
 
     while True:
@@ -460,12 +460,14 @@ if __name__ == "__main__":
         
         elif what_to_play == 'minmax':
             minmax = MinMax.MinMaxNode(game, state)
-            play_at(minmax.minimax(state, 4)[0])
+            play_at(minmax.minimax(state, 3)[0])
 
             #Debug
+            print(minmax.file)
             print("corners: ", state.corners())
             print("mobility: ", state.mobility())
             print("parity: ", state.parity())
+            print("evaluation: ", state.evaluation())
 
             move = input(str('next move: '))
             if move == None:
@@ -477,22 +479,26 @@ if __name__ == "__main__":
             print("corners: ", state.corners())
             print("mobility: ", state.mobility())
             print("parity: ", state.parity())
+            print("evaluation: ", state.evaluation())
 
-        elif what_to_play == 'mct vs minmax':
+        elif what_to_play == 'vs':
             
-            chosen_node, chosen_move = mct.tree_search(mct.current_node, 2)
+            minmax = MinMax.MinMaxNode(game, state)
+
+            #TODO randomly starts mct or minmax
+
+            #mct's turn
+            chosen_node, chosen_move = mct.tree_search(mct.current_node, 1)
             state = mct.current_node.state
             play_at(chosen_move, state)
+            print(chosen_move)
             mct.current_node = chosen_node
-
-            move = input(str('next move: '))
-
-            if move == None:
-                continue
             
-            coord = game.txt_move_to_coord(move)
-            play_at(coord, state)
-            mct.current_node = mct.current_node.enfants[coord]
+            #minmax's turn
+            move = minmax.minimax(state, 3)[0]
+            play_at(move, state)
+            print(move)
+            mct.current_node = mct.current_node.enfants[move]
 
         else:
             raise RuntimeError

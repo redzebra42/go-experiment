@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 class MinMaxNode():
 
@@ -7,6 +8,7 @@ class MinMaxNode():
         self.state = state
         self.childs = {}
         self.is_max = self.state.current_player == self.game.max_player
+        self.file = ""
 
         '''
         state.is_over()
@@ -19,12 +21,14 @@ class MinMaxNode():
 
         '''
 
-    def minimax(self, state, depth: int):
+    def minimax(self, state, depth: int, print_tree=True):
         if state.is_over() or depth == 0:
-            return (None, state.evaluation())
+            return (None, state.evaluation())   
         if self.is_max:
             best_score = np.NINF
-            for move in state.legal_moves():
+            legal_moves = state.legal_moves()
+            random.shuffle(legal_moves)
+            for move in legal_moves:
                 tmp_state = state.clone()
                 tmp_state.play_at(move)
                 score = self.minimax(tmp_state, depth - 1)[1]
@@ -33,13 +37,19 @@ class MinMaxNode():
                     best_move = move
         else:
             best_score = np.Inf
-            for move in state.legal_moves():
+            legal_moves = state.legal_moves()
+            random.shuffle(legal_moves)
+            for move in legal_moves:
                 tmp_state = state.clone()
                 tmp_state.play_at(move)
                 score = self.minimax(tmp_state, depth - 1)[1]
                 if score < best_score:
                     best_score = score
                     best_move = move
+        if print_tree:
+            for i in range(depth):
+                self.file += "    "
+            self.file += f"({best_move}, {best_score})\n"
         return (best_move, best_score)
     
     def AlphaBeta(self, depth, alpha, beta):
