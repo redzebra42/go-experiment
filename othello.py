@@ -19,8 +19,8 @@ class Oboard():
         self.prev_move = prev_move
         self.two_previous_moves = [self.prev_move]
         self.legal_moves()
-        self.max_player = 2
-        self.min_player = 1
+        self.max_player = 1
+        self.min_player = 2
         self.nb_coups_max = 0
         self.nb_coups_min = 0
 
@@ -293,7 +293,7 @@ class Oboard():
             if self.board[corner[0]][corner[1]] == self.min_player:
                 corner_min += 1
             elif self.board[corner[0]][corner[1]] == self.max_player:
-                corner_max += 2
+                corner_max += 1
         if corner_max + corner_min != 0:
             return (corner_max - corner_min) / (corner_min + corner_max)
         else:
@@ -316,7 +316,7 @@ class Oboard():
         return (self.nb_coups_min + self.nb_coups_max) % 2
     
     def evaluation(self):
-        corner_bias = 10
+        corner_bias = 2
         mobility_bias = 1
         parity_bias = 1
         return (corner_bias * self.corners() + mobility_bias * self.mobility() + parity_bias * self.parity())
@@ -325,7 +325,7 @@ class Ogame():
 
     def __init__(self) -> None:
         self.state = Oboard()
-        self.max_player = 2
+        self.max_player = self.state.max_player
 
         '''
         game class that has the following functions:
@@ -459,6 +459,11 @@ if __name__ == "__main__":
             mct.current_node = mct.current_node.enfants[coord]
         
         elif what_to_play == 'minmax':
+
+            game.max_player = 2
+            state.max_player = 2
+            state.min_player = 1
+
             minmax = MinMax.MinMaxNode(game, state)
             play_at(minmax.minimax(state, 3)[0])
 
@@ -488,7 +493,7 @@ if __name__ == "__main__":
             #TODO randomly starts mct or minmax
 
             #mct's turn
-            chosen_node, chosen_move = mct.tree_search(mct.current_node, 1)
+            chosen_node, chosen_move = mct.tree_search(mct.current_node, 0.5)
             state = mct.current_node.state
             play_at(chosen_move, state)
             print(chosen_move)
