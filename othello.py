@@ -465,7 +465,7 @@ if __name__ == "__main__":
             state.min_player = 1
 
             minmax = MinMax.MinMaxNode(game, state)
-            play_at(minmax.minimax(state, 3)[0])
+            play_at(minmax.minimax(state, 4)[0])
 
             #Debug
             print(minmax.file)
@@ -503,7 +503,10 @@ if __name__ == "__main__":
             move = minmax.minimax(state, 3)[0]
             play_at(move, state)
             print(move)
-            mct.current_node = mct.current_node.enfants[move]
+            if move in mct.current_node.enfants.keys():
+                mct.current_node = mct.current_node.enfants[move]
+            else:
+                mct.current_node = mct.current_node.node_from_move(move)
 
         else:
             raise RuntimeError

@@ -65,6 +65,14 @@ class MCT():
             return self
             raise RuntimeError #on ne devrait pas arriver a un état fini déja testé lors de la séléction
 
+    def node_from_move(self, move):
+        new_state = self.state.clone()
+        self.game.play_at(new_state, move)
+        new_node = MCT(new_state, self.game)
+        new_node.parent = self
+        self.enfants[move] = new_node
+        return new_node
+
     def simulation(self):
         '''renvois le vainqueur d'une simulation aléatoire a partir de l'état de self'''
         new_state = self.state.clone()
