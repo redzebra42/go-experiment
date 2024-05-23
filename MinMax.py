@@ -52,6 +52,36 @@ class MinMaxNode():
             file += f"({best_move}, {best_score})\n"
             print(file)
         return (best_move, best_score)
+    
+    def biased_minmax_simulation(self, state, depth: int, bias, eval, print_tree=False):
+        #TODO faire une sorte de biased minmax ou ça renvois un rand parmis les quelques meilleurs moves (selon le bias)
+        #on peut l'appliquer au go avec une fonction d'eval très simle, genre le territoire, captures... et faire l'analogie avec 
+        #l'othello en prenant une foction d'eval du meme genre (genre le plus de pions de sa couleur sur le plateau)
+        #tester sur l'othello plusieurs valeurs de bias, et voire laquelle donne les meilleur resultats pour ensuite prendre cette valeur pour le go
+        if depth == 0 or state.is_over():
+            return (None, state.evaluation())
+        if state.current_player == state.max_player:
+            legal_moves = state.legal_moves()
+            move_list = []
+            for move in legal_moves:
+                tmp_state = state.clone()
+                tmp_state.play_at(move)
+                score = self.minimax(tmp_state, depth - 1)[1]
+                move_list.append((score, move))
+            best_moves = sorted(move_list)[:int(bias*len(move_list))]
+            rand_best_score, rand_best_move = random.choice(best_moves)
+        else:
+            legal_moves = state.legal_moves()
+            move_list = []
+            for move in legal_moves:
+                tmp_state = state.clone()
+                tmp_state.play_at(move)
+                score = self.minimax(tmp_state, depth - 1)[1]
+                move_list.append((score, move))
+            best_moves = sorted(move_list)[:int(bias*len(move_list))]
+            rand_best_score, rand_best_move = random.choice(best_moves)
+        return (rand_best_move, rand_best_score)
+
 
     def AlphaBeta(self, depth, alpha, beta):
         if self.state.is_over() or depth == 0:

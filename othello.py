@@ -367,6 +367,10 @@ class Ogame():
     def rand_simulation(self, state):
         state.rand_simulation()
         return state
+    
+    def biased_minmax_simulation(self, state, bias, eval):
+        MinMax.MinMaxNode(self, state).biased_minmax_simulation(bias, eval)
+        return state
 
     def play_mct(self, state, coord, player):
         res = Oboard(state.board, player, state.size, state.prev_move)
@@ -515,6 +519,29 @@ if __name__ == "__main__":
             play_at(coord, state)
             mct.current_node = mct.current_node.enfants[coord]
     
+    elif what_to_play == 'biased mct':
+
+        while True:
+            
+            print(rand_vs_mct(4, 1))
+
+            def eval(state):
+                return state.eval
+
+            chosen_node, chosen_move = mct.tree_search(mct.current_node, 2, False, 100, True, eval, 1)
+            state = mct.current_node.state
+            play_at(chosen_move, state)
+            mct.current_node = chosen_node
+
+            move = input(str('next move: '))
+
+            if move == None:
+                continue
+            
+            coord = game.txt_move_to_coord(move)
+            play_at(coord, state)
+            mct.current_node = mct.current_node.enfants[coord]
+
     elif what_to_play == 'minmax':
 
         while True:
@@ -552,7 +579,7 @@ if __name__ == "__main__":
             minmax = MinMax.MinMaxNode(game, state)
 
             #mct's turn
-            chosen_node, chosen_move = mct.tree_search(mct.current_node, 2)
+            chosen_node, chosen_move = mct.tree_search(mct.current_node, 2, True, 100)
             state = mct.current_node.state
             play_at(chosen_move, state)
             print(chosen_move)
