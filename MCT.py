@@ -23,6 +23,10 @@ class MCT():
 
     def is_racine(self) -> bool:
         return self.parent == None
+    
+    def UTC(self):
+        if self.parent != None:
+            return (self.weight[0] / self.weight[1]) + sqrt(2 * log(self.parent.weight[1]) / self.weight[1])
 
     def best_child(self):
         best = (None, -1)
@@ -33,6 +37,14 @@ class MCT():
                 best = (enf, score)
         return best[0]
     
+    def best_child_with_eval_bias(self, eval, bias):
+        best = (None, -1)
+        # list = [(enf.weight[0] / enf.weight[1]) + sqrt(2) * sqrt(log(node.weight[1]) / enf.weight[1]) for enf in node.enfants.values()]
+        for enf in self.enfants.values():
+            score = (enf.weight[0] / enf.weight[1]) + sqrt(2 * log(self.weight[1]) / enf.weight[1]) + bias*enf.state.eval()
+            if (score > best[1]):
+                best = (enf, score)
+        return best[0]
     
     '''
     game class that has the following functions:
@@ -48,8 +60,11 @@ class MCT():
     clone()
     '''
 
-    def selection(self):
-        return self.best_child()
+    def selection(self, eval_bias=False, eval=None, bias=1):
+        if not eval_bias:
+            return self.best_child()
+        else:
+            return self.best_child_with_eval_bias(eval, bias)
 
     def expension(self):
         '''ajoute aux enfants de self les nouveau noeuds correspondent a UN nouveu coup légal'''
@@ -88,7 +103,7 @@ class MCT():
         if self.state.current_player != sim_winner:
             self.weight[0] += 1
 
-    def tree_search(self, start_node, duration:int, iter:bool = False, nb_iter:int=100) -> tuple:
+    def tree_search(self, start_node, duration:int, iter:bool = False, nb_iter:int=100, eval_bias=False, eval=None, bias=1) -> tuple:
         if iter:
             clock = time.clock_gettime(0)
             for i in range(nb_iter):
@@ -115,7 +130,7 @@ class MCT():
                     print(i)
                 curr_node = start_node
                 while not(curr_node.is_feuille()):
-                    curr_node = curr_node.selection()
+                    curr_node = curr_node.selection(eval_bias, eval, bias)
                 curr_node = curr_node.expension()
                 sim_res = curr_node.simulation()
                 while not(curr_node.is_racine()):
@@ -159,5 +174,5 @@ class MCT():
         self._pretty_print(self, 0, file)
     
     def __str__(self) -> str:
-        return str(f'weight = {self.weight}, size = {len(self.enfants)}, move = {self.state.two_previous_moves[0]}')
+        return str(f'weight = {self.weight}, size = {len(self.enfants)}, move = {self.state.prev_move}, eval = {self.UTC()}')
 

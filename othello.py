@@ -439,7 +439,7 @@ if __name__ == "__main__":
                 mct_wins += 1
         return mct_wins
 
-    def graph_vs(from_itt, to_itt, incr_itt, nb_parties, minmax_level):
+    def graph_vs(from_itt, to_itt, incr_itt, nb_parties, minmax_level, eval_bias=False, bias=1):
         itt = from_itt
         mct_player = 2
         x = []
@@ -467,7 +467,7 @@ if __name__ == "__main__":
                     mct_victories = 0
 
                     #mct's turn
-                    chosen_node, chosen_move = mct.tree_search(mct.current_node, None, True, itt)
+                    chosen_node, chosen_move = mct.tree_search(mct.current_node, itt, False, None, eval_bias, state.evaluation, bias)
                     state = mct.current_node.state
                     play_at(chosen_move, state)
                     mct.current_node = chosen_node
@@ -489,11 +489,6 @@ if __name__ == "__main__":
             y.append(100*mct_victories/nb_parties)
             itt += incr_itt
 
-        plt.plot(x, y)
-        plt.xlabel("nombre d'itérations de MCT")
-        plt.ylabel(f"{'%'} de victoires")
-        plt.title(f"pourcentage de victoires de MCT contre minmax de profondeur {minmax_level}")
-        plt.show()
         return x, y
 
 
@@ -556,14 +551,13 @@ if __name__ == "__main__":
         while True:
             minmax = MinMax.MinMaxNode(game, state)
 
-            #TODO randomly starts mct or minmax
-
             #mct's turn
-            chosen_node, chosen_move = mct.tree_search(mct.current_node, None, True, 2000)
+            chosen_node, chosen_move = mct.tree_search(mct.current_node, 2)
             state = mct.current_node.state
             play_at(chosen_move, state)
             print(chosen_move)
             mct.current_node = chosen_node
+            mct.pretty_print()
             
             #minmax's turn
             move = minmax.minimax(state, 3)[0]
@@ -575,8 +569,26 @@ if __name__ == "__main__":
                 mct.current_node = mct.current_node.node_from_move(move)
 
     elif what_to_play == 'graph':
-        
-        graph_vs(500, 4000, 250, 5, 3)
+
+        minmax_level = 3
+        x, y = graph_vs(0.2, 5, 0.4, 5, minmax_level)
+        plt.plot(x, y)
+        plt.xlabel("nombre d'itérations de MCT")
+        plt.ylabel(f"{'%'} de victoires")
+        plt.title(f"pourcentage de victoires de MCT contre minmax de profondeur {minmax_level}")
+        plt.show()
+    
+    elif what_to_play == 'bias_graph':
+
+        minmax_level = 3
+        x, y = graph_vs(0.2, 5, 0.4, 50, minmax_level)
+        plt.plot(x, y, label=0)
+        for i in [0.2, 0.5, 0.8, 1, 2, 3]: #liste des valeurs de evaluation bias
+            z = graph_vs(0.2, 5, 0.4, 50, minmax_level, True, i)[1]
+            print(z)
+            plt.plot(x, z, label=i)
+        plt.legend()
+        plt.show()
 
     else:
             raise RuntimeError
