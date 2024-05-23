@@ -2,6 +2,7 @@ import copy
 import random
 from MCT import *
 import MinMax
+import matplotlib.pyplot as plt
 
 def init_board(board):
     "initialize the board to the starting position"
@@ -17,7 +18,7 @@ class Oboard():
         self.current_player = player
         self.size = size
         self.prev_move = prev_move
-        self.two_previous_moves = [self.prev_move]
+        self.sec_previous_move = None
         self.legal_moves()
         self.max_player = 1
         self.min_player = 2
@@ -222,7 +223,9 @@ class Oboard():
         return leg_moves
     
     def is_over(self):
-        if len(self.legal_moves()) == 1:
+        if self.prev_move == 'pass' and self.sec_previous_move == 'pass':
+            return True
+        elif len(self.legal_moves()) == 1:
             new_state = self.clone()
             new_state.play_at('pass')
             if len(new_state.legal_moves()) == 1:
@@ -263,6 +266,7 @@ class Oboard():
     def play_at(self, move):
         if move == 'pass':
             self.current_player = self.opp_player()
+            self.sec_previous_move = self.prev_move
             self.prev_move = move
             self.legal_moves()
         else:
@@ -276,6 +280,7 @@ class Oboard():
                 else:
                     self.nb_coups_min += 1
                 self.current_player = self.opp_player()
+                self.sec_previous_move = self.prev_move
                 self.prev_move = move
                 self.legal_moves()
             else:
@@ -434,13 +439,70 @@ if __name__ == "__main__":
                 mct_wins += 1
         return mct_wins
 
+    def graph_vs(from_itt, to_itt, incr_itt, nb_parties, minmax_level):
+        itt = from_itt
+        mct_player = 2
+        x = []
+        y = []
+        while itt <= to_itt:
 
-    what_to_play = input(str("what do you want to play ? (mct/minmax/vs)\n"))
+            for i in range(nb_parties):
+
+                game = Ogame()
+                state = game.state
+                mct = MCT(state.clone(), game)
+                minmax = MinMax.MinMaxNode(game, state)
+
+                #randomly starts with mct or minmax
+                if random.randint(0,1) == 0:
+                    state.max_player, state.min_player = state.min_player, state.max_player
+                    move = minmax.minimax(state, minmax_level)[0]
+                    play_at(move, state)
+                    if move in mct.current_node.enfants.keys():
+                        mct.current_node = mct.current_node.enfants[move]
+                    else:
+                        mct.current_node = mct.current_node.node_from_move(move)
+
+                while not state.is_over():
+                    mct_victories = 0
+
+                    #mct's turn
+                    chosen_node, chosen_move = mct.tree_search(mct.current_node, None, True, itt)
+                    state = mct.current_node.state
+                    play_at(chosen_move, state)
+                    mct.current_node = chosen_node
+                    if state.is_over():
+                        break
+
+                    #minmax's turn
+                    move = minmax.minimax(state, minmax_level)[0]
+                    play_at(move, state)
+                    if move in mct.current_node.enfants.keys():
+                        mct.current_node = mct.current_node.enfants[move]
+                    else:
+                        mct.current_node = mct.current_node.node_from_move(move)
+                
+                if state.winner() == mct_player:
+                    mct_victories += 1
+            
+            x.append(itt)
+            y.append(100*mct_victories/nb_parties)
+            itt += incr_itt
+
+        plt.plot(x, y)
+        plt.xlabel("nombre d'itérations de MCT")
+        plt.ylabel(f"{'%'} de victoires")
+        plt.title(f"pourcentage de victoires de MCT contre minmax de profondeur {minmax_level}")
+        plt.show()
+        return x, y
+
+
+    what_to_play = input(str("what do you want to play ? (mct/minmax/vs/graph)\n"))
     mct.state.print_board()
 
-    while True:
+    if what_to_play == 'mct':
 
-        if what_to_play == 'mct':
+        while True:
             
             print(rand_vs_mct(4, 1))
 
@@ -457,15 +519,16 @@ if __name__ == "__main__":
             coord = game.txt_move_to_coord(move)
             play_at(coord, state)
             mct.current_node = mct.current_node.enfants[coord]
-        
-        elif what_to_play == 'minmax':
+    
+    elif what_to_play == 'minmax':
 
+        while True:
             game.max_player = 2
             state.max_player = 2
             state.min_player = 1
 
             minmax = MinMax.MinMaxNode(game, state)
-            play_at(minmax.minimax(state, 4)[0])
+            play_at(minmax.minimax(state, 3)[0])
 
             #Debug
             print(minmax.file)
@@ -486,14 +549,17 @@ if __name__ == "__main__":
             print("parity: ", state.parity())
             print("evaluation: ", state.evaluation())
 
-        elif what_to_play == 'vs':
-            
+    elif what_to_play == 'vs':
+
+        #une partie (mct iter 2000 minmax 3) ~ 5 minutes
+        
+        while True:
             minmax = MinMax.MinMaxNode(game, state)
 
             #TODO randomly starts mct or minmax
 
             #mct's turn
-            chosen_node, chosen_move = mct.tree_search(mct.current_node, 0.5)
+            chosen_node, chosen_move = mct.tree_search(mct.current_node, None, True, 2000)
             state = mct.current_node.state
             play_at(chosen_move, state)
             print(chosen_move)
@@ -508,6 +574,10 @@ if __name__ == "__main__":
             else:
                 mct.current_node = mct.current_node.node_from_move(move)
 
-        else:
+    elif what_to_play == 'graph':
+        
+        graph_vs(500, 4000, 250, 5, 3)
+
+    else:
             raise RuntimeError
 
