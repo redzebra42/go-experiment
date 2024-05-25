@@ -403,7 +403,7 @@ if __name__ == "__main__":
     def play_at(coord, state=state):
         if state.is_legal(coord):
             game.play_at(state, coord)
-            state.print_board()
+            #state.print_board()
         else:
             print("illegal move from main")
 
@@ -445,10 +445,11 @@ if __name__ == "__main__":
 
     def graph_vs(from_itt, to_itt, incr_itt, nb_parties, minmax_level, eval_bias=False, bias=1):
         itt = from_itt
-        mct_player = 2
         x = []
         y = []
         while itt <= to_itt:
+
+            mct_victories = 0
 
             for i in range(nb_parties):
 
@@ -468,10 +469,9 @@ if __name__ == "__main__":
                         mct.current_node = mct.current_node.node_from_move(move)
 
                 while not state.is_over():
-                    mct_victories = 0
 
                     #mct's turn
-                    chosen_node, chosen_move = mct.tree_search(mct.current_node, itt, False, None, eval_bias, state.evaluation, bias)
+                    chosen_node, chosen_move = mct.tree_search(mct.current_node, itt, False, itt, eval_bias, state.evaluation, bias)
                     state = mct.current_node.state
                     play_at(chosen_move, state)
                     mct.current_node = chosen_node
@@ -486,11 +486,14 @@ if __name__ == "__main__":
                     else:
                         mct.current_node = mct.current_node.node_from_move(move)
                 
-                if state.winner() == mct_player:
+                print(state.winner() == state.min_player)
+                if state.winner() == state.min_player:
                     mct_victories += 1
             
             x.append(itt)
             y.append(100*mct_victories/nb_parties)
+            print(x)
+            print(y)
             itt += incr_itt
 
         return x, y
@@ -571,6 +574,21 @@ if __name__ == "__main__":
             print("parity: ", state.parity())
             print("evaluation: ", state.evaluation())
 
+    elif what_to_play == 'biased minmax':
+
+        game.max_player = 2
+        state.max_player = 2
+        state.min_player = 1
+         
+        while True:
+
+            minmax = MinMax.MinMaxNode(game, state)
+            play_at(minmax.minimax(state, 1)[0])
+
+            minmax = MinMax.MinMaxNode(game, state)
+            coord = minmax.biased_minmax_simulation(state, 1, 0.5, state.evaluation)[0]
+            play_at(coord, state)
+
     elif what_to_play == 'vs':
 
         #une partie (mct iter 2000 minmax 3) ~ 5 minutes
@@ -597,8 +615,8 @@ if __name__ == "__main__":
 
     elif what_to_play == 'graph':
 
-        minmax_level = 3
-        x, y = graph_vs(0.2, 5, 0.4, 5, minmax_level)
+        minmax_level = 2
+        x, y = graph_vs(2, 6, 1, 15, minmax_level)
         plt.plot(x, y)
         plt.xlabel("nombre d'itérations de MCT")
         plt.ylabel(f"{'%'} de victoires")

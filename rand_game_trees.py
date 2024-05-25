@@ -66,8 +66,7 @@ class RGTstate():
         for i in range(1, self.board_size - node[0] + 1):
             enf_list.append((node[0] + 1, (node[1] - 1) * (self.board_size - node[0]) + i))
         return enf_list
-    
-    
+
     def legal_moves(self) -> list:
         return self.enfants(self.position)
     
@@ -75,8 +74,7 @@ class RGTstate():
         return self.position[0] == self.board_size - 1
     
     def winner(self) -> int:
-        #TODO peut etre switch les valeurs du gagnant (ou y reflechir au moins) on rappelle que le score 
-        #d'une case est positif si elle est bénéfique au joueur 1 (ou 0 mais faut se décider) et ce pour tout noeud.
+        #on rappelle que le score d'une case est positif si elle est bénéfique au joueur courrant de cette case.
         if self.is_over():
             path = self.path(self.position[1])
             self.update_tree(path)

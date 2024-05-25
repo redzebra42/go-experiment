@@ -62,11 +62,11 @@ class MCT():
     clone()
     '''
 
-    def selection(self):
+    def selection(self): #O(n) ou n est la taille du plateau (ou le nombre d'enfants de self plus précisement)
         return self.best_child()
 
-    def expension(self):
-        '''ajoute aux enfants de self les nouveau noeuds correspondent a UN nouveu coup légal'''
+    def expension(self): #O(n) par le clone ou la création du MCT
+        '''ajoute aux enfants de self le nouveau noeud correspondent a UN nouveu coup légal'''
         if not(self.state.is_over()):
             new_move = random.choice([e for e in self.state.legal_moves() if not e in self.enfants.keys()]) #liste des legal_moves sans les moves déja testés
             new_state = self.state.clone()
@@ -87,7 +87,7 @@ class MCT():
         self.enfants[move] = new_node
         return new_node
 
-    def simulation(self, eval_bias=False, eval=None, bias=1):
+    def simulation(self, eval_bias=False, eval=None, bias=1): #O(k*n²) ou k est le nb de coups d'une partie, donc ~ 0(n^3)
         '''renvois le vainqueur d'une simulation aléatoire a partir de l'état de self'''
         new_state = self.state.clone()
         if not eval_bias:
@@ -99,7 +99,7 @@ class MCT():
         else:
             raise RuntimeError #rand_simulation devrait aller jusqu'a la fin de la partie
 
-    def back_propagation(self, sim_winner):
+    def back_propagation(self, sim_winner): #O(1)
         '''update le poids d'un noeud selon le résultat de la simulation'''
         self.weight[1] += 1
         if self.state.current_player != sim_winner:
@@ -122,8 +122,8 @@ class MCT():
                 curr_node.back_propagation(sim_res)
                 curr_node = curr_node.parent
                 #debug
-                if start_node != None:
-                    start_node.pretty_print()
+                #if start_node != None:
+                #    start_node.pretty_print()
             print("tree_search time: ", time.clock_gettime(0) - clock)
             print("mean time per search :", (time.clock_gettime(0) - clock) / nb_iter)
             return start_node.choose_best_node()                                                 #(node, move)
@@ -133,7 +133,8 @@ class MCT():
             while duration > time.clock_gettime(0) - start_time:
                 i += 1
                 if i % 50 == 0:
-                    print(i)
+                    #print(i)
+                    pass
                 curr_node = start_node
                 while not(curr_node.is_feuille()):
                     curr_node = curr_node.selection()
@@ -145,7 +146,7 @@ class MCT():
                 #on refait une dernière backpropagation pour la racine
                 curr_node.back_propagation(sim_res)
                 curr_node = curr_node.parent
-            print(i)
+            #print(i)
             return start_node.choose_best_node()
 
     def choose_best_node(self):

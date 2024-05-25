@@ -59,7 +59,7 @@ class MinMaxNode():
         #l'othello en prenant une foction d'eval du meme genre (genre le plus de pions de sa couleur sur le plateau)
         #tester sur l'othello plusieurs valeurs de bias, et voire laquelle donne les meilleur resultats pour ensuite prendre cette valeur pour le go
         if depth == 0 or state.is_over():
-            return (None, state.evaluation())
+            return (None, state.evaluation()) #TODO eval
         if state.current_player == state.max_player:
             legal_moves = state.legal_moves()
             move_list = []
@@ -68,7 +68,7 @@ class MinMaxNode():
                 tmp_state.play_at(move)
                 score = self.minimax(tmp_state, depth - 1)[1]
                 move_list.append((score, move))
-            best_moves = sorted(move_list)[:int(bias*len(move_list))]
+            best_moves = sorted(move_list, reverse=True)[:int(bias*len(move_list))+1]
             rand_best_score, rand_best_move = random.choice(best_moves)
         else:
             legal_moves = state.legal_moves()
@@ -78,7 +78,7 @@ class MinMaxNode():
                 tmp_state.play_at(move)
                 score = self.minimax(tmp_state, depth - 1)[1]
                 move_list.append((score, move))
-            best_moves = sorted(move_list)[:int(bias*len(move_list))]
+            best_moves = sorted(move_list, reverse=True)[:int(bias*len(move_list))+1]
             rand_best_score, rand_best_move = random.choice(best_moves)
         return (rand_best_move, rand_best_score)
 
