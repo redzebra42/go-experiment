@@ -206,7 +206,7 @@ class Board():
             return False
 
     def old_territory(self, player):
-        #clock = time.clock_gettime(0)
+        #clock = time.time()
         points = 0
         already_counted = []
         for i in range(len(self.goban)):
@@ -218,7 +218,7 @@ class Board():
                     if not(coord in already_counted):
                         for k in range(len(coord_group)):
                             already_counted.append(coord_group[k])
-        #print("territory: ", time.clock_gettime(0) - clock)
+        #print("territory: ", time.time() - clock)
         return points
     
     def territory(self, player):
@@ -248,7 +248,7 @@ class Board():
         return res
 
     def is_legal(self, coord, player):
-        clock = time.clock_gettime(0)
+        clock = time.time()
         if self.goban[coord[1]][coord[0]] == '0':
             res = 0
             neighbours = self.neighbours(coord)
@@ -261,10 +261,10 @@ class Board():
                         res += 1
                     elif self.goban[neighb[1]][neighb[0]] == player and self.liberty(group)[0] == 1:
                         res += 1
-            #print("is_legal: ", time.clock_gettime(0) - clock)
+            #print("is_legal: ", time.time() - clock)
             return res != len(neighbours)
         else:
-            #print("is_legal: ", time.clock_gettime(0) - clock)
+            #print("is_legal: ", time.time() - clock)
             return False
     
     def update_legal_moves(self, move, curr_player, captures):
@@ -272,14 +272,14 @@ class Board():
         Updates the legal_move_board
         could be optimized by not checking multiple times the same group in the neighb loop
         '''
-        clock = time.clock_gettime(0)
+        clock = time.time()
         if move != 'pass':
             self.leg_move_board[move[1]][move[0]] = []
             self.leg_move_board = self.initiate_legal_moves()
-        #print("update legal moves: ", time.clock_gettime(0) - clock)
+        #print("update legal moves: ", time.time() - clock)
 
     def initiate_legal_moves(self):
-        clock = time.clock_gettime(0)
+        clock = time.time()
         leg_move_board = [[[] for i in range(self.size)] for j in range(self.size)]
         for coord in self.all_coords():
             if self.goban[coord[1]][coord[0]] == '0':
@@ -287,7 +287,7 @@ class Board():
                     leg_move_board[coord[1]][coord[0]].append('w')
                 if self.is_legal(coord, 'b'):
                     leg_move_board[coord[1]][coord[0]].append('b')
-        #print("initiate legal moves: ", time.clock_gettime(0) - clock)
+        #print("initiate legal moves: ", time.time() - clock)
         return leg_move_board
     
     def is_eye(self, coord, player):

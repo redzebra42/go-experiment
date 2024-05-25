@@ -37,7 +37,7 @@ if __name__ == "__main__":
             y_list = [0]
             x_list = [0]
             for t in range(100, parcour_up_to, 300): #Boucle sur le nombre de parours de l'arbre pour chaque tests
-                clock = time.clock_gettime(0)
+                clock = time.time()
                 res = 0
                 for k in range(nb_tests - int(5*sqrt(t/100))): #Boucle sur le nombre de tests par parcours
                     if k%5 == 0:
@@ -52,9 +52,9 @@ if __name__ == "__main__":
                         res += 1
                 print(x_list)
                 print(y_list)
-                print(time.clock_gettime(0) - clock)
+                print(time.time() - clock)
                 print(nb_tests - int(5*sqrt(t/100)))
-                clock = time.clock_gettime(0)
+                clock = time.time()
                 x_list.append(t)
                 y_list.append((res/(nb_tests - int(5*sqrt(t/100))))*100)
             plt.plot(x_list, y_list, label = str(i))

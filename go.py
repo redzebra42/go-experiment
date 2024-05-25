@@ -27,15 +27,15 @@ class Go():
             new_state.current_player = 'w'
 
     def play_at(self, state, coord):
-        clock = time.clock_gettime(0)
+        clock = time.time()
         if coord == 'pass':
             self._next_turn(state, coord)
-            #print("play_at: ", time.clock_gettime(0) - clock)
+            #print("play_at: ", time.time() - clock)
         else:
             if self.is_legal(state, coord):
                 state.play_at(coord, state.current_player)
                 self._next_turn(state, coord)
-                #print("play_at: ", time.clock_gettime(0) - clock)
+                #print("play_at: ", time.time() - clock)
             else:
                 raise RuntimeError
             
@@ -62,7 +62,7 @@ class Go():
             return state.current_player in state.leg_move_board[coord[1]][coord[0]]
     
     def play_random(self, state):
-        clock = time.clock_gettime(0)
+        clock = time.time()
         leg_moves = state.legal_moves()
         k = random.randint(0, len(leg_moves)-1)
         coord = leg_moves[k]

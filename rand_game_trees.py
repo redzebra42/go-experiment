@@ -150,11 +150,11 @@ if __name__ == "__main__":
     rgt = RGT(state)
 
     def time_check(nuber_of_tests):
-        clock = time.clock_gettime(0)
+        clock = time.time()
         for i in range(nuber_of_tests):
             rgt.rand_simulation(rgt.state)
             rgt.play_at(rgt.state, (0, 1))
         file = open("RGT_tree.lsp", "w")
         rgt.pretty_print(file)
-        print(time.clock_gettime(0) - clock)
+        print(time.time() - clock)
 

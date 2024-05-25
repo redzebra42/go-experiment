@@ -108,7 +108,7 @@ class MCT():
     def tree_search(self, start_node, duration:int, iter:bool = False, nb_iter:int=100, eval_bias=False, eval=None, bias=0.5) -> tuple:
         #bias est dans [0,1[
         if iter:
-            clock = time.clock_gettime(0)
+            clock = time.time()
             for i in range(nb_iter):
                 curr_node = start_node
                 while not(curr_node.is_feuille()):
@@ -124,13 +124,13 @@ class MCT():
                 #debug
                 #if start_node != None:
                 #    start_node.pretty_print()
-            print("tree_search time: ", time.clock_gettime(0) - clock)
-            print("mean time per search :", (time.clock_gettime(0) - clock) / nb_iter)
+            print("tree_search time: ", time.time() - clock)
+            print("mean time per search :", (time.time() - clock) / nb_iter)
             return start_node.choose_best_node()                                                 #(node, move)
         else:
-            start_time = time.clock_gettime(0)
+            start_time = time.time()
             i = 0
-            while duration > time.clock_gettime(0) - start_time:
+            while duration > time.time() - start_time:
                 i += 1
                 if i % 50 == 0:
                     #print(i)

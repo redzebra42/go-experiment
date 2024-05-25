@@ -20,10 +20,7 @@ class Oboard():
         self.prev_move = prev_move
         self.sec_previous_move = None
         self.legal_moves()
-        self.max_player = 1
-        self.min_player = 2
-        self.nb_coups_max = 0
-        self.nb_coups_min = 0
+        self.nb_coups = 0
 
     def curr_player(self):
         return self.current_player
@@ -275,10 +272,7 @@ class Oboard():
                 for legal_dir in leg_directions:
                     self.reverse(move, legal_dir)
                 self.board[move[0]][move[1]] = self.current_player
-                if self.current_player == self.max_player:
-                    self.nb_coups_max += 1
-                else:
-                    self.nb_coups_min += 1
+                self.nb_coups += 1
                 self.current_player = self.opp_player()
                 self.sec_previous_move = self.prev_move
                 self.prev_move = move
@@ -291,20 +285,20 @@ class Oboard():
         self.play_at(move)
         self.print_board()
 
-    def corners(self):
+    def corners(self, max_player):
         corner_min = 0
         corner_max = 0
         for corner in [(0, 0), (0, 7), (7, 0), (7, 7)]:
-            if self.board[corner[0]][corner[1]] == self.min_player:
-                corner_min += 1
-            elif self.board[corner[0]][corner[1]] == self.max_player:
+            if self.board[corner[0]][corner[1]] == max_player:
                 corner_max += 1
+            elif self.board[corner[0]][corner[1]] == 3 - max_player:
+                corner_min += 1
         if corner_max + corner_min != 0:
             return (corner_max - corner_min) / (corner_min + corner_max)
         else:
             return 0
     
-    def mobility(self):
+    def mobility(self, max_player):
         mob_curr_player = len(self.legal_moves())
         tmp_state = self.clone()
         tmp_state.play_at('pass')
@@ -312,25 +306,24 @@ class Oboard():
         if mob_curr_player + mob_opp_player == 0:
             return 0
         else:
-            if self.current_player == self.max_player:     #if currnet player is MAX
+            if self.current_player == max_player:     #if currnet player is MAX
                 return (mob_curr_player - mob_opp_player) / (mob_curr_player + mob_opp_player)
             else:
                 return (mob_opp_player - mob_curr_player) / (mob_curr_player + mob_opp_player)
 
     def parity(self):
-        return (self.nb_coups_min + self.nb_coups_max) % 2
+        return self.nb_coups % 2
     
-    def evaluation(self):
+    def evaluation(self, max_player):
         corner_bias = 2
         mobility_bias = 1
         parity_bias = 1
-        return (corner_bias * self.corners() + mobility_bias * self.mobility() + parity_bias * self.parity())
+        return (corner_bias * self.corners(max_player) + mobility_bias * self.mobility(max_player) + parity_bias * self.parity())
     
 class Ogame():
 
     def __init__(self) -> None:
         self.state = Oboard()
-        self.max_player = self.state.max_player
 
         '''
         game class that has the following functions:
@@ -403,7 +396,7 @@ if __name__ == "__main__":
     def play_at(coord, state=state):
         if state.is_legal(coord):
             game.play_at(state, coord)
-            #state.print_board()
+            state.print_board()
         else:
             print("illegal move from main")
 
@@ -460,13 +453,22 @@ if __name__ == "__main__":
 
                 #randomly starts with mct or minmax
                 if random.randint(0,1) == 0:
-                    state.max_player, state.min_player = state.min_player, state.max_player
-                    move = minmax.minimax(state, minmax_level)[0]
+                    #minmax starts black
+                    mct_player = 1
+                    max_player = 2
+                    move = minmax.minimax(state, max_player, minmax_level)[0]
                     play_at(move, state)
                     if move in mct.current_node.enfants.keys():
                         mct.current_node = mct.current_node.enfants[move]
                     else:
                         mct.current_node = mct.current_node.node_from_move(move)
+                else:
+                    #mct starts black
+                    mct_player = 2
+                    max_player = 1
+                
+                print("mct is ", mct_player)
+                print("minmax is ", max_player)
 
                 while not state.is_over():
 
@@ -479,15 +481,18 @@ if __name__ == "__main__":
                         break
 
                     #minmax's turn
-                    move = minmax.minimax(state, minmax_level)[0]
+                    move = minmax.minimax(state, max_player, minmax_level)[0]
                     play_at(move, state)
                     if move in mct.current_node.enfants.keys():
                         mct.current_node = mct.current_node.enfants[move]
                     else:
                         mct.current_node = mct.current_node.node_from_move(move)
                 
-                print(state.winner() == state.min_player)
-                if state.winner() == state.min_player:
+                state.print_board()
+                print("mct is ", mct_player)
+                print("minmax is ", max_player)
+                print("winner is ", state.winner())
+                if state.winner() == mct_player:
                     mct_victories += 1
             
             x.append(itt)
@@ -553,7 +558,7 @@ if __name__ == "__main__":
             state.min_player = 1
 
             minmax = MinMax.MinMaxNode(game, state)
-            play_at(minmax.minimax(state, 3)[0])
+            play_at(minmax.minimax(state, max_player, 3)[0])
 
             #Debug
             print(minmax.file)
@@ -583,7 +588,7 @@ if __name__ == "__main__":
         while True:
 
             minmax = MinMax.MinMaxNode(game, state)
-            play_at(minmax.minimax(state, 1)[0])
+            play_at(minmax.minimax(state, max_player, 1)[0])
 
             minmax = MinMax.MinMaxNode(game, state)
             coord = minmax.biased_minmax_simulation(state, 1, 0.5, state.evaluation)[0]
@@ -605,7 +610,7 @@ if __name__ == "__main__":
             mct.pretty_print()
             
             #minmax's turn
-            move = minmax.minimax(state, 3)[0]
+            move = minmax.minimax(state, max_player, 3)[0]
             play_at(move, state)
             print(move)
             if move in mct.current_node.enfants.keys():
