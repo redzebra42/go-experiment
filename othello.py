@@ -396,7 +396,7 @@ if __name__ == "__main__":
     def play_at(coord, state=state):
         if state.is_legal(coord):
             game.play_at(state, coord)
-            state.print_board()
+            #state.print_board()
         else:
             print("illegal move from main")
 
@@ -473,7 +473,7 @@ if __name__ == "__main__":
                 while not state.is_over():
 
                     #mct's turn
-                    chosen_node, chosen_move = mct.tree_search(mct.current_node, itt, False, itt, eval_bias, state.evaluation, bias)
+                    chosen_node, chosen_move = mct.tree_search(mct.current_node, itt, True, itt, eval_bias, state.evaluation, bias)
                     state = mct.current_node.state
                     play_at(chosen_move, state)
                     mct.current_node = chosen_node
@@ -489,11 +489,11 @@ if __name__ == "__main__":
                         mct.current_node = mct.current_node.node_from_move(move)
                 
                 state.print_board()
-                print("mct is ", mct_player)
-                print("minmax is ", max_player)
-                print("winner is ", state.winner())
                 if state.winner() == mct_player:
+                    print("winner is mct")
                     mct_victories += 1
+                else:
+                    print("winner is minmax")
             
             x.append(itt)
             y.append(100*mct_victories/nb_parties)
@@ -553,9 +553,7 @@ if __name__ == "__main__":
     elif what_to_play == 'minmax':
 
         while True:
-            game.max_player = 2
-            state.max_player = 2
-            state.min_player = 1
+            max_player = 2
 
             minmax = MinMax.MinMaxNode(game, state)
             play_at(minmax.minimax(state, max_player, 3)[0])
@@ -581,9 +579,7 @@ if __name__ == "__main__":
 
     elif what_to_play == 'biased minmax':
 
-        game.max_player = 2
-        state.max_player = 2
-        state.min_player = 1
+        max_player = 2
          
         while True:
 
@@ -610,7 +606,7 @@ if __name__ == "__main__":
             mct.pretty_print()
             
             #minmax's turn
-            move = minmax.minimax(state, max_player, 3)[0]
+            move = minmax.minimax(state, 2, 3)[0]
             play_at(move, state)
             print(move)
             if move in mct.current_node.enfants.keys():
@@ -620,8 +616,8 @@ if __name__ == "__main__":
 
     elif what_to_play == 'graph':
 
-        minmax_level = 2
-        x, y = graph_vs(2, 6, 1, 15, minmax_level)
+        minmax_level = 3
+        x, y = graph_vs(500, 4000, 500, 20, minmax_level)
         plt.plot(x, y)
         plt.xlabel("nombre d'itérations de MCT")
         plt.ylabel(f"{'%'} de victoires")

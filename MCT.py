@@ -124,8 +124,8 @@ class MCT():
                 #debug
                 #if start_node != None:
                 #    start_node.pretty_print()
-            print("tree_search time: ", time.time() - clock)
-            print("mean time per search :", (time.time() - clock) / nb_iter)
+            #print("tree_search time: ", time.time() - clock)
+            #print("mean time per search :", (time.time() - clock) / nb_iter)
             return start_node.choose_best_node()                                                 #(node, move)
         else:
             start_time = time.time()
