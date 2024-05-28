@@ -3,6 +3,7 @@ import random
 from MCT import *
 import MinMax
 import matplotlib.pyplot as plt
+import operator
 
 def init_board(board):
     "initialize the board to the starting position"
@@ -375,7 +376,20 @@ class Ogame():
         new_state.curr_player = new_state.opp_player()
         new_state.prev_move = move
         new_state.legal_moves()
-
+    
+    def biased_rand_simulation(self, state, bias):
+        #TODO extremement lent, voir pour enlever clone -> stcker l'état précédent ?
+        while not state.is_over():
+            moves = []
+            for move in state.legal_moves():
+                tmp_state = state.clone()
+                tmp_state.play_at(move)
+                moves.append((tmp_state.evaluation(state.current_player), move))
+            moves = sorted(moves, reverse=True, key=operator.itemgetter(0))
+            moves = moves[:int(bias*len(moves))+1]
+            move = random.choice(moves)[1]
+            state.play_at(move)
+        return state.winner()
 
 def is_legal_test(board1):
     legal_board = [[None for i in range(board1.size)] for j in range(board1.size)]
@@ -503,6 +517,64 @@ if __name__ == "__main__":
 
         return x, y
 
+    def biased_graph(i_depart, i_arrive, incr, nb_parties, temps_parties, minmax_level):
+        x, y = [], []
+        i = i_depart
+        while i <= i_arrive:
+            i += incr
+            mct_victories = 0
+            for j in range(nb_parties):
+                #initialisation des classes
+                game = Ogame()
+                state = game.state
+                mct = MCT(state.clone(), game)
+                minmax = MinMax.MinMaxNode(game, state)
+                #alterne le premier joueur
+                if i % 2 == 0:
+                    #minmax starts black
+                    mct_player = 1
+                    max_player = 2
+                    move = minmax.minimax(state, max_player, minmax_level)[0]
+                    play_at(move, state)
+                    if move in mct.current_node.enfants.keys():
+                        mct.current_node = mct.current_node.enfants[move]
+                    else:
+                        mct.current_node = mct.current_node.node_from_move(move)
+                else:
+                    #mct starts black
+                    mct_player = 2
+                    max_player = 1
+                #boucle pour une partie
+                while not state.is_over():
+                    #tour de mct
+                    chosen_node, chosen_move = mct.biased_tree_search(mct.current_node, temps_parties, i)
+                    state = mct.current_node.state
+                    play_at(chosen_move, state)
+                    mct.current_node = chosen_node
+                    state.print_board()
+                    if state.is_over():
+                        break
+                    #tour de minmax
+                    move = minmax.minimax(state, max_player, minmax_level)[0]
+                    play_at(move, state)
+                    if move in mct.current_node.enfants.keys():
+                        mct.current_node = mct.current_node.enfants[move]
+                    else:
+                        mct.current_node = mct.current_node.node_from_move(move)
+
+                state.print_board()
+                if state.winner() == mct_player:
+                    print("winner is MCT")
+                    mct_victories += 1
+                else:
+                    print("winner is minmax")
+            x.append(i)
+            y.append(100*mct_victories/nb_parties)
+            print(x)
+            print(y)
+        plt.plot(x ,y)
+        plt.show()
+
 
     what_to_play = input(str("what do you want to play ? (mct/minmax/vs/graph)\n"))
     mct.state.print_board()
@@ -625,16 +697,7 @@ if __name__ == "__main__":
         plt.show()
     
     elif what_to_play == 'bias_graph':
-
-        minmax_level = 3
-        x, y = graph_vs(0.2, 5, 0.4, 50, minmax_level)
-        plt.plot(x, y, label=0)
-        for i in [0.2, 0.5, 0.8, 1, 2, 3]: #liste des valeurs de evaluation bias
-            z = graph_vs(0.2, 5, 0.4, 50, minmax_level, True, i)[1]
-            print(z)
-            plt.plot(x, z, label=i)
-        plt.legend()
-        plt.show()
+        x, y = biased_graph(i_depart=0.1, i_arrive=1, incr=0.1, nb_parties=20, temps_parties=2, minmax_level=3)
 
     else:
             raise RuntimeError

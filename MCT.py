@@ -87,13 +87,19 @@ class MCT():
         self.enfants[move] = new_node
         return new_node
 
-    def simulation(self, eval_bias=False, eval=None, bias=1): #O(k*n²) ou k est le nb de coups d'une partie, donc ~ 0(n^3)
+    def simulation(self): #O(k*n²) ou k est le nb de coups d'une partie, donc ~ 0(n^3)
         '''renvois le vainqueur d'une simulation aléatoire a partir de l'état de self'''
         new_state = self.state.clone()
-        if not eval_bias:
-            self.game.rand_simulation(new_state)
+        self.game.rand_simulation(new_state)
+        if new_state.is_over():
+            return new_state.winner()
         else:
-            self.game.biased_minmax_simulation(new_state, bias, eval)
+            raise RuntimeError #rand_simulation devrait aller jusqu'a la fin de la partie
+        
+    def biased_simulation(self, bias): #O(k*n²) ou k est le nb de coups d'une partie, donc ~ 0(n^3)
+        '''renvois le vainqueur d'une simulation aléatoire a partir de l'état de self'''
+        new_state = self.state.clone()
+        self.game.biased_rand_simulation(new_state, bias)
         if new_state.is_over():
             return new_state.winner()
         else:
@@ -148,6 +154,27 @@ class MCT():
                 curr_node = curr_node.parent
             #print(i)
             return start_node.choose_best_node()
+
+    def biased_tree_search(self, start_node, duration:int, bias:float) -> tuple:
+        #bias est dans [0,1]                                            #(node, move)
+        start_time = time.time()
+        i = 0
+        while duration > time.time() - start_time:
+            i += 1
+            curr_node = start_node
+            while not(curr_node.is_feuille()):
+                curr_node = curr_node.selection()
+            curr_node = curr_node.expension()
+            sim_res = curr_node.biased_simulation(bias)
+            while not(curr_node.is_racine()):
+                curr_node.back_propagation(sim_res)
+                curr_node = curr_node.parent
+            #on refait une dernière backpropagation pour la racine
+            curr_node.back_propagation(sim_res)
+            curr_node = curr_node.parent
+        print(i)
+        return start_node.choose_best_node()
+
 
     def choose_best_node(self):
         '''retourne l'enfant le plus visité du noeud self et le move associé'''
