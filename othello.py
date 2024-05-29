@@ -19,7 +19,7 @@ class Oboard():
         self.current_player = player
         self.size = size
         self.prev_move = prev_move
-        self.sec_previous_move = None
+        self.sec_prev_move = None
         self.legal_moves()
         self.nb_coups = 0
 
@@ -221,7 +221,7 @@ class Oboard():
         return leg_moves
     
     def is_over(self):
-        if self.prev_move == 'pass' and self.sec_previous_move == 'pass':
+        if self.prev_move == 'pass' and self.sec_prev_move == 'pass':
             return True
         elif len(self.legal_moves()) == 1:
             new_state = self.clone()
@@ -262,11 +262,14 @@ class Oboard():
             self.play_random()
 
     def play_at(self, move):
+        #modifie le state et renvois le sec_prev_move
         if move == 'pass':
             self.current_player = self.opp_player()
-            self.sec_previous_move = self.prev_move
+            sec_move = self.sec_prev_move
+            self.sec_prev_move = self.prev_move
             self.prev_move = move
             self.legal_moves()
+            return sec_move
         else:
             leg_directions = self.legal_dirs(move)
             if len(leg_directions) != 0:
@@ -275,12 +278,23 @@ class Oboard():
                 self.board[move[0]][move[1]] = self.current_player
                 self.nb_coups += 1
                 self.current_player = self.opp_player()
-                self.sec_previous_move = self.prev_move
+                sec_move = self.sec_prev_move
+                self.sec_prev_move = self.prev_move
                 self.prev_move = move
                 self.legal_moves()
+                return sec_move
             else:
                 print("illegal move from state")
                 raise RuntimeError
+
+    def unplay_at(self, move, sec_move):
+        self.current_player = self.opp_player()
+        self.prev_move = self.sec_prev_move
+        self.sec_prev_move = sec_move
+        self.legal_moves()
+        if move != 'pass':
+            self.board[move[0]][move[1]] = 0
+            self.nb_coups -= 1
     
     def play_at_and_print(self, move):
         self.play_at(move)
@@ -378,7 +392,7 @@ class Ogame():
         new_state.legal_moves()
     
     def biased_rand_simulation(self, state, bias):
-        #TODO extremement lent, voir pour enlever clone -> stcker l'état précédent ?
+        #TODO extremement lent, voir pour enlever clone -> stocker l'état précédent ?
         while not state.is_over():
             moves = []
             for move in state.legal_moves():
