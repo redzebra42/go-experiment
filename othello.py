@@ -157,31 +157,37 @@ class Oboard():
     def is_legal(self, move):
         return move == "pass" or (len(self.legal_dirs(move)) != 0)
     
-    def reverse(self, move, dir):
+    def reverse(self, move, dir) -> list:
+        reversed = []
         if dir == 'R':
             i = move[1] + 1
             while self.board[move[0]][i] == self.opp_player():
+                reversed.append((move[0], i))
                 self.board[move[0]][i] = self.current_player
                 i += 1
         elif dir == 'L':
             i = move[1] - 1
             while self.board[move[0]][i] == self.opp_player():
+                reversed.append((move[0], i))
                 self.board[move[0]][i] = self.current_player
                 i -= 1
         elif dir == 'U':
             i = move[0] + 1
             while self.board[i][move[1]] == self.opp_player():
+                reversed.append((i, move[1]))
                 self.board[i][move[1]] = self.current_player
                 i += 1
         elif dir == 'D':
             i = move[0] - 1
             while self.board[i][move[1]] == self.opp_player():
+                reversed.append((i, move[1]))
                 self.board[i][move[1]] = self.current_player
                 i -= 1
         elif dir == 'DR':
             i = move[0] + 1
             j = move[1] + 1
             while self.board[i][j] == self.opp_player():
+                reversed.append((i, j))
                 self.board[i][j] = self.current_player
                 i += 1
                 j += 1
@@ -189,6 +195,7 @@ class Oboard():
             i = move[0] - 1
             j = move[1] + 1
             while self.board[i][j] == self.opp_player():
+                reversed.append((i, j))
                 self.board[i][j] = self.current_player
                 i -= 1
                 j += 1
@@ -196,6 +203,7 @@ class Oboard():
             i = move[0] + 1
             j = move[1] - 1
             while self.board[i][j] == self.opp_player():
+                reversed.append((i, j))
                 self.board[i][j] = self.current_player
                 i += 1
                 j -= 1
@@ -203,9 +211,11 @@ class Oboard():
             i = move[0] - 1
             j = move[1] - 1
             while self.board[i][j] == self.opp_player():
+                reversed.append((i, j))
                 self.board[i][j] = self.current_player
                 i -= 1
                 j -= 1 
+        return reversed
     
     def legal_moves(self):
         leg_moves = []
@@ -263,18 +273,19 @@ class Oboard():
 
     def play_at(self, move):
         #modifie le state et renvois le sec_prev_move
+        reversed = []
         if move == 'pass':
             self.current_player = self.opp_player()
             sec_move = self.sec_prev_move
             self.sec_prev_move = self.prev_move
             self.prev_move = move
             self.legal_moves()
-            return sec_move
+            return sec_move, reversed
         else:
             leg_directions = self.legal_dirs(move)
             if len(leg_directions) != 0:
                 for legal_dir in leg_directions:
-                    self.reverse(move, legal_dir)
+                    reversed += self.reverse(move, legal_dir)
                 self.board[move[0]][move[1]] = self.current_player
                 self.nb_coups += 1
                 self.current_player = self.opp_player()
@@ -282,19 +293,21 @@ class Oboard():
                 self.sec_prev_move = self.prev_move
                 self.prev_move = move
                 self.legal_moves()
-                return sec_move
+                return sec_move, reversed
             else:
                 print("illegal move from state")
                 raise RuntimeError
 
-    def unplay_at(self, move, sec_move):
+    def unplay_at(self, move, sec_move, reversed):
         self.current_player = self.opp_player()
         self.prev_move = self.sec_prev_move
         self.sec_prev_move = sec_move
-        self.legal_moves()
+        for rev_move in reversed:
+            self.board[rev_move[0]][rev_move[1]] = 3 - self.board[rev_move[0]][rev_move[1]]
         if move != 'pass':
             self.board[move[0]][move[1]] = 0
             self.nb_coups -= 1
+        self.legal_moves()
     
     def play_at_and_print(self, move):
         self.play_at(move)
@@ -396,9 +409,9 @@ class Ogame():
         while not state.is_over():
             moves = []
             for move in state.legal_moves():
-                tmp_state = state.clone()
-                tmp_state.play_at(move)
-                moves.append((tmp_state.evaluation(state.current_player), move))
+                sec_move, reversed = state.play_at(move)
+                moves.append((state.evaluation(state.current_player), move))
+                state.unplay_at(move, sec_move, reversed)
             moves = sorted(moves, reverse=True, key=operator.itemgetter(0))
             moves = moves[:int(bias*len(moves))+1]
             move = random.choice(moves)[1]
@@ -430,7 +443,7 @@ if __name__ == "__main__":
 
     def tree_search(search_depth):
         mct.new_move(search_depth)
-        mct.state.print_board()
+        #mct.state.print_board()
 
     def time_tree_search(sec, tree):
         tree.new_move_time(sec)
@@ -501,7 +514,7 @@ if __name__ == "__main__":
                 while not state.is_over():
 
                     #mct's turn
-                    chosen_node, chosen_move = mct.tree_search(mct.current_node, itt, True, itt, eval_bias, state.evaluation, bias)
+                    chosen_node, chosen_move = mct.tree_search(mct.current_node, itt, False, itt, eval_bias, state.evaluation, bias)
                     state = mct.current_node.state
                     play_at(chosen_move, state)
                     mct.current_node = chosen_node
@@ -565,7 +578,7 @@ if __name__ == "__main__":
                     state = mct.current_node.state
                     play_at(chosen_move, state)
                     mct.current_node = chosen_node
-                    state.print_board()
+                    #state.print_board()
                     if state.is_over():
                         break
                     #tour de minmax
@@ -703,7 +716,7 @@ if __name__ == "__main__":
     elif what_to_play == 'graph':
 
         minmax_level = 3
-        x, y = graph_vs(500, 4000, 500, 20, minmax_level)
+        x, y = graph_vs(4, 6, 1, 20, minmax_level)
         plt.plot(x, y)
         plt.xlabel("nombre d'itérations de MCT")
         plt.ylabel(f"{'%'} de victoires")
@@ -711,7 +724,7 @@ if __name__ == "__main__":
         plt.show()
     
     elif what_to_play == 'bias_graph':
-        x, y = biased_graph(i_depart=0.1, i_arrive=1, incr=0.1, nb_parties=20, temps_parties=2, minmax_level=3)
+        x, y = biased_graph(i_depart=0, i_arrive=0.8, incr=0.2, nb_parties=20, temps_parties=4, minmax_level=3)
 
     else:
             raise RuntimeError

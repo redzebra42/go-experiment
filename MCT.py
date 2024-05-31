@@ -138,9 +138,6 @@ class MCT():
             i = 0
             while duration > time.time() - start_time:
                 i += 1
-                if i % 50 == 0:
-                    #print(i)
-                    pass
                 curr_node = start_node
                 while not(curr_node.is_feuille()):
                     curr_node = curr_node.selection()
@@ -152,7 +149,7 @@ class MCT():
                 #on refait une dernière backpropagation pour la racine
                 curr_node.back_propagation(sim_res)
                 curr_node = curr_node.parent
-            #print(i)
+            print(i)
             return start_node.choose_best_node()
 
     def biased_tree_search(self, start_node, duration:int, bias:float) -> tuple:
